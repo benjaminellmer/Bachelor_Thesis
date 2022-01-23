@@ -1,0 +1,195 @@
+\chapter{Implementation}
+\label{cha:Implementation}
+This chapter shows an implementation of the authentication mechanisms discussed in chapter~\ref{cha:authentication_mechanisms}.
+The trust the network approach is not implemented in this chapter because it is deprecated and should not be used anymore. 
+
+This implementation aims not to teach how to implement the discussed authentication mechanisms. It should help to gain a good understanding of how the mechanisms work.
+Security critical features like service-to-service authentication are not recommended to be implemented and maintained by developers, which are not specialized for software security.
+Therefore it is always good to use software as a platform applications like Kubernetes.
+The most popular service mesh for Kubernetes is Istio.
+It provides all security mechanisms, which are implemented in this chapter.
+The implementation of Istio might differ from the following implementation, but the concepts stay the same.
+
+\section{Implementation of mTLS}
+This chapter shows the implementation of service-to-service authentication using mutual TLS. 
+The following snippets are based on an ASP.NET 5.0 Web API written in C\# and the keys are generated using the cli\footnote{Command line interface} of OpenSSL.
+Even if the implementation looks different in other languages, the code snippets should help understand the used mechanisms in more detail.
+
+\subsection{Create Certificate Authority}
+The following commands will create a key pair and a certificate for the CA.
+The parameters of the following commands might vary, depending on how security-critical an application is.
+The certificate of the CA is self-signed and does only include the subject field.
+The CA has a 4096-bit RSA key, which does not mean that a 2048-bit key is not valid, but a 4096-bit key is much harder to brute force.
+The key pair is also encrypted using the AES algorithm with a 256-bit key. Therefore anybody who has physical access to the file also needs a password to read the content.
+The certificate of the CA is valid for one year, this period always depends on the application.
+\begin{enumerate}
+    \item Create key pair: \\ 
+    \lstinline{openssl genrsa -aes256 -passout pass:"capassword" -out ca.key 4096}
+    \item Create self-signed certificate: \\
+    \lstinline{openssl req -new -passin pass:"capassword" -key ca.key -x509 -days 365} \\
+    \lstinline{-out ca.crt -subj "/CN=ca.swapindo.com"}
+\end{enumerate}
+
+\subsection{Create key pair and a signed certificate for a service} \label{sec:createkeypair}
+The following commands will create a key pair and a certificate for a service. 
+The CA signed the certificate and is later used in the TLS handshake.
+Each service has to do this process, therefore it is good to use automation tools like Netflix uses Lemur~\cite{dias2020microservices}.
+The certificates of the services get a shorter lifetime of 30 days, this might also differ depending on how security-critical the application is. 
+Additionally, a PFX file is created, it is an encrypted container that includes both the certificate and the key pair.
+The PFX file is not required, but it makes it more convenient to parse the file from a C\# program.
+\begin{enumerate}
+    \item Create key pair: \\ 
+    \lstinline{openssl genrsa -aes256 -passout pass:"servicepassword" -out service.key 4096}
+    \item Create certificate signing request: \\
+    \lstinline{openssl req -passin pass:"servicepassword" -new -key service.key} \\
+    \lstinline{-out service.csr -subj "/CN=adservice.swapindo.com"}
+    \item Sign certificate, using the private key of the CA: \\
+    \lstinline{openssl x509 -req -passin pass:"capassword" -days 30 -in service.csr -CA ca.crt} \\
+    \lstinline{-CAkey ca.key -set_serial -01 -out service.crt}
+    \item Create PFX file, which is later used, to send HTTPS Requests: \\
+    \lstinline{openssl pkcs12 -export -out service.pfx -passin pass:"servicepassword" -inkey} \\ 
+    \lstinline{service.key -in service.crt -passout pass:"passwordService"}
+\end{enumerate}
+
+\subsection{Certificate validation logic}
+The code of listing~\ref{lst:CertificateAuthority} shows an implementation of the validation logic, implemented in a static class, the \textit{CertificateAuthority}.
+The \textit{CertificateAuthority} makes use of the singleton pattern, which is good practice since the validations do not store any state, and the file which holds the CA certificate should not be parsed at each request.
+The validation is done using an \textit{X509Chain} of the dotnet cryptography library.
+The chain is configured to ignore revocation because the revocation is beyond the scope of this implementation.
+Furthermore, the chain is configured to use the \textit{CustomTrustStore}, because this is the place where the appended certificates are stored.
+
+The \textit{AppendCertificate} function is used to append the certificate of the self-signed root CA to the \textit{CustomTrustStore} of the chain.
+The CA certificate could also be appended in the constructor of the CA, but providing a function for this purpose makes the class more flexible since multiple CAs can be added, and the path of the certificate can vary between the applications.
+
+The validation of the certificate is performed in the \textit{ValidateCertificate} function. 
+It uses the \textit{Build} function of the \textit{X509Chain}, which returns true or false, whether the certificate is valid or not.
+Using the cryptographic functionalities of popular libraries is always safer than implementing them by hand.
+
+\noindent \begin{minipage}{\linewidth}
+\begin{CsCode}[label={lst:CertificateAuthority}, caption={CertificateAuthority class, that is responsible for the certificate validation~\cite{impsingleton,impvalidatecert,impx509chain}},captionpos=b]
+ public class CertificateAuthority {
+    private static X509Chain chain = null;
+    private static CertificateAuthority instance = new CertificateAuthority();
+    public static CertificateAuthority Instance { get { return instance; } }
+    
+    static CertificateAuthority() {
+        // Create chain
+        chain = new X509Chain();
+        
+        // Set options
+        chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+        chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+    }
+    
+    public void AppendCertificate(X509Certificate cert) {
+        // Add the certificate to the custom trust store
+        chain.ChainPolicy.CustomTrustStore.Add(cert);
+    }
+    
+    public bool Validate(X509Certificate2 cert) {
+        try {
+            return chain.Build(cert);
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+}
+\end{CsCode}
+\end{minipage}
+
+\subsection{Service configuration}
+The server, which hosts the application has to be configured to allow the client to send certificates. 
+This process may vary, depending on the used technologies.
+The code in listing~\ref{lst:ConfigureKestrel} shows how this is done using the Kestrel web server.
+This only allows the clients to send certificates, but it does not validate them against the CA.
+Therefore every request, which uses a valid certificate is considered valid, even if the certificate is signed by an unknown CA.
+
+\noindent \begin{minipage}{\linewidth}
+\begin{CsCode}[label={lst:ConfigureKestrel}, caption={Configure Kestrel to allow certificates~\cite{implkritnermtls}},captionpos=b]
+webBuilder.ConfigureKestrel(kestrelOptions => {
+    kestrelOptions.ConfigureHttpsDefaults(httpOptions => {
+        httpOptions.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+    });
+});
+\end{CsCode}
+\end{minipage}
+
+Listing~\ref{lst:ConfigureService} shows how the services are configured to verify that the incoming certificate is signed by the trusted root CA.
+The validation is configured to neglect the revocation and allow only chained certificates. Otherwise, somebody could use the key pair of the CA itself to access the service.
+If the certificate is considered valid, it is additionally checked by the \textit{CertificateAuthority}, which was shown in listing~\ref{lst:CertificateAuthority}.
+If the client's certificate is valid and is signed by the CA, the client is authenticated and is allowed to access the functionalities of the service.
+
+\noindent \begin{minipage}{\linewidth}
+\begin{CsCode}[label={lst:ConfigureService}, caption={Configure the certificate authentication for the service~\cite{implkritnermtls}},captionpos=b]
+services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
+.AddCertificate(options => {
+    options.AllowedCertificateTypes = CertificateTypes.Chained;
+    options.RevocationMode = X509RevocationMode.NoCheck;
+    options.Events = new CertificateAuthenticationEvents() {
+        OnCertificateValidated = context => {
+            if (CertificateAuthority.Instance.Validate(context.ClientCertificate)) {
+                context.Success();
+            } else {
+                context.Fail("Certificate validation failed");
+            }
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context => {
+            context.Fail("Certificate validation failed");
+            return Task.CompletedTask;
+        }
+    };
+});
+\end{CsCode}
+\end{minipage}
+
+The code of listing~\ref{lst:ConfigureService} shows how to configure the client authentication for the service.
+But the service has to be configured to use the implemented authentication mechanism.
+Therefore the statement \lstinline{app.UseAuthentication();} has to be added to the \textit{Configure} function of the \textit{Startup} class. 
+Since the service was configured to allow certificates and not to require them. 
+The API functions can define whether a client needs a valid certificate or not.
+This is done by appending the \lstinline{[Authorize]} annotation before the function declaration.
+The code of listing~\ref{lst:ConfigureKestrel} can be adopted to require certificates, which would not allow any access to the API without a valid certificate.
+
+\subsection{Use the certificate for requests}
+Since the services consume the functionalities of other services, they have to be configured to use client certificates for their request.
+The creation of a client certificate was shown in section~\ref{sec:createkeypair}.
+Listing~\ref{lst:ConfigureHttpClient} shows how the client certificate is appended to a \textit{HttpClient}, which is later injected into the services, using dependency injection.
+It is not required to use dependency injection for the HttpClient, but it is good practice to use it according to the documentation.
+A considerable advantage of the dependency injection is that the pfx file does not have to be parsed for each request.
+Instead, it is parsed once and injected into the controller when initialized.
+The controller can then use the \textit{HttpClient} and perform requests without dealing with the client certificate.
+
+\noindent \begin{minipage}{\linewidth}
+\begin{CsCode}[label={lst:ConfigureHttpClient}, caption={Append Certificate to HttpClient~\cite{implclientfactory, implconfighandler}},captionpos=b]
+services.AddHttpClient("mtlsclient")
+.ConfigurePrimaryHttpMessageHandler(() => {
+    HttpClientHandler handler = new HttpClientHandler();
+    handler.ClientCertificates
+        .Add(new X509Certificate2(@"service.pfx", "passwordService"));
+    return handler;
+});
+\end{CsCode}
+\end{minipage}
+
+%Listing~\ref{lst:UseHttpClient} shows how the configured HttpClient is injected into a Controller and then used to perform a request.
+%
+%\noindent \begin{minipage}{\linewidth}
+%\begin{CsCode}[label={lst:UseHttpClient}, caption={Use the injected HttpClient~\cite{impluseclient}},captionpos=b]
+%[ApiController]
+%public class ForwardUsersController : ControllerBase {
+%    private HttpClient httpClient;
+%
+%    public ForwardUsersController(IHttpClientFactory factory) {
+%        httpClient = factory.CreateClient("mtlsclient");
+%    }
+%
+%    [HttpGet]
+%    public async Task<string> Get() {
+%        using (var response = await httpClient.GetAsync(apiUrl)) {
+%            // process response
+%        }
+%    }
+%}
+%\end{CsCode}
+%\end{minipage}
