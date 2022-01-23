@@ -5,8 +5,12 @@
 
 ## Work that uses the same proposed method to solve a different problem
 - internet public key infrastructure
+- self hosted pki
 
 ## A method that is similiar to your method that solves a relatively similiar problem
 
 ## A discussion of a set of related problems that covers your problem domain
 - key management
+
+# Sonstiges
+vielleicht kurze Einführung in asymmetrische Kryptographie
