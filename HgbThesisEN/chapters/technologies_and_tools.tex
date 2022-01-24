@@ -88,8 +88,6 @@ TLS itself is also called one-way TLS because it helps the client to identify th
 Therefore mutual TLS (mTLS) was introduced to provide authentication in both directions.
 The client and the server must own a private/public key pair, so it is more suited for the communication between two systems and not between users and servers~\cite{dias2020microservices}. 
 
-\pagebreak
-
 \subsection{Handshake Protocol}
 The handshake protocol is responsible for negotiating a cipher suite and for the authentication using X.509 certificates.
 The cipher suite declares the key exchange algorithm, the signature algorithm, the symmetric encryption algorithm, including the mode of the encryption algorithm and the hashing algorithm~\cite{turnertls, kurbatov2021design}.
@@ -100,6 +98,8 @@ The handshake varies on the key exchange method, but it can be separated into th
     \item The client sends a pre-master secret to the server and if mTLS is used, the client sends his certificate to the server
     \item The client and the server finish the handshake, using the independently computed master secret
 \end{enumerate}
+The steps of the handshake will be explained in more detail in chapter~\ref{sec:tlshandshake_details}.
+
 
 \subsection{Record Protocol}
 The record protocol provides a secure channel for the communication between the parties.
