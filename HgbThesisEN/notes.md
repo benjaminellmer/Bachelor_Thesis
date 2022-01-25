@@ -24,3 +24,4 @@ identity propagation in related work anschneiden
 - pki 
 - mtls web security
 - identity propagation
+- zero trust networks ?
