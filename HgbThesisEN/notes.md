@@ -19,9 +19,20 @@ gutes paper: https://ieeexplore.ieee.org/abstract/document/7019737
 identity propagation in related work anschneiden
 
 # Related Work
+- kurz einleiten mit API Gateway usw. 
+- ganz wichtig was ist ein service mesh
 - einführung asymm. krypto
 - key management
 - pki 
 - mtls web security
 - identity propagation
 - zero trust networks ?
+
+# Implementation/Project Overview
+MTLS:
+kurz durch den code durchgehen also von der alten Impl. übernehmen (sehr kurz fassen 1. Seite max. 2 Seiten)
+ordentliche grafik erstellen 
+zuerst kommt request von app zu api gateway
+dann geht gateway direkt weiter zu dem service 
+der service geht weiter zu einem anderem service 
+
