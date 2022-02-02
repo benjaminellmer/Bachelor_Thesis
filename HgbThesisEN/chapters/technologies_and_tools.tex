@@ -1,4 +1,4 @@
-\chapter{Technologies and Tools}
+\chapter{Technologies}
 This chapter describes the technologies and tools, which are necessary for the implementation of the later discussed authentication mechanisms.
 
 \section{X509.Certificate}
@@ -88,6 +88,7 @@ TLS itself is also called one-way TLS because it helps the client to identify th
 Therefore mutual TLS (mTLS) was introduced to provide authentication in both directions.
 The client and the server must own a private/public key pair, so it is more suited for the communication between two systems and not between users and servers~\cite{dias2020microservices}. 
 
+
 \subsection{Handshake Protocol}
 The handshake protocol is responsible for negotiating a cipher suite and for the authentication using X.509 certificates.
 The cipher suite declares the key exchange algorithm, the signature algorithm, the symmetric encryption algorithm, including the mode of the encryption algorithm and the hashing algorithm~\cite{turnertls, kurbatov2021design}.
@@ -106,20 +107,20 @@ The record protocol provides a secure channel for the communication between the 
 This is done by using the algorithms declared in the cipher suite.
 Confidentiality is assured, using symmetric encryption, and integrity is provided by Message Authentication Codes (MAC)~\cite{kurbatov2021design, krawczyk2013security}.
 
-\section{OpenSSL}
-OpenSSL is an open-source library that provides implementations of the state-of-the-art cryptographic algorithms, including the TLS protocols.
-It is fully cross-platform and can either be used within programs or by its CLI.
-It is crucial to use libraries like OpenSSL for cryptographic operations because most developers are not fully aware of all dangers, resulting in vulnerabilities caused by faulty implementations~\cite{viega2002network}.
-OpenSSL will be used to create and sign keys and certificates in chapter~\ref{cha:Implementation}.
+%\section{OpenSSL}
+%OpenSSL is an open-source library that provides implementations of the state-of-the-art cryptographic algorithms, including the TLS protocols.
+%It is fully cross-platform and can either be used within programs or by its CLI.
+%It is crucial to use libraries like OpenSSL for cryptographic operations because most developers are not fully aware of all dangers, resulting in vulnerabilities caused by faulty implementations~\cite{viega2002network}.
+%OpenSSL will be used to create and sign keys and certificates in chapter~\ref{cha:Implementation}.
 
-\subsection{OpenSSL file formats}
-Files with the following extensions are created and used in chapter~\ref{cha:Implementation}.
-The file extensions are not exclusive to the OpenSSL library, and these are only the extensions that are later used.
-There are many more available extensions, which are not discussed in this thesis~\cite{opensslextensions, viega2002network}:
-\begin{description}
-    \item[pem:] A Privacy Enhanced Mail file is a base64 encoded text file, which can be used as a container for a private key, or one to many certificates.
-    \item[crt:] A pem file containing certificates can use the crt extension instead of the pem extension.
-    \item[key:] A pem file containing a private key can use the key extension instead of the pem extension.
-    \item[csr:] A csr file contains a certificate signing request intended to be signed by a certificate authority.
-    \item[pfx:] A pfx file is a container that can include certificates and a private key together in a binary file.
-\end{description}
+%\subsection{OpenSSL file formats}
+%Files with the following extensions are created and used in chapter~\ref{cha:Implementation}.
+%The file extensions are not exclusive to the OpenSSL library, and these are only the extensions that are later used.
+%There are many more available extensions, which are not discussed in this thesis~\cite{opensslextensions, viega2002network}:
+%\begin{description}
+%    \item[pem:] A Privacy Enhanced Mail file is a base64 encoded text file, which can be used as a container for a private key, or one to many certificates.
+%    \item[crt:] A pem file containing certificates can use the crt extension instead of the pem extension.
+%    \item[key:] A pem file containing a private key can use the key extension instead of the pem extension.
+%    \item[csr:] A csr file contains a certificate signing request intended to be signed by a certificate authority.
+%    \item[pfx:] A pfx file is a container that can include certificates and a private key together in a binary file.
+%\end{description}

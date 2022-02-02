@@ -24,7 +24,7 @@ identity propagation in related work anschneiden
 - einführung asymm. krypto
 - key management
 - pki 
-- mtls web security
+- mtls web security (CCA)
 - identity propagation
 - zero trust networks ?
 
