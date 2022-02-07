@@ -17,6 +17,7 @@
 vielleicht kurze Einführung in asymmetrische Kryptographie
 gutes paper: https://ieeexplore.ieee.org/abstract/document/7019737
 identity propagation in related work anschneiden
+artikel über end user context: https://ieeexplore.ieee.org/document/6082008
 
 # Related Work
 - kurz einleiten mit API Gateway usw. 
