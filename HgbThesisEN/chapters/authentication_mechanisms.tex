@@ -3,12 +3,12 @@
 This chapter explains the concepts and details of the two compared authentication mechanisms.
 Only the mTLS approach and the authentication using self-signed JWTs approach are discussed in this chapter since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
 
-\begin{figure}
-	\centering
-	\includegraphics{images/authentication-mechanisms/TikZ_mTLS_base_structure.pdf}
-	\caption{Setup using mTLS for the service-to-service authentication~\cite{dias2020microservices}}
-	\label{fig:auth_mechanisms_mtls}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics{images/authentication-mechanisms/TikZ_mTLS_base_structure.pdf}
+%	\caption{Setup using mTLS for the service-to-service authentication~\cite{dias2020microservices}}
+%	\label{fig:auth_mechanisms_mtls}
+%\end{figure}
 
 \section{Authentication based on mTLS}
 Mutual TLS is the most popular option for the service-to-service authentication of microservice deployments~\cite{dias2020microservices}.
@@ -20,7 +20,7 @@ The authentication using mTLS requires a PKI, the same as TLS on the internet.
 It is possible to use the already existing PKI of the internet, but this would make the key management much harder and would not bring any advantages.
 % TODO: Insert Reference to self-hosted PKI
 Therefore it is good practice to use a self-hosted PKI to have a root of trust within the network~\cite{dias2020microservices}.
-The setup of a microservice deployment using mTLS is shown in figure~\ref{fig:auth_mechanisms_mtls}.
+%The setup of a microservice deployment using mTLS is shown in figure~\ref{fig:auth_mechanisms_mtls}.
 
 When mTLS is used, the server and the client must provide a valid certificate to create a communication channel.
 The issuer of the presented certificates must be trusted by all communicating parties~\cite{dias2020microservices}.
@@ -154,16 +154,16 @@ Same as mTLS, it is based on asymmetric cryptography, and each service needs to 
 The main idea is that the sender creates a JWT, which is signed with his private key.
 The receiving service can then check the signature of the JWT with the public key of the sending service.
 The signed JWT is transferred within the Authorization header of the HTTP request~\cite{dias2020microservices}.
-This workflow is visualized in figure~\ref{fig:auth_mechanisms_jwt}.
+%This workflow is visualized in figure~\ref{fig:auth_mechanisms_jwt}.
 Since the JWT does not have any fixed structure, it is possible to embed contextual data like the user context as claims within the JWT.
 Therefore parameters and information about the user do not have to be passed within the body or as URL parameters~\cite{dias2020microservices}.
 
-\begin{figure}
-	\centering
-	\includegraphics{images/authentication-mechanisms/TikZ_jwt_base_structure.pdf}
-	\caption{Setup using self signed JWTs for the service-to-service authentication~\cite{dias2020microservices}}
-	\label{fig:auth_mechanisms_jwt}
-\end{figure}
+%\begin{figure}
+%	\centering
+%	\includegraphics{images/authentication-mechanisms/TikZ_jwt_base_structure.pdf}
+%	\caption{Setup using self signed JWTs for the service-to-service authentication~\cite{dias2020microservices}}
+%	\label{fig:auth_mechanisms_jwt}
+%\end{figure}
 
 The usage of self-signed JWTs does not provide any confidentiality for the communication among the services.
 Therefore TLS should be used to secure service-to-service communication.

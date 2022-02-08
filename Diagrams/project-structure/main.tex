@@ -1,0 +1,33 @@
+\documentclass[tikz]{standalone}
+\usetikzlibrary{positioning,fit,arrows.meta,backgrounds, calc, shapes.geometric}
+
+\tikzset{
+    service/.style={
+        regular polygon,draw,regular polygon sides = 8,
+		inner sep = 0cm,
+		minimum width = 3cm,
+    }
+}
+
+\begin{document}
+
+\begin{tikzpicture}
+	\node (app) at (4, 7.75) {\includegraphics[width=0.2\textwidth]{androidphone.png}}; % https://www.inventicons.com/icon/android-mobile-5082
+	\node (firebase) at (8, 4.5) {\includegraphics[width=0.4\textwidth]{firebase.png}}; % https://www.google.com/url?sa=i&url=https%3A%2F%2Fmedium.com%2F%40collo.kariss%2Ffirebase-authentication-f8706dd82be4&psig=AOvVaw3qNXcSilWAPuWsRDyBwhtY&ust=1644418795199000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCLCe0sOv8PUCFQAAAAAdAAAAABAR
+	\node[service] (apigateway) at (9, 10) {API Gateway};
+	\node[service] (adservice) at (13, 13) {AdService};
+	\node[service] (userservice) at (14, 9) {UserService};
+
+	\node[draw, dotted, circle, fit=(apigateway) (adservice) (userservice), draw, inner sep=0cm] (perimeter) {};
+
+	\draw[-stealth] (4.7, 7.75) -- node[midway, above left] {1.} (7.5, 9.5);
+	\draw[-stealth] (8.4, 8.5) -- node[midway, left] {2.} (8, 5.5);
+	\draw[stealth-] (8.7, 8.5) -- node[midway, right] {3.} (8.3, 5.5);
+	\draw[-stealth] (10.1,11) -- node[midway, above left] {4.} (11.6,12.4);
+	\draw[-stealth] (13.3, 11.6) -- node[midway, left] {5.} (13.6, 10.4);
+	\draw[stealth-] (13.6, 11.6) -- node[midway, right] {6.} (13.9, 10.4);
+	\draw[stealth-] (10.4,10.7) -- node[midway, below right] {7.} (11.9,12.1);
+	\draw[stealth-] (4.7, 7.3) -- node[midway, below right] {2.} (7.7, 9.2);
+\end{tikzpicture}
+
+\end{document}
