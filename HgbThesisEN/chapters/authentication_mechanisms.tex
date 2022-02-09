@@ -197,7 +197,7 @@ This means the JWT is carried in a way that can not be forged.
 Therefore it is better to use self-signed JWTs for the authentication when the end-user context is relevant in many situations~\cite{dias2020microservices}.
 
 \subsection{Conclusion}
-service-to-service authentication using self-signed JWTs is not only a mechanism for authentication. It additionally provides nonrepudiation and makes sharing the user context more convenient. 
+Service-to-service authentication using self-signed JWTs is not only a mechanism for authentication. It additionally provides nonrepudiation and makes sharing the user context more convenient. 
 Otherwise, the implementation of self-signed JWTs is much more challenging than the implementation of mTLS.
 It is insufficient to configure the webserver correctly and append a certificate to each request.
 Every service has to know how to encode and decode JWTs unless he only sends or receives requests.

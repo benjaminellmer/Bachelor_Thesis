@@ -1,17 +1,40 @@
 \chapter{Project Structure}
 \label{cha:project_structure}
 This chapter shows the structure of an project which implements the previously discussed authentication mechanisms.
-This chapter aims to clarify the interactions of the components which are needed to implement the service-to-service security.
-The visualizations of this chapter are based on a microservice backend for a flea market app.
-The backend is implemented in C\# using the ASP.NET framework.
+The aim of this chapter is clarifying the interactions of the components which are needed to implement the service-to-service authentication.
+The visualizations of this chapter are based on the backend of a flea market app.
 
-\section{Components}
-The components of the example deployment are shown in figure~\ref{fig:deployment_structure}. 
-It consists of the following parts:
+\section{Preambel Flea Market App}
+The flea market app is an Android app written in the programming language Kotlin.
+The main features are buying, renting and swapping items.
+The user is authenticated using firebase authentication.
+He has to present his access token to the Microsoft API Gateway on each request.
+The backend of the app is based on the microservice architecture and the microservices are mainly implemented in C\#.
+The backend actually has the following microservices:
+\begin{itemize}
+	\item AdService
+	\item UserService
+	\item ChatService
+	\item MediaService
+	\item SubscriptionService
+	\item ReportService
+\end{itemize}
+Each microservice has its own PostgreSQL database.
+The services are hosted on Microsoft Azure using docker containers.
+Only the AdService and the UserService will be mentioned to show an exemplary example of the service-to-service authentication. 
+
+\section{Exemplary Example}
+Figure~\ref{fig:deployment_structure} shows an extract of the previously described backend.
+It visualizes the communication of a request to the backend.
+The user fetches all ads which are in his surrounding.
+Additionally to the ads, the user gets a preview of the owner for each ad, therefore the UserService needs to be consumed.
+To simlify the workflow, topics like authorization, key management and user context sharing are not handled in this example.
+In this use case the following components are in use: 
 \begin{description}
 	\item[Android App:] The Android App is the User Interface for the client to access the functionalities of the service.
 		The requests sent by the Android App are sent in beyond of the user.
 	\item[Firebase Authentication:] The Firebase Authentication service is responsible for validating the access tokens wich are transferred by the users.
+		The app also communicates with this service to get an access token, but this is done in an earlier stage.
 	\item[API Gateway:] The API Gateway is the only entry point to the deployment.
 		Therefore the API Gateway is the only component which directly communicates to the Android App.
 	\item[AdService:] The AdService is one service of the deployment.
@@ -26,30 +49,61 @@ It consists of the following parts:
 	\label{fig:deployment_structure}
 \end{figure}
 
-\section{Workflow using mTLS}
-
+\subsection{Workflow using mTLS}
 \begin{enumerate}
-	\item The client sends an API request to the Microsoft API Gateway using an Android App.
-		The client communicates with the API Gateway using HTTPS.
+	\item[1.] The client sends an API request to the Microsoft API Gateway using the Android App.
+		The communication between the API Gateway and the App is secured using HTTPS.
 		Therefore the server is authenticated to the client using TLS.
 		The client is authenticated to the server by embedding an firebase access token within the Authorization header.
-	\item The API Gateway receives the request from the client and has to check the provided access token.
-		The token is validated using an token validation service provided by firebase.
-		If the token is invalid, the client has to retrieve a new token an start from the beginning.
-		When the client provided an valid access token, the request of the client is forwarded to the "AdService".
-		The communication between the API Gateway and the "AdService" is secured using mTLS.
-		This means both the API Gateway and the AdService have to present a valid certificate signed by a trusted CA.
-	\item The request from the client is then processed on the "AdService".
-		Since the "AdService" needs information about the users which are the owners of the ads, it needs to communicate with the "UserService".
-		The communication between the "UserService" and the "AdService" is also protected using mTLS.
-	\item When the "UserService" processed the request from the "AdService", it responds with the expected result.
-		The response does not require to present the certificates again, since TCP connection between the "AdService" and the "UserService" is still present.
-	\item The "AdService" then processes the response from the "UserService" and sends its request to the API Gateway, again using the opened TCP connection.
-	\item The API Gateway forwards the response from the "AdService" to the Android App.
+	\item[2.] The API Gateway sends the received token to the Firebase Authentication service to validate it.
+		This is defined as a policy within the policy file of the API Gateway.
+	\item[3.] The Firebase Authentication service returns the information whether the persented token is valid or not.
+	\item[4.] When the client provided a valid access token, the request of the client is forwarded to the \textbf{AdService}.
+		The communication between the API Gateway and the \textbf{AdService} is secured using mTLS.
+		This means both parties have to present a certificate, signed by a trusted CA.
+		Therefore the webserver of the \textbf{AdService} has to be configured to allow or even require Client Certificates.
+	\item[5.] After processing the request from the API Gateway the \textbf{AdService} sends a request to the \textbf{UserService} to retrieve the additional information about the owner.
+		The communication between the \textbf{UserService} and the \textbf{AdService} is also protected using mTLS, so it has to be configured like the \textbf{AdService}.
+		The certificate is appened to the request using a HTTPClient, which is injected to the Controller of the WebService using Dependency Injection.
+	\item[6.] When the \textbf{UserService} processed the request, it responds with the expected result.
+		The response does not require to perform the authentication again, since TCP connection between the \textbf{AdService} and the \textbf{UserService} is still opened.
+	\item[7.] After the \textbf{AdService} processed the response from the \textbf{UserService}, it uses the opened connection with the API Gateway and transfers its response.
+	\item[8.] The API Gateway forwards the response from the \textbf{AdService} to the Android App.
 		This connection is still secured using TLS and not mTLS.
-		It would be possible to secure the communication between the API Gateway and the client using certificate.
-		This mechanism is called Client Certificate Authentication.
-	\item The App can now process the response and present the requested information to the user.
+		The App can now process the response and present the requested information to the user.
 \end{enumerate}
 
-\section{Workflow using self signed JWT}
+\subsection{Workflow using JWT}
+The workflow using JWT and the workflow using mTLS are very similar, therefore only the steps which differ between the mechanisms are described again.
+\begin{enumerate}
+	\item[4.] The request from the client is forwarded to the \textbf{UserService}. 
+		Therefore the API Gateway has to create a valid JWT to communicate with the \textbf{UserService}.
+		On the Microsoft API Gateway, the logic to create a JWT is implemented as a policy.
+		The JWT, which is signed using the private key of the API Gateway is transferred within the Authorization header.
+	\item[5.] The \textbf{AdService} has to retrieve additional information from the \textbf{UserService}.
+		Now the \textbf{AdService} has to present his JWT to the \textbf{UserService}.
+		This is done by using a HTTPClientFactory, which automatically embeds the signed JWT within the Authorization header, when the request is sent.
+		If the \textbf{AdService} does not know the certificate of the \textbf{UserService}, it will deny the request and ask the \textbf{AdService} to present its certificate.
+		In this case the request is repeated and the certificate of the \textbf{AdService} is transferred during the TLS handshake, like it would be transferred using mTLS.
+\end{enumerate}
+
+%\begin{enumerate}
+%	\item[1.] The client sends an API request to the Microsoft API Gateway using the Android App.
+%		The communication between the API Gateway and the App is secured using HTTPS.
+%		Therefore the server is authenticated to the client using TLS.
+%		The client is authenticated to the server by embedding an firebase access token within the Authorization header.
+%	\item[2.] The API Gateway sends the received token to the Firebase Authentication service to validate it.
+%	\item[3.] The Firebase Authentication service returns the information whether the persented token is valid or not.
+%	\item[4.] When the client provided a valid access token, the request of the client is forwarded to the \textbf{AdService}.
+%		The communication between the API Gateway and the \textbf{AdService} is secured usint mTLS or JWTs.
+%		This means the API Gateway has to present either a certificate, signed by a trusted CA or a JWT signed using its own private key to the \textbf{UserService}.
+%	\item[5.] After processing the request from the API Gateway the \textbf{AdService} sends a request to the \textbf{UserService} to retrieve the additional information about the owner.
+%		The communication between the \textbf{UserService} and the \textbf{AdService} is also protected using mTLS or JWTs.
+%	\item[6.] When the \textbf{UserService} processed the request, it responds with the expected result.
+%		The response does not require to perform the authentication again, since TCP connection between the \textbf{AdService} and the \textbf{UserService} is still opened.
+%	\item[7.] After the \textbf{AdService} processed the response from the \textbf{UserService}, it uses the opened connection with the API Gateway and transfers its response.
+%	\item[8.] The API Gateway forwards the response from the \textbf{AdService} to the Android App.
+%		This connection is still secured using TLS and not mTLS and no JWT is needed.
+%		The App can now process the response and present the requested information to the user.
+%\end{enumerate}
+
