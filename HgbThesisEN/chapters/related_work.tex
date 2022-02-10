@@ -1,2 +1,69 @@
 \chapter{Related Work}
 \label{cha:Related_Work}
+This chapter summarizes the state-of-the-art concepts for microservice security and for authentication in the digital world.
+Furthermore the technologies, which are used to implemented this concepts are described in more detail.
+
+\section{Microserivce Security}
+Siriwardena and Dias~\cite{dias2020microservices} gave an exhensive guide of all topics related to microservice security. 
+They separated the security of an microservice deployment into edge-level security and service-level security.
+The microservice architecture is based on separating the system in multiple parts.
+It is not sufficient to secure the system only on the edge-level or only on the service-level.
+Each part of the system has to be secured properly regarding confidentiality, authentication and authorization.
+
+\subsection{Edge-level security}
+Edge-level security is defined as the security mechanisms that protect the resources within the deployment from attackers outside the deployment.
+The API Gateway is responsible for the edge security it is the only entry point to the microservice deployment.
+All requests targeted for the APIs of the services are intercepted by the API Gateway.
+After validation of the requests, it dispatches the requests to the microservices.
+The main tasks of an API Gateway are authentication of the end user, authorization, and throttling.
+It authenticates the end user using access tokens, which come from access delegation technologies like OAuth 2.0 or Open ID Connect~\cite{siriwardena2014advanced}.
+Due to outourcing the end user authentication to the API Gateway, the end user authentication has to be performed only once and not by every service.
+The API Gateway is able to perform simple authorization assertions. 
+As soon as the authorization gets more granular, the microservices have to perform it on their own, because the API Gateway does not know the business logic.
+
+\subsection{Service-level security}
+Service-level security is defined as the security mechanisms that protect the communication among the microservices.
+According to Barabanov and Makrushin~\cite{barabanov2020authentication} service-level security can be decomposed into the sub functions service-level authentication, service-level authorization, and external identity propagation.
+Service-level security can either be implemented by the microservices themselves or by a service-mesh.
+A service mesh can be seen as a dedicated infrastructure layer, which manages the service-to-service communication of containerized services.
+In a typical microservice deployment with a service mesh, each microservice has its service proxy, which works transparently~\cite{dias2020microservices}
+The servce mesh is responsible for service discovery, routing, load balancing, traffic configuration, authentication authorization and monitoring~\cite{chandramouli2019microservices}.
+
+\subsubsection{Service-to-service-authentication} 
+\label{sec:service-to-service-authentication}
+Authentication is the process of identifying the communication partner to protect a system from spoofing.
+Since the communication among microservices is done using remote calls, their communication has to provide authentication.
+Service-to-service authentication can be implemented in the following ways~\cite{dias2020microservices}:
+\begin{itemize}
+    \item Trust the Network (TTN)
+    \item mutual Transport Layer Security (mTLS)
+    \item self signed JSON Web Tokens (JWTs)
+\end{itemize}
+Trust the Network is a security approach, that is based on the assertion that nobody has access to the components within a network perimeter.
+All components rely on the network security.
+Nevertheless, internal misbehaviour can lead to exploits allowing attackers intrude into the network perimeter and exploit the microservices~\cite{zaheer2019eztrust}. 
+Therefore the industry is heading towards zero-trust networks and the TTN approach became deprecated~\cite{dias2020microservices}.
+
+Service-to-servie authentication based on mTLS and self signed JWTs will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
+
+\subsubsection{Service-level authorization} 
+\label{sec:service-level-authorization}
+Authorization defines the tasks that a principal is allowed to perform on a system.
+It requires that the principal is already authenticated because the authorization is performed based on the identity~\cite{siriwardena2014advanced}. 
+Service-level authorization gives the microservices more control to enforce access control.
+The authorization is usually performed using policy decision point (PDP) models like the centralized PDP model or the embedded PDP model~\cite{dias2020microservices, barabanov2020authentication}.
+Proper service-to-service mechanisms are a precondition for service-to-service authorization, since the authorization can be bypassed with insufficient authentication~\cite{siriwardena2014advanced}.
+
+\subsubsection{External entity identity propagation} 
+\label{sec:external-entity-identity-propagation}
+In order to perform the authorization correctly, the services have to know the context of the caller.
+The most popular technic for identity propagation is extracting the context of the user within JSON Web Tokens.
+The tokens are passed between the microservices and the API Gateway.
+The propagated identity of the user can be extracted from the token, and the token's signature must be checked.
+The microservices can perform authorization based on the identity of the client~\cite{barabanov2020authentication, dias2020microservices}.
+The chosen authentication mechanism do have an impact on the identity propagation, this will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
+
+\section{Authentication}
+
+
+

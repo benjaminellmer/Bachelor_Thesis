@@ -30,7 +30,7 @@ The TBSCertificate contains the data of the certificate, including the following
 
 \subsubsection{SignatureAlgorithm}
 The signatureAlogrithm field stores the information, which cryptographic algorithm was used to sign the certificate.
-Algorithms are declared by their identifier, the "OBJECT IDENTIFIER." 
+Algorithms are declared by their identifier, the "OBJECT IDENTIFIER".
 The most commonly used algorithms are the RSA\footnote{Rivest Shamir Adleman} algorithm and the Digital Signature Algorithm (DSA)~\cite{x509rfc}.
 
 \subsubsection{SignatureValue}
@@ -79,15 +79,14 @@ The chosen signature algorithm signs the base64 encoded header, the base64 encod
 The signature provides integrity for the message, and if it was signed with a private key, it provides authentication~\cite{jwtdocauth0}.
 The base64 encoded signature is the third part of the JWT.
 
-\section{Transport Layer Security} 
+\section{Transport Layer Security}
 The Transport Layer Security (TLS) Protocol provides authentication, integrity, and confidentiality for the communication between two parties.
-It consists of two layers, the handshake protocol, and the record protocol~\cite{turnertls}. 
+It consists of two layers, the handshake protocol, and the record protocol~\cite{turnertls}.
 
 \subsection{mTLS} \label{sec:mtls}
 TLS itself is also called one-way TLS because it helps the client to identify the server, but not the server to identify the client.
 Therefore mutual TLS (mTLS) was introduced to provide authentication in both directions.
 The client and the server must own a private/public key pair, so it is more suited for the communication between two systems and not between users and servers~\cite{dias2020microservices}. 
-
 
 \subsection{Handshake Protocol}
 The handshake protocol is responsible for negotiating a cipher suite and for the authentication using X.509 certificates.
@@ -100,7 +99,6 @@ The handshake varies on the key exchange method, but it can be separated into th
     \item The client and the server finish the handshake, using the independently computed master secret
 \end{enumerate}
 The steps of the handshake will be explained in more detail in chapter~\ref{sec:tlshandshake_details}.
-
 
 \subsection{Record Protocol}
 The record protocol provides a secure channel for the communication between the parties.

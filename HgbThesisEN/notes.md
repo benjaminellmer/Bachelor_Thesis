@@ -1,7 +1,7 @@
 # Related Work:
 
 ## Work that proposes a different method to solve the same problem
-- Network Perimeter security
+- Network Perimeter security 
 
 ## Work that uses the same proposed method to solve a different problem
 - internet public key infrastructure

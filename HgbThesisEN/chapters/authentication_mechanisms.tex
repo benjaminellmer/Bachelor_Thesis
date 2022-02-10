@@ -1,7 +1,7 @@
 \chapter{Authentication Mechanisms}
 \label{cha:authentication_mechanisms}
 This chapter explains the concepts and details of the two compared authentication mechanisms.
-Only the mTLS approach and the authentication using self-signed JWTs approach are discussed in this chapter since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
+Only the mTLS approach and the authentication using self-signed JWTs approach are discussed in more detail since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
 
 %\begin{figure}
 %	\centering
@@ -47,12 +47,11 @@ The following sequence and figure~\ref{fig:tlshandshake} should give an overview
 		The client validates the sent certificates with his own trusted store.
 		If it trusts the sent certificate chain, the server is successfully authenticated.
 	\item The server sends the \textbf{CertificateRequest} message, in which the trusted CAs of the server are listed.
-		The client can use this list to choose the correct certificate he has to present.
-	\item The server sends the \textbf{ServerHelloDone} message.
+		The client can use this list to choose the correct certificate he has to present for the Client Certificate Authentication.
+	\item The server sends the \textbf{ServerHelloDone} message, signalizing that the server finished his Hello message.
 	\item The client responds with his \textbf{Certificate} message, which is similar to the servers \textbf{Certificate} message, but contains the client's certificate chain.
-	\item The client then generates a random value for the pre-master secret.
-		The pre-master secret derives symmetric keys for the cryptographic operations defined in the cipher suite.
-		Then the pre-master secret is encrypted using the server's public key.
+	\item The client then generates a random value, the pre-master secret, which is later used to derive symmetric keys for the cryptographic operations defined in the cipher suite.
+		The pre-master secret is then encrypted using the server's public key.
 		Therefore, only the owner of the corresponding private key, the server, can decrypt this message.
 		In the end, the encrypted pre-master secret is transferred to the server within the \textbf{ClientKeyExchange} message.
 	\item The client has to prove that he owns the corresponding private key of the certificate he sent.
@@ -61,10 +60,11 @@ The following sequence and figure~\ref{fig:tlshandshake} should give an overview
 		The server can decrypt the hash with the certificate's public key and can calculate the hash on its own to check whether the decrypted hash is correct or not.
 	\item The client sends a \textbf{ChangeCipherSpec} message to signal the server that all following messages will be protected with the protection mechanisms defined in the cipher suite.
 	\item The last message of the handshake is the \textbf{Finished} message, which is an encrypted hash of all previous messages.
+	%\item[11-12] Same as steps 9-10 but from the server.
 	\item Same as step 9, but from the server.
 	\item Same as step 10, but from the server.
 \end{enumerate}
-After the handshake, both participants know the secret, which can encrypt and decrypt messages.
+After the handshake, both participants know the secret, that is used to encrypt and decrypt messages.
 The handshake would have almost the same steps when mTLS is not used.
 Only the \textbf{CertificateRequest} message of the sever and the \textbf{Certificate} message and the \textbf{CertificateVerify} message of the client are unique for mTLS.
 One special case of the handshake is that the client responds to the \textbf{CertificateRequest} with an empty \textbf{Certificate} message.
@@ -98,10 +98,10 @@ The workflow of this approach is shown in figure~\ref{fig:mtls_id_1}
 	\label{fig:mtls_id_1}
 \end{figure}
 
-Another approach is that the STS is used to generate a new token for each request which is shown in figure~\ref{fig:mtls_id_2}.
+Another approach is that the STS is used to generate a new token for each request like it is shown in figure~\ref{fig:mtls_id_2}.
 When the STS generates a new token for each request, he fully knows all performed requests.
 Therefore the STS could implement further authorization logic~\cite{dias2020microservices}.
-Nevertheless, the frequent calls could result in an enormous workload for the STS and decrease the system's performance.
+Nevertheless, the frequent calls could result in an bigger workload for the STS and decrease the system's performance.
 
 \begin{figure}[H]
 	\centering
@@ -112,12 +112,12 @@ Nevertheless, the frequent calls could result in an enormous workload for the ST
 
 Both approaches result in some overhead, especially the second one.
 Additionally, when the microservices are located in different trust domains, those approaches can get very complicated since a microservice only trusts the STS within its trust domain~\cite{dias2020microservices}.
-Therefore, mTLS might not be the superior mechanism for systems that require the end-user context.
+Therefore, mTLS might not be the superior mechanism for systems that require to share the end-user context.
 
 \subsection{Conclusion}
 mTLS is an efficient mechanism to implement service-to-service authentication.
 Since the communication between the services is usually done using HTTPS, the services already use TLS.
-Therefore, mTLS does not cause much configuration overhead, and no new technologies are necessary~\cite{dias2020microservices}, unless the services share the end-user context.
+Therefore, mTLS does not cause much configuration overhead, and no new technologies are necessary~\cite{dias2020microservices}.
 
 One crucial advantage of the TLS handshake is that the private keys are never exchanged, and the session keys are always different due to the usage of the randomness.
 This means that even if an intruder can get the session key of a communication channel, he cannot use this key for another session.
@@ -128,7 +128,7 @@ From the developer's perspective, mTLS does not require much implementation logi
 The service which acts as the server has to be configured to use certificate authentication.
 Depending on the used technologies, this is usually done by setting a few configuration parameters in the code or directly on the webserver.
 The service which acts as the client has to be configured to send his certificate during the TLS handshake.
-Most HTTP Client libraries support simply attaching the certificate to each HTTP Request.
+Most HTTP Client libraries support simply attaching the certificate to each HTTP request.
 Nevertheless, the developers do not have to implement much logic resulting in the problem that they do not have much control over the system.
 The developers have to rely on the implementation of the webserver developers.
 This means that if a web server has security-related bugs, the microservice developers can not solve them independently.
