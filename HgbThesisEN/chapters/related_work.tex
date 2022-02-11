@@ -1,7 +1,8 @@
 \chapter{Related Work}
 \label{cha:Related_Work}
-This chapter summarizes the state-of-the-art concepts for microservice security and for authentication in the digital world.
-Furthermore the technologies, which are used to implemented this concepts are described in more detail.
+This chapter summarizes the state-of-the-art concepts for microservice security and for public key based authentication.
+Furthermore the technologies, which are used to implement the later discussed authentication mechanisms are described.
+This chapter aims to give a good understanding of the whole domain and not only about service-to-service authentication.
 
 \section{Microserivce Security}
 Siriwardena and Dias~\cite{dias2020microservices} gave an exhensive guide of all topics related to microservice security. 
@@ -63,7 +64,116 @@ The propagated identity of the user can be extracted from the token, and the tok
 The microservices can perform authorization based on the identity of the client~\cite{barabanov2020authentication, dias2020microservices}.
 The chosen authentication mechanism do have an impact on the identity propagation, this will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
-\section{Authentication}
+\section{Public key-Based Authentication}
+Authentication can be performed in many ways.
+The authentication mechanisms which are later discussed in chapter~\ref{cha:authentication_mechanisms} are both based on public key cryptography.
+Since public key cryptography provides higher security than symmetric cryptography, it is the preferred method for authentication mechanisms. 
+Altough it requires higher computation and communication costs than symmetric cryptography~\cite{pubkeycrypto}.
 
+\subsection{Public key cryptography}
 
+\subsection{PKI}
+
+\subsection{Key Management}
+
+% \cite{canetti2016universally}
+
+\section{Technologies}
+\subsection{X509.Certificate}
+X.509 certificates assure the users of a public key that the associated person or system owns the private key by binding public keys to subjects.
+Certificate authorities sign certificates and each communication partner who trusts the CA trusts the certificates signed by it.
+The most significant advantage of certificates is that they can be exchanged using untrusted communication channels because the signatures are not valid anymore when the contents of a certificate are changed.
+Therefore manipulations can be detected, and manipulated certificates can be declined~\cite{x509rfc}.
+
+\subsubsection{Trust Path}
+When the client of a service wants to consume a service, which is hosted on a server, it has to obtain the server's certificate.
+If the client does not know the public key of the CA who signed the server's certificate, he has to obtain it.
+Obtaining the public key often results in chains because the client may have to work his way up until he reaches a CA he trusts.
+Such chains are also called certification paths.
+The way in which the clients can retrieve the CA certificates can be configured by the CA.
+
+\subsubsection{Fields}
+Depending on the version, a certificate can include more or less information.
+The information is always stored inside the tbsCertificate, signatureAlgorithm, and signatureValue fields and can be expanded using extensions.
+
+The TBSCertificate contains the data of the certificate, including the following information:
+\begin{itemize}
+    \item Subject of the certificate
+    \item Issuer of the certificate
+    \item public key of the subject
+    \item Validity period
+    \item Additional information
+\end{itemize}
+
+The signatureAlogrithm field stores the information, which cryptographic algorithm was used to sign the certificate.
+Algorithms are declared by their identifier, the "OBJECT IDENTIFIER".
+The most commonly used algorithms are the RSA\footnote{Rivest Shamir Adleman} algorithm and the Digital Signature Algorithm (DSA)~\cite{x509rfc}.
+
+The signatureValue field contains the value of the digital signature.
+It is obtained by signing the content of the tbsCertificate, using the algorithm specified in the signatureAlgorithm field.
+The signature is used to verify the validity of the information embedded in the tbsCertificate field.
+
+\subsection{JSON Web Token}
+A JSON Web Token (JWT) is a container, which can carry authentication and authorization assertions and further information in a cryptographically safe manner.
+An authentication assertion can be anything, which authenticates the user.
+Usually, usernames or e-mail addresses are used to identify a user uniquely.
+An authorization assertion can be any information about the access permissions of a user.
+For example, a JWT can include the information, whether the user is an admin or an unprivileged user~\cite{dias2020microservices}. 
+
+\subsubsection{Structure}
+A JWT is decomposed into the header, the payload, and the signature.
+The three parts are concatenated and separated by a dot~\cite{jwtdocauth0}.
+A valid JWT could look like the JWT shown in figure~\ref{fig:myjwt}.
+\begin{figure}
+    \textcolor{red}{Header}.
+	\textcolor{blue}{Payload}.
+	\textcolor{darkgreen}{Signature} \\ \\
+    \textcolor{red}{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9}.
+	\textcolor{blue}{eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQi\\OjE1MTYyMzkwMjIsInVzZXJuYW1lIjoiYmVuamFtaW4uZWxsbWVyIiwiZW1haWw\\iOiJiZW5qYW1pbi5lbGxtZXJAeWFob28uY29tIiwiYWRtaW4iOmZhbHNlfQ}.
+	\textcolor{darkgreen}{0ksqN71\\oloNvq3IrY7w72uoTgPz9Gpn08p-KSbFulY0}
+    \caption{Sample JSON Web Token}
+    \label{fig:myjwt}
+\end{figure}
+
+The \textbf{header} contains the metadata related to the JWT, which is usually the type of the token and the signature algorithm.
+The specification defines that only HS256\footnote{HMAC SHA-256} and none algorithm must be implemented  by conforming JWT implementation.
+It is recommended to additionally implement the algorithms RS256 and ES256\footnote{Elliptic Curve Digital Signature Algorithm (ECDSA) with 256-bit key}~\cite{jwtdocauth0, jwtrfc}.
+The base64 encoded header is the first part of the JWT.
+
+The \textbf{payload} is a set of registered and custom claims.
+A claim is a piece of information about an entity.
+The JWT specification defines registered claims, which are not mandatory for all cases but should provide a good starting point for a set of useful claims to ensure interoperability.
+Custom claims can be defined by the software architects, on their own, depending on their needs.
+The custom claims registered in the IANA registry are called public claims, and those not registered in the IANA registry are called private claims~\cite{jwtdocauth0, jwtrfc}.
+The base64 encoded payload is the second part of the JWT.
+
+The chosen signature algorithm signs the base64 encoded header, the base64 encoded payload, and a secret.
+The \textbf{signature} provides integrity for the message, and if it was signed with a private key, it additionally provides authentication~\cite{jwtdocauth0}.
+The base64 encoded signature is the third part of the JWT.
+
+\subsection{Transport Layer Security}
+The Transport Layer Security (TLS) Protocol provides authentication, integrity, and confidentiality for the communication between two parties.
+It consists of two layers, the handshake protocol, and the record protocol~\cite{turnertls}.
+
+\subsubsection{mTLS} \label{sec:mtls}
+TLS itself is also called one-way TLS because it helps the client to identify the server, but not the server to identify the client.
+Therefore mutual TLS (mTLS) was introduced to provide authentication in both directions.
+The client and the server must own a private/public key pair, so it is more suited for the communication between two systems and not between users and servers~\cite{dias2020microservices}. 
+
+\subsubsection{Handshake Protocol}
+The handshake protocol is responsible for negotiating a cipher suite and for the authentication using X.509 certificates.
+The cipher suite declares the key exchange algorithm, the signature algorithm, the symmetric encryption algorithm, including the mode of the encryption algorithm and the hashing algorithm~\cite{turnertls, kurbatov2021design}.
+The handshake varies on the key exchange method, but it can be separated into the following steps~\cite{krawczyk2013security}:
+\begin{enumerate}
+    \item The server and the client exchange Hello messages
+    \item The server sends its certificate to the client
+    \item The client sends a pre-master secret to the server and if mTLS is used, the client sends his certificate to the server
+    \item The client and the server finish the handshake, using the independently computed master secret
+\end{enumerate}
+The steps of the handshake will be explained in more detail in chapter~\ref{sec:tlshandshake_details}.
+
+\subsubsection{Record Protocol}
+The record protocol provides a secure channel for the communication between the parties.
+This is done by using the algorithms declared in the cipher suite.
+Confidentiality is assured, using symmetric encryption, and integrity is provided by Message Authentication Codes (MAC)~\cite{kurbatov2021design, krawczyk2013security}.
 
