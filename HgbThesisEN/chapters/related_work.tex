@@ -65,23 +65,94 @@ The microservices can perform authorization based on the identity of the client~
 The chosen authentication mechanism do have an impact on the identity propagation, this will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
 \section{Public key-Based Authentication}
-Authentication can be performed in many ways.
-The authentication mechanisms which are discussed in chapter~\ref{cha:authentication_mechanisms} are both based on public key cryptography.
+Authentication can be performed in many ways two common approaches are symmetric cryptography and public key cryptography.
+Both authentication mechanisms which are discussed in chapter~\ref{cha:authentication_mechanisms} are based on public key cryptography.
 Public key cryptography provides higher security than symmetric cryptography.
 Therefore it is the preferred method to implement authentication mechanisms, altough it requires higher computation and communication costs than symmetric cryptography~\cite{pubkeycrypto}.
 
-
 \subsection{Public key cryptography}
+Public key cryptography can also be called asymmetric cryptography, because the main idea is, that different keys are used for encryption and decryption~\cite{anderson2020security}.
+Each participant is required to own at least on key pair.
+A key pair consists of a public key that is available to everyone and a private key that is only known by the owner of the key pair.
+Encrypting a message with the public key, allows many people to encrypt messages in a way that only the person, which owns the private key can read them.
+Furthermore it allows one person to encrypt messages, in a way, that many people can read it, by encrypting the message with the private key~\cite{henriques2017using}.
+This is also known under the term digital signature. 
+Digital signatures can be used to provide authentication and integrity for messages~\cite{anderson2020security}.
+
+%The commonly used algorithm for digital signatures is RSA.
+%RSA is based on factoring and the encryption key consists of the modulus $N$ which is hard to factor.
+%The modulus $N$ is calculated by multiplying to large prime number $p$ and $q$ with each other.
+%Additionally the encryption key has a public factor $e$ that has no common factors with either $p-1$ or $q-1$.
+%The private key consists of the factors $p$ and $q$, which have to be kept secret.
+%The person that knows the private key, can encrypt a message using the following formular, where $M$ is the message and $C$ is the encrypted message~\cite{anderson2020security}:
+%\begin{displaymath}
+%	C = M^e (mod N)
+%\end{displaymath}
+%An encrypted message can be decryped using the following formular:
+%\begin{displaymath}
+%	M = \sqrt[e]{C (mod N)}
+%\end{displaymath}
+%Only the owner of the private key can simply calculate the message from the cipher, using the Fermat's theorem\footnote{See~\cite{anderson2020security} for further information}.
+
+The problem with assymmetric cryptography is, that the encryption and decryption times are worse than using symmetric cryptography.
+The restriction to use only assymmetric cryptography could decrease the performance of the system.
+Therefore it is common sense to use hybrid systems, that exchange symmetric keys using assymmetric cryptography, but then use symmetric cryptography for the encryption and decryption of messages like it is done in TLS~\cite{henriques2017using}.
+Henriques~\cite{henriques2017using} showed, that this mechanism does not result in any correlations between the keys and that the performance of the system can be improved using a hybrid approach.
 
 \subsection{PKI}
+Public key cryptography assumes that the receiver of a message already knows and trsusts the public key of the message sender.
+Public Key Infrastructues (PKI) are used to achieve this assertion.
+They are responsible for providing a possibility to retrieve the public key of a participant in a trusted way.
+This is done using Certificate Authorities (CA) and certificates~\cite{anderson2020security}.
+
+There are two types of PKIs, open PKIs and closed PKIs.
+An open PKI 
 
 \subsection{Key Management} \label{sec:key_management}
+\section{Key Management}
+Key management is the most challenging part of the later discussed authentication mechanisms.
+It includes the main areas: bootstrapping trust, provisioning keys/certificates to microservices, certificate revocation, key rotation, and monitoring the key usage. 
 
-% \cite{canetti2016universally}
+\subsection{Bootstrapping Trust}
+The commonly used approach to create trust between the services is a Certificate Authority (CA). 
+The CA consists of a private key used to sign certificates and a certificate signed by the CA itself.
+The services do fully trust the CA and store the CA's public key. 
+When a service wants to get trusted by the CA, it has to create its public and private key. 
+Then a certificate is created using the public key, information about the service, and some metadata. 
+The unsigned certificate is then transferred to the CA, and the CA validates the certificate, signs it, and sends it back to the service. 
+The services exchange and validate their certificates during the TLS handshake.
+If the signature of the certificate and all other parameters are valid, the service is fully trusted~\cite{dias2020microservices}.
+
+\subsection{Key Provisioning}
+In the beginning, it is sufficient to create and sign the certificates manually when deploying a microservice.
+This approach is not more feasible at a certain number of services, and an automatic way to inject the certificates and keys to the services has to be implemented.
+Netflix has an additional component, the Lemur API, which is responsible for the key provisioning. Key provisioning using the Lemur API is done in the following steps\cite{dias2020microservices}: % Todo, umbedingt Netflix als Quelle hierfuer suchen
+\begin{itemize}
+    \item During the continuous delivery process, each microservice gets a set of credentials to use the Lemur API
+    \item During the startup, the microservice talks to the Lemur API to obtain a signed certificate for its private/public key pair
+    \item The Lemur API creates a certificate signing request (CSR) and sends it to the CA
+    \item The CA signs the certificate and sends it to Lemur
+    \item Lemur returns the signed certificate to the microservice
+\end{itemize}
+Therefore the developers do not have to worry about creating and signing certificates. Instead, they have to implement the communication with the Lemur API.
+
+\subsection{Certificate revocation}
+A certificate can be revocated for the following reasons: 
+\begin{itemize}
+    \item Private key of the CA is compromised
+    \item Private key of the microservice is compromised
+    \item The holder of the certificate is no longer the identity, which requested the certificate 
+    \item The CA finds out that the parameters provided in the CSR are invalid
+\end{itemize}
+The hardest part about the certificate revocation is to inform all microservices about the certificates, which are revocated. This is done using certificate revocation lists (CRL) or other revocation mechanics. The big downside of CRLS is that the CA has to store a list of certificates, which are relocated, and the clients have to retrieve this list for every communication. Caching can be used to reduce latencies. Otherwise, it also reduces the security because a certificate can be revocated during the lifetime of the cache. Especially a case in which the CA does not respond to the CRL query is tough to handle. Therefore the certificate revocation is a significant downside of microservice security using mTLS, even if the Online Certificate Status Protocol (OSCP) tries to remedy the situation\cite{dias2020microservices}.
+
+\subsection{Key rotation}
+It is essential to rotate the keys of the microservices frequently. How often the keys are rotated depends on how critical the security is for the company. It is possible to use very short rotation intervals, like Netflix. According to Siriwardena and Dias~\cite{dias2020microservices} they rotate their keys every 4 minutes. Usually, the keys are rotated a few times per year, or only a few times per decade, which might increase the chance of key compromisation. The rotation of the CAs keys is much more critical because it requires each running service to retrieve a new certificate. Therefore the keys of the CA are rotated very rarely, or only when the private key is compromised.
 
 \section{Technologies}
 \subsection{X509.Certificate}
-X.509 certificates assure the users of a public key that the associated person or system owns the private key by binding public keys to subjects.
+X.509 certifcates binds the subject of a certificate to a public key.
+They are used to assure the user of an certificate that subject of the certificate owns the correspondig private key.
 Certificate authorities sign certificates and each communication partner who trusts the CA trusts the certificates signed by it.
 The most significant advantage of certificates is that they can be exchanged using untrusted communication channels because the signatures are not valid anymore when the contents of a certificate are changed.
 Therefore manipulations can be detected, and manipulated certificates can be declined~\cite{x509rfc}.
