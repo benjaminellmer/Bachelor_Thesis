@@ -1,16 +1,18 @@
 \chapter{Project Structure}
 \label{cha:project_structure}
-This chapter shows the structure of an project which implements the previously discussed authentication mechanisms.
-The aim of this chapter is clarifying the interactions of the components which are needed to not only implement the service-to-service authentication, but also the authentication of the end user.
-For the simlicity topics like authorization, key management and user context sharing are not handled in this example.
+This chapter aims to show the concrete structure of an project, which implements the previously discussed authentication mechanisms.
+The focus of this chapter is showing the effects of the different authentication mechanisms to the project itself.
+For the simplicity topics like authorization, key management and user context sharing are not handled in this chapter.
 The visualizations of this chapter are based on the backend of a flea market app.
 
-\section{Preambel Flea Market App}
+\section{Flea Market App}
 The flea market app is an Android App written in the programming language Kotlin.
 The main features are buying, renting and swapping items.
 The user is authenticated using firebase authentication.
 He has to present his access token to the Microsoft API Gateway with each request.
-The backend of the app is based on the microservice architecture and the microservices are mainly implemented in C\# it actually contains of the following services:
+The backend of the app is based on the microservice architecture.
+The microservice are mainly implemented in C\# using the ASP.Net Core framework.
+Actually the backend contains the following services:
 \begin{itemize}
 	\item AdService
 	\item UserService
@@ -26,7 +28,7 @@ Only the AdService and the UserService will be used to show an exemplary example
 \section{Exemplary Example}
 Figure~\ref{fig:deployment_structure} shows an extract of the previously described backend and visualizes the communication of the needed components.
 In this example the user fetches all ads which are in his surrounding.
-Therefore the AdService is used to fetch all ads and the UserService is needed to preview some information about the seller.
+Therefore the AdService is used to retrieve the ads from the database and the UserService is needed to preview information about the seller.
 In this use case the following components are necessary:
 \begin{description}
 	\item[Android App:] The Android App is the User Interface for the client to access the functionalities of the services.
@@ -36,12 +38,12 @@ In this use case the following components are necessary:
 	\item[API Gateway:] The API Gateway is the only entry point into the deployment.
 		Therefore the API Gateway is the only component which directly communicates to the Android App.
 	\item[AdService:] The AdService is responsible to manage all ads offered to the user of the app.
-	\item[UserService:] The AdService is the service which is responsible for managing the data of the users.
+	\item[UserService:] The AdService is the service which is responsible for managing the users. 
 \end{description}
 
 \begin{figure}
 	\centering
-	\includegraphics{images/project-structure/TikZ_structure.pdf}
+	\includegraphics[width=0.7\textwidth]{images/project-structure/TikZ_structure.pdf}
 	\caption{Communication among the components of the exemplary example}
 	\label{fig:deployment_structure}
 \end{figure}
@@ -53,7 +55,7 @@ In this use case the following components are necessary:
 		Therefore the server is authenticated to the client using TLS.
 		The client is authenticated to the server by embedding an firebase access token within the Authorization header.
 	\item[2.] The API Gateway sends the received token to the Firebase Authentication service to validate it.
-		This is defined as a policy within the policy file of the API Gateway.
+		This procedure is defined as a policy within the policy file of the API Gateway.
 	\item[3.] The Firebase Authentication service returns the information whether the persented token is valid or not.
 	\item[4.] When the client provided a valid access token, the request of the client is forwarded to the \textbf{AdService}.
 		The communication between the API Gateway and the \textbf{AdService} is secured using mTLS.
@@ -83,4 +85,90 @@ The workflow using JWT and the workflow using mTLS are very similar, therefore o
 		If the \textbf{AdService} does not know the certificate of the \textbf{UserService}, it will deny the request and ask the \textbf{AdService} to present its certificate.
 		In this case the request is repeated and the certificate of the \textbf{AdService} is transferred during the TLS handshake, like it would be transferred using mTLS.
 \end{enumerate}
+
+\section{Implementation Details}
+
+\subsection{mTLS} \label{sec:impl_details_mtls}
+As already discussed in chapter~\ref{cha:authentication_mechanisms}, the implementation of mutual TLS does not require very much logic on the service-side.
+The best way to implement mTLS, in a ASP.Net Core API is using the \textbf{Microsoft.AspNetCore.Authentication.Certificate} library.
+It provides the mechanism to add certificate authentication as \textbf{AuthenticationScheme} and implement custom \textbf{CertificateAuthenticationEvents}.
+The \textbf{CertificateAuthorityService}, implements the interface \textbf{ICertificateAuthorityService} which is shown in listing~\ref{lst:ICertificateAuthorityService}.
+It provides features to manage a custom certificate truststore and validate certificates using this truststore.
+An instance of the \textbf{CertificateAuthorityService} is injected to the \textbf{CertificateAuthenticationEvents}.
+The dependcy injection is managed by the \textbf{Microsoft.Extensions.DependencyInjection} library.
+The \textbf{UseAuthentication} and \textbf{UseAuthorization} functions of the \textbf{ApplicationBuilder} have to be called to use the created \textbf{AuthenticationScheme}.
+The functions of the API Controllers have to be marked with the \textbf{[Authorize]} annotation, to require the client to be authenticated to consume the function.
+Therefore it is possible to exclude some functionalities from the certificate authentication.
+
+\noindent \begin{minipage}{\linewidth}
+\begin{CsCode}[label={lst:ICertificateAuthorityService}, caption={ICertificateAuthorityService interface, which is implemented by the injected CertificateAuthorityService},captionpos=b]
+public interface ICertificateAuthorityService {
+	public void AppendCertificate(X509Certificate2 certificate);
+	public bool ValidateCertificate(X509Certificate2 certificate);
+}
+\end{CsCode}
+\end{minipage}
+
+\subsection{JWT}
+The best way to implement the authentication using self-signed JWTs in ASP.Net Core is a custom middleware.
+% TODO: Faktencheck
+A custom middleware provides the possibility to perform actions on the receiving request before, they are handled by the API Controllers.
+The \textbf{JWTAuthenticationMiddleware} validates the JWT and the certificates of all received request.
+The validation is performed like it is shown in~\ref{alg:jwt}.
+
+When a client certificate is transferred within the TLS handshake, it is checked using a service that implements the \textbf{ICertificateAuthorityService}, which was shown in listing~\ref{lst:ICertificateAuthorityService}.
+If the certificate is valid, it is mapped to the issuer of the certificate within a custom truststore of the \textbf{JWTValidationService}.
+The \textbf{JWTValidationService} implements the \textbf{ITokenValidationService} interface which is shown in listing~\ref{lst:ITokenValidationService}.
+Both the \textbf{CertificateAuthorityService} and the \textbf{JWTValidationService} are injected into the \textbf{Invoke} function of the \textbf{JWTAuthenticationMiddleware} using dependecy injection.
+
+\noindent \begin{minipage}{\linewidth}
+\begin{CsCode}[label={lst:ITokenValidationService}, caption={ITokenValidationService interface, which is implemented by the injected JWTValidationService},captionpos=b]
+public interface ITokenValidationService {
+	public bool PutIntoTruststore(X509Certificate2 certificate);
+	public bool ContainsIssuerInTruststore(String issuer);
+	public bool ValidateTokenWithTruststore(String token, string issuer);
+	public bool ValidateTokenWithTruststore(String token);
+}
+\end{CsCode}
+\end{minipage}
+
+\begin{algorithm}
+\caption{Pseudocode of the request validation using self-signed JWTs}\label{alg:jwt}
+\begin{algorithmic}
+\State $certificate \gets request.Connection.ClientCertificate$
+\State $token \gets request.Headers[Authorization]$
+\State $missingCertificate \gets false$
+
+\If{$token$ is $null$}
+	\State $response.StatusCode \gets 403Forbidden$
+	\State $authenticated \gets false$
+\Else
+	\State $issuer \gets null$
+	\If{$certificate$ is not $null$}
+		\If{$certificate$ is $trusted$}
+			\If{$putCertificateIntoTruststore(certificate)$ is $successful$}
+				\State $issuer \gets certificate.subject$
+			\EndIf
+		\EndIf
+	\Else
+		\If{$containsIssuerInTruststore(token.issuer)$}
+			\State $issuer \gets token.issuer$
+		\Else
+			\State $missingCertificate \gets true$
+		\EndIf
+	\EndIf
+
+	\If{$issuer$ is not $null$ \&\& $validateJWT(token)$ is $valid$}
+		\State $authenticated \gets true$
+	\Else
+		\If{$missingCertificate$ is $true$}
+			\State $response.StatusCode \gets 401Unauthorized$
+		\Else
+			\State $response.StatusCode \gets 403Forbidden$
+		\EndIf
+		\State $authenticated \gets false$
+	\EndIf
+\EndIf
+\end{algorithmic}
+\end{algorithm}
 
