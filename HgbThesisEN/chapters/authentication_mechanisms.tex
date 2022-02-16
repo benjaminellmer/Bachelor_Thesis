@@ -76,6 +76,7 @@ Depending on the configuration of the server, the connection without a certifica
 	\label{fig:tlshandshake}
 \end{figure}
 
+% maybe look at yarygina2018overcoming on page 16 again...
 \subsection{Passing the end user context} \label{sec:mtls_end_user_context}
 For some functionalities, the identity of the microservice is not relevant. Instead, the identity of the end-user is relevant.
 In those cases, the microservices have to pass the end-user context when they consume the logic of other microservices.
@@ -137,7 +138,6 @@ This means that if a web server has security-related bugs, the microservice deve
 For example, the apache webserver, one of the most popular webservers, had many issues in combination with CCA.
 Arnis Parsovs~\cite{parsovs2013practical} researched the problems of the apache webserver and gave an extensive guide on how to circumvent all bugs when CCA is configured.
 
-% TODO: Referenz auf key management
 The biggest challenge of mTLS is the key management, which was described in more detail in the chapter~\ref{sec:key_management}.
 Key management is responsible for key provisioning, key revocation, key rotation, and more management tasks.
 Usually, the key management requires a self-hosted PKI for the deployment.

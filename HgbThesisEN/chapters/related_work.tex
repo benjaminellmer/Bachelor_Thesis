@@ -79,20 +79,20 @@ Furthermore it allows one person to encrypt messages, in a way, that many people
 This is also known under the term digital signature. 
 Digital signatures can be used to provide authentication and integrity for messages~\cite{anderson2020security}.
 
-%The commonly used algorithm for digital signatures is RSA.
-%RSA is based on factoring and the encryption key consists of the modulus $N$ which is hard to factor.
-%The modulus $N$ is calculated by multiplying to large prime number $p$ and $q$ with each other.
-%Additionally the encryption key has a public factor $e$ that has no common factors with either $p-1$ or $q-1$.
-%The private key consists of the factors $p$ and $q$, which have to be kept secret.
-%The person that knows the private key, can encrypt a message using the following formular, where $M$ is the message and $C$ is the encrypted message~\cite{anderson2020security}:
-%\begin{displaymath}
-%	C = M^e (mod N)
-%\end{displaymath}
-%An encrypted message can be decryped using the following formular:
-%\begin{displaymath}
-%	M = \sqrt[e]{C (mod N)}
-%\end{displaymath}
-%Only the owner of the private key can simply calculate the message from the cipher, using the Fermat's theorem\footnote{See~\cite{anderson2020security} for further information}.
+The commonly used algorithm for digital signatures is RSA.
+RSA is based on factoring and the encryption key consists of the modulus $N$ which is hard to factor.
+The modulus $N$ is calculated by multiplying to large prime number $p$ and $q$ with each other.
+Additionally the encryption key has a public factor $e$ that has no common factors with either $p-1$ or $q-1$.
+The private key consists of the factors $p$ and $q$, which have to be kept secret.
+The person that knows the private key, can encrypt a message using the following formular, where $M$ is the message and $C$ is the encrypted message~\cite{anderson2020security}:
+\begin{displaymath}
+	C = M^e (mod N)
+\end{displaymath}
+An encrypted message can be decryped using the following formular:
+\begin{displaymath}
+	M = \sqrt[e]{C (mod N)}
+\end{displaymath}
+Only the owner of the private key can simply calculate the message from the cipher, using the Fermat's theorem\footnote{See~\cite{anderson2020security} for further information}.
 
 The problem with assymmetric cryptography is, that the encryption and decryption times are worse than using symmetric cryptography.
 The restriction to use only assymmetric cryptography could decrease the performance of the system.
@@ -100,59 +100,64 @@ Therefore it is common sense to use hybrid systems, that exchange symmetric keys
 Henriques~\cite{henriques2017using} showed, that this mechanism does not result in any correlations between the keys and that the performance of the system can be improved using a hybrid approach.
 
 \subsection{PKI}
-Public key cryptography assumes that the receiver of a message already knows and trsusts the public key of the message sender.
+Public key cryptography assumes that the receiver of a message already knows and trsusts the public key of the sender.
 Public Key Infrastructues (PKI) are used to achieve this assertion.
 They are responsible for providing a possibility to retrieve the public key of a participant in a trusted way.
 This is done using Certificate Authorities (CA) and certificates~\cite{anderson2020security}.
 
-There are two types of PKIs, open PKIs and closed PKIs.
-An open PKI 
+A PKI can either be a open PKI (global) or a closed PKI (self-hosted).
+Closed PKIs have a specific bounded context~\cite{hlavaty2003risk}.
+A common use case for closed PKIs are microservice deployments, because they are usually company intern and have a specific bounded context~\cite{dias2020microservices}.
+The project which is reviewed in chapter~\ref{cha:project_structure} makes use of a closed PKI.
+Closed PKIs are a popular option, because they allow risk management and provide secrecy of its code~\cite{hlavaty2003risk}.
+Open PKIs can be inspected by the public and based on the inspection it is determined whether the PKI is trusted or not.
+Certificates are retrieved, by making partnerships with CAs.
+The main advantage is, that no proprietary software is needed, since the PKIs are managed by the PKI vendors~\cite{hlavaty2003risk}.
 
 \subsection{Key Management} \label{sec:key_management}
-\section{Key Management}
-Key management is the most challenging part of the later discussed authentication mechanisms.
-It includes the main areas: bootstrapping trust, provisioning keys/certificates to microservices, certificate revocation, key rotation, and monitoring the key usage. 
+Key management is one requirement for public key based authentication mechanism.
+It results in being the most challenging part for the later discussed authentication mechanisms.
+When the key management of a system is very weak, it will have consequences to all parts of the system.
+Especially service-to-service authentication is affected by the quality of the key management.
+The authentication mechanism can be as secure as possible, but when the keys are compromised, the authentication mechanism can't stay secure~\cite{dias2020microservices, fumy1993principles}.
+According to Fumy et. al.~\cite{fumy1993principles}, a key management service has to implement the following tasks:
+\begin{description}
+	\item[Entity Registration:] The service must provide a procedure to create a link between an authenticated identity and its keys.
+	\item[Key Generation:] The service must provide a procedure to create key pairs with good cryptographic quality.
+	\item[Certification:] The service must provide a procedure for issuing certificates. Certification is oftenly a part of key distribution.
+	\item[Authentication/Verification:] The service must provide a procedure to guarantee entity authentication, message content authentication and message origin authentication.
+	\item[Key Distribution:] The service must provide a procedure to supply keys for parties legitimately asking for them.
+\end{description}
 
-\subsection{Bootstrapping Trust}
-The commonly used approach to create trust between the services is a Certificate Authority (CA). 
-The CA consists of a private key used to sign certificates and a certificate signed by the CA itself.
-The services do fully trust the CA and store the CA's public key. 
-When a service wants to get trusted by the CA, it has to create its public and private key. 
-Then a certificate is created using the public key, information about the service, and some metadata. 
-The unsigned certificate is then transferred to the CA, and the CA validates the certificate, signs it, and sends it back to the service. 
-The services exchange and validate their certificates during the TLS handshake.
-If the signature of the certificate and all other parameters are valid, the service is fully trusted~\cite{dias2020microservices}.
+Dias and Siriwardena~\cite{dias2020microservices} furthermore give insights to the key provisioning (distribution) process of netflix.
+Netflix uses its own broker called Lemur for the key provisioning.
+The key provisioning is performed in the following steps, which are visualized in figure~\ref{fig:key_provisioning_netflix}:
+\begin{enumerate}
+    \item During the continuous delivery process, each microservice gets a set of credentials that are good enough to access the Lemur APIs.
+		This is done using an netflix internal tool called Metatron.
+		The credentials from Metatron are long lived credentials, this means they can be used for longer period, so the following process can be repeated multiple times.
+    \item The microservice talks to the Lemur API to obtain a signed certificate for its credentials.
+		This can happen either, during the startup process of the microservice, or when the microservice is rotating its keys.
+    \item Lemur creates a certificate signing request (CSR) addressed to the CA.
+    \item The certificate is signed using the CA.
+		Lemur is not a CA, but it knows how to integrate with a CA to generated signed certificates.
+    \item Lemur returns the signed certificate to the microservice who can than use it to authenticate itself to other services.
+\end{enumerate}
+Therefore the developers do not have to worry about creating and signing certificates.
+Instead, they have to implement the communication with the Lemur API.
 
-\subsection{Key Provisioning}
-In the beginning, it is sufficient to create and sign the certificates manually when deploying a microservice.
-This approach is not more feasible at a certain number of services, and an automatic way to inject the certificates and keys to the services has to be implemented.
-Netflix has an additional component, the Lemur API, which is responsible for the key provisioning. Key provisioning using the Lemur API is done in the following steps\cite{dias2020microservices}: % Todo, umbedingt Netflix als Quelle hierfuer suchen
-\begin{itemize}
-    \item During the continuous delivery process, each microservice gets a set of credentials to use the Lemur API
-    \item During the startup, the microservice talks to the Lemur API to obtain a signed certificate for its private/public key pair
-    \item The Lemur API creates a certificate signing request (CSR) and sends it to the CA
-    \item The CA signs the certificate and sends it to Lemur
-    \item Lemur returns the signed certificate to the microservice
-\end{itemize}
-Therefore the developers do not have to worry about creating and signing certificates. Instead, they have to implement the communication with the Lemur API.
 
-\subsection{Certificate revocation}
-A certificate can be revocated for the following reasons: 
-\begin{itemize}
-    \item Private key of the CA is compromised
-    \item Private key of the microservice is compromised
-    \item The holder of the certificate is no longer the identity, which requested the certificate 
-    \item The CA finds out that the parameters provided in the CSR are invalid
-\end{itemize}
-The hardest part about the certificate revocation is to inform all microservices about the certificates, which are revocated. This is done using certificate revocation lists (CRL) or other revocation mechanics. The big downside of CRLS is that the CA has to store a list of certificates, which are relocated, and the clients have to retrieve this list for every communication. Caching can be used to reduce latencies. Otherwise, it also reduces the security because a certificate can be revocated during the lifetime of the cache. Especially a case in which the CA does not respond to the CRL query is tough to handle. Therefore the certificate revocation is a significant downside of microservice security using mTLS, even if the Online Certificate Status Protocol (OSCP) tries to remedy the situation\cite{dias2020microservices}.
-
-\subsection{Key rotation}
-It is essential to rotate the keys of the microservices frequently. How often the keys are rotated depends on how critical the security is for the company. It is possible to use very short rotation intervals, like Netflix. According to Siriwardena and Dias~\cite{dias2020microservices} they rotate their keys every 4 minutes. Usually, the keys are rotated a few times per year, or only a few times per decade, which might increase the chance of key compromisation. The rotation of the CAs keys is much more critical because it requires each running service to retrieve a new certificate. Therefore the keys of the CA are rotated very rarely, or only when the private key is compromised.
+\begin{figure}
+	\centering
+	\includegraphics{images/related-work/netflix-provisioning.pdf}
+	\caption{Key provisioning of netflix using Lemur and Metatron~\cite{dias2020microservices}}
+	\label{fig:key_provisioning_netflix}
+\end{figure}
 
 \section{Technologies}
 \subsection{X509.Certificate}
 X.509 certifcates binds the subject of a certificate to a public key.
-They are used to assure the user of an certificate that subject of the certificate owns the correspondig private key.
+They are used to assure the user of an certificate that the subject of the certificate owns the correspondig private key.
 Certificate authorities sign certificates and each communication partner who trusts the CA trusts the certificates signed by it.
 The most significant advantage of certificates is that they can be exchanged using untrusted communication channels because the signatures are not valid anymore when the contents of a certificate are changed.
 Therefore manipulations can be detected, and manipulated certificates can be declined~\cite{x509rfc}.
@@ -168,7 +173,7 @@ The way in which the clients can retrieve the CA certificates can be configured 
 Depending on the version, a certificate can include more or less information.
 The information is always stored inside the tbsCertificate, signatureAlgorithm, and signatureValue fields and can be expanded using extensions.
 
-The TBSCertificate contains the data of the certificate, including the following information:
+The \textbf{TBSCertificate} contains the data of the certificate, including the following information:
 \begin{itemize}
     \item Subject of the certificate
     \item Issuer of the certificate
@@ -177,13 +182,29 @@ The TBSCertificate contains the data of the certificate, including the following
     \item Additional information
 \end{itemize}
 
-The signatureAlogrithm field stores the information, which cryptographic algorithm was used to sign the certificate.
+The \textbf{signatureAlogrithm} field stores the information, which cryptographic algorithm was used to sign the certificate.
 Algorithms are declared by their identifier, the "OBJECT IDENTIFIER".
 The most commonly used algorithms are the RSA\footnote{Rivest Shamir Adleman} algorithm and the Digital Signature Algorithm (DSA)~\cite{x509rfc}.
 
-The signatureValue field contains the value of the digital signature.
+The \textbf{signatureValue} field contains the value of the digital signature.
 It is obtained by signing the content of the tbsCertificate, using the algorithm specified in the signatureAlgorithm field.
 The signature is used to verify the validity of the information embedded in the tbsCertificate field.
+
+\subsubsection{Certificate Revocation}
+A certificate can be revocated for the following reasons: 
+\begin{itemize}
+    \item Private key of the CA is compromised
+    \item Private key of the microservice is compromised
+    \item The holder of the certificate is no longer the identity, which requested the certificate 
+    \item The CA finds out that the parameters provided in the CSR are invalid
+\end{itemize}
+The hardest part about the certificate revocation is to inform all participants about the certificates, which are revocated.
+This is done using certificate revocation lists (CRL) or other revocation mechanics.
+The big downside of CRLS is that the CA has to store a list of certificates, which are relocated, and the clients have to retrieve this list for every communication.
+Caching can be used to reduce latencies.
+Otherwise, it also reduces the security because a certificate can be revocated during the lifetime of the cache.
+Especially a case in which the CA does not respond to the CRL query is tough to handle.
+Therefore the certificate revocation is a significant downside of public-key based authentication, even if the Online Certificate Status Protocol (OSCP) tries to remedy the situation\cite{dias2020microservices}.
 
 \subsection{JSON Web Token}
 A JSON Web Token (JWT) is a container, which can carry authentication and authorization assertions and further information in a cryptographically safe manner.
