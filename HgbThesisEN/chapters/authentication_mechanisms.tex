@@ -193,7 +193,6 @@ Therefore the \textbf{PaymentService} would send a request to the \textbf{OrderS
 When the \textbf{OrderService} stores the JWT and the request, it can always proove that the request was originated by the \textbf{PaymentService}.
 It could not be an other service, because only the \textbf{PaymentService} can create a valid signature for the public key of the \textbf{PaymentService}.
 
-
 \subsection{Passing the end-user context}
 The approaches to how the end-user context is passed between the services are similar to the approaches explained in~\ref{sec:mtls_end_user_context}.
 The big difference is how the JWT is transferred among the services.

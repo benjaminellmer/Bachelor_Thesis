@@ -268,12 +268,11 @@ Confidentiality is assured, using symmetric encryption, and integrity is provide
 \section{Discussion}
 This chapter described the fundamentals, to understand the details and differences between the later described authentication mechanisms.
 Furthermore it was described why service-to-service authentication is needed and what additional mechanisms have to be implemented to secure a microservice deployment.
+Additionally, the possibility to outsource the authentication mechanism to a service mesh was discussed.
+Nevertheless, the authentication mechanisms stay the same, wheter they are performed by the services themselves or using the service mesh pattern.
 
-It is very important to understand, that the whole system is compromised, when one security mechanism does not work properly.
-For example the authorization can affected, when the authentication is neglected.
+It is very important to understand, that each security mechnism is dependent on the other mechanism.
+For example the authorization can affected, when the authentication is not performed properly.
 Each service and each layer of the deployment has to be secured properly.
 The problem with the microservice architecture is, that one compromised service can be used to compromise other services.
 Therefore is is very important to choose the correct security mechanisms and understand how they work.
-
-Additionally, the possibility to outsource the authentication mechanism to a service mesh was discussed.
-Since, the authentication mechanisms stay the same, regardless whether they are performed by the services themselves or using the service mesh pattern, it is assumed that the authentication is done by the services in the following chapters.

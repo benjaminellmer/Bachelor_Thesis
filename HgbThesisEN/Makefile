@@ -3,7 +3,7 @@ texfile=$(file).tex
 pdffile=$(file).pdf
 
 pdf:
-	latexmk $(texfile) -pdf
+	latexmk $(texfile) -pdf -f
 
 open:
 	evince $(pdffile) & 
