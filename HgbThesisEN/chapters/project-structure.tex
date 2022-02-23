@@ -23,9 +23,9 @@ Actually the backend contains the following services:
 \end{itemize}
 Each service has its own PostgreSQL database.
 The services are hosted on Microsoft Azure using docker containers.
-Only the AdService and the UserService will be used to show an exemplary example of the communication within the deployment when the discussed authentication mechanisms are implemented.
+Only the AdService and the UserService will be used to show an the communication within the deployment of the project using the discussed authentication mechanisms.
 
-\section{Exemplary Example}
+\section{Structure}
 Figure~\ref{fig:deployment_structure} shows an extract of the previously described backend and visualizes the communication of the needed components.
 In this example the user fetches all ads which are in his surrounding.
 Therefore the AdService is used to retrieve the ads from the database and the UserService is needed to preview information about the seller.
@@ -44,7 +44,7 @@ In this use case the following components are necessary:
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{images/project-structure/TikZ_structure.pdf}
-	\caption{Communication among the components of the exemplary example}
+	\caption{Communication among the components of the shown project}
 	\label{fig:deployment_structure}
 \end{figure}
 
@@ -95,18 +95,25 @@ It provides the mechanism to add certificate authentication as \textbf{Authentic
 The \textbf{CertificateAuthorityService}, implements the interface \textbf{ICertificateAuthorityService} which is shown in listing~\ref{lst:ICertificateAuthorityService}.
 It provides features to manage a custom certificate truststore and validate certificates using this truststore.
 An instance of the \textbf{CertificateAuthorityService} is injected to the \textbf{CertificateAuthenticationEvents}.
-The dependcy injection is managed by the \textbf{Microsoft.Extensions.DependencyInjection} library.
+The depenendency injection is managed by the \textbf{Microsoft.Extensions.DependencyInjection} library.
 The \textbf{UseAuthentication} and \textbf{UseAuthorization} functions of the \textbf{ApplicationBuilder} have to be called to use the created \textbf{AuthenticationScheme}.
 The functions of the API Controllers have to be marked with the \textbf{[Authorize]} annotation, to require the client to be authenticated to consume the function.
 Therefore it is possible to exclude some functionalities from the certificate authentication.
 
+The client side does not require much logic either.
+The client has to attach his certificate to the request.
+In ASP.Net this is done, by creating a custom \textbf{HTTPHandler}, and setting the \textbf{ClientCertificate} property.
+The \textbf{HTTPHandler} is then used to create a \textbf{HTTPClient}, which is used to perform the requests.
+It is good practise to create the \textbf{HTTPClient} once and then inject it into the Controllers using dependency injection.
+This helps improving the performance and especially prevents, that the certificate of the service has to be parsed multiple times.
+
 \noindent \begin{minipage}{\linewidth}
-\begin{CsCode}[label={lst:ICertificateAuthorityService}, caption={ICertificateAuthorityService interface, which is implemented by the injected CertificateAuthorityService},captionpos=b]
-public interface ICertificateAuthorityService {
-	public void AppendCertificate(X509Certificate2 certificate);
-	public bool ValidateCertificate(X509Certificate2 certificate);
-}
-\end{CsCode}
+	\begin{CsCode}[label={lst:ICertificateAuthorityService}, caption={ICertificateAuthorityService interface, which is implemented by the injected CertificateAuthorityService},captionpos=b]
+		public interface ICertificateAuthorityService {
+			public void AppendCertificate(X509Certificate2 certificate);
+			public bool ValidateCertificate(X509Certificate2 certificate);
+		}
+	\end{CsCode}
 \end{minipage}
 
 \subsection{JWT}
@@ -115,60 +122,103 @@ The best way to implement the authentication using self-signed JWTs in ASP.Net C
 A custom middleware provides the possibility to perform actions on the receiving request before, they are handled by the API Controllers.
 The \textbf{JWTAuthenticationMiddleware} validates the JWT and the certificates of all received request.
 The validation is performed like it is shown in~\ref{alg:jwt}.
-
 When a client certificate is transferred within the TLS handshake, it is checked using a service that implements the \textbf{ICertificateAuthorityService}, which was shown in listing~\ref{lst:ICertificateAuthorityService}.
 If the certificate is valid, it is mapped to the issuer of the certificate within a custom truststore of the \textbf{JWTValidationService}.
 The \textbf{JWTValidationService} implements the \textbf{ITokenValidationService} interface which is shown in listing~\ref{lst:ITokenValidationService}.
 Both the \textbf{CertificateAuthorityService} and the \textbf{JWTValidationService} are injected into the \textbf{Invoke} function of the \textbf{JWTAuthenticationMiddleware} using dependecy injection.
 
 \noindent \begin{minipage}{\linewidth}
-\begin{CsCode}[label={lst:ITokenValidationService}, caption={ITokenValidationService interface, which is implemented by the injected JWTValidationService},captionpos=b]
-public interface ITokenValidationService {
-	public bool PutIntoTruststore(X509Certificate2 certificate);
-	public bool ContainsIssuerInTruststore(String issuer);
-	public bool ValidateTokenWithTruststore(String token, string issuer);
-	public bool ValidateTokenWithTruststore(String token);
-}
-\end{CsCode}
+	\begin{CsCode}[label={lst:ITokenValidationService}, caption={ITokenValidationService interface, which is implemented by the injected JWTValidationService},captionpos=b]
+		public interface ITokenValidationService {
+			public bool PutIntoTruststore(X509Certificate2 certificate);
+			public bool ContainsIssuerInTruststore(String issuer);
+			public bool ValidateTokenWithTruststore(String token, string issuer);
+			public bool ValidateTokenWithTruststore(String token);
+		}
+	\end{CsCode}
 \end{minipage}
 
-\begin{algorithm}
-\caption{Pseudocode of the request validation using self-signed JWTs}\label{alg:jwt}
-\begin{algorithmic}
-\State $certificate \gets request.Connection.ClientCertificate$
-\State $token \gets request.Headers[Authorization]$
-\State $missingCertificate \gets false$
+The client has to implement the logic for creating JWTs and attaching them to the requests within the Authorization header.
+The JWTs are created, using the \textbf{JWTCreatorService} that implements the \textbf{ITokenCreatorService} which is shown in~\ref{lst:ITokenCreatorService}.
+The \textbf{JWTCreatorService} and a \textbf{HTTPClient} are injected to the API Controllers using dependency injection.
+The Controllers can choose between two clients, one that contains the certifcte of the service and one that does not contain any additional data.
+In both cases the Controller has to use the \textbf{JWTCreatorService} to create a JWT and append it to the Authorization header of each request.
+An authentication JWT, which is created using the \textbf{JWTCreatorService} is shown in figure~\ref{fig:jwt_en_decoded}.
 
-\If{$token$ is $null$}
-	\State $response.StatusCode \gets 403Forbidden$
-	\State $authenticated \gets false$
-\Else
-	\State $issuer \gets null$
-	\If{$certificate$ is not $null$}
+\noindent \begin{minipage}{\linewidth}
+	\begin{CsCode}[label={lst:ITokenCreatorService}, caption={ITokenCreatorService interface, which is injected to the API Controllers},captionpos=b]
+		public interface ITokenCreatorService {
+			public string CreateToken(string audience);
+		}
+	\end{CsCode}
+\end{minipage}
+
+\begin{figure}
+	\begin{centering}
+	\end{centering}
+	\textcolor{red}{eyJhbGciOiJSUzI1NiIsImtpZCI6IkYwMURFNTBCNTU5MzVBQ0VEOUNDNzdCRjR\\FMjY5NkVDOTE4MUI5NjkiLCJ0eXAiOiJKV1QifQ}.
+	\textcolor{blue}{eyJuYmYiOjE2NDU1MjU5MjM\\sImV4cCI6MTY0NTUyNjIyMywiaXNzIjoic2VydmljZTEuc3dhcGluZG8uY29tIiwiYXV\\kIjoic2VydmljZTIuc3dhcGluZG8uY29tIn0}.
+	\\ 
+	\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{red}{\{} 
+	\textcolor{red}{"alg": "RS256",}
+	\textcolor{red}{"kid": "F01DE50B55935ACED9CC77BF4E2696EC9181B969",}
+	\textcolor{red}{"typ": "JWT"} 
+\textcolor{red}{\}}
+\textcolor{blue}{\{} 
+	\textcolor{blue}{"nbf": 1645525923,}
+	\textcolor{blue}{"exp": 1645526223,}
+	\textcolor{blue}{"iss": "service1.swapindo.com",}
+	\textcolor{blue}{"aud": "service2.swapindo.com"} 
+\textcolor{blue}{\}}
+	\end{Verbatim}
+	\caption{Header and Payload of a JWT, created by the JWTCreatorService}
+	\label{fig:jwt_en_decoded}
+\end{figure}
+
+\begin{algorithm}[H]
+	\caption{Pseudocode of the request validation using self-signed JWTs}\label{alg:jwt}
+	\begin{algorithmic}
+		\State $certificate \gets request.Connection.ClientCertificate$
+		\State $token \gets request.Headers[Authorization]$
+		\State $missingCertificate \gets false$
+
+		\If{$token$ is $null$}
+		\State $response.StatusCode \gets 403Forbidden$
+		\State $authenticated \gets false$
+		\Else
+		\State $issuer \gets null$
+		\If{$certificate$ is not $null$}
 		\If{$certificate$ is $trusted$}
-			\If{$putCertificateIntoTruststore(certificate)$ is $successful$}
-				\State $issuer \gets certificate.subject$
-			\EndIf
+		\If{$putCertificateIntoTruststore(certificate)$ is $successful$}
+		\State $issuer \gets certificate.subject$
 		\EndIf
-	\Else
+		\EndIf
+		\Else
 		\If{$containsIssuerInTruststore(token.issuer)$}
-			\State $issuer \gets token.issuer$
+		\State $issuer \gets token.issuer$
 		\Else
-			\State $missingCertificate \gets true$
+		\State $missingCertificate \gets true$
 		\EndIf
-	\EndIf
+		\EndIf
 
-	\If{$issuer$ is not $null$ \&\& $validateJWT(token)$ is $valid$}
+		\If{$issuer$ is not $null$ \&\& $validateJWT(token)$ is $valid$}
 		\State $authenticated \gets true$
-	\Else
-		\If{$missingCertificate$ is $true$}
-			\State $response.StatusCode \gets 401Unauthorized$
 		\Else
-			\State $response.StatusCode \gets 403Forbidden$
+		\If{$missingCertificate$ is $true$}
+		\State $response.StatusCode \gets 401Unauthorized$
+		\Else
+		\State $response.StatusCode \gets 403Forbidden$
 		\EndIf
 		\State $authenticated \gets false$
-	\EndIf
-\EndIf
-\end{algorithmic}
+		\EndIf
+		\EndIf
+	\end{algorithmic}
 \end{algorithm}
 
+\section{Conclusion}
+This chapter showed an concrete project which implements the previously discussed authentication concepts.
+Furthermore, some details were shown to give an idea how the concepts can be implemented.
+The implementation details also prooved that the authentication mechanism using self-sigend JWTs requires more code than the implementation using mTLS.
+The aim of this implementation was to clarify, what the services have to do when they send and receive requests and responses.
+The concrete implementation differs between the used programming language and the used technologies.

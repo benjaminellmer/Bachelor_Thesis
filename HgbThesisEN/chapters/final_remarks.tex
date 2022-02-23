@@ -17,11 +17,17 @@ Therefore choosing JWTs over mTLS would be unnecessary overhead when the target 
 The decision if the additional control of the approach using self-signed JWTs is worth the overhead has to be evaluated for each project independently.
 
 The biggest challenge of both authentication mechanisms is the key-management.
-Both mechanisms require a self hosted PKI and require to handle all associated tasks.
+Both mechanisms require a PKI and require to handle all associated key management tasks.
 Therefore the implementation of the authentication mechanisms is much less work than the key management.
 Nevertheless, the level of security that is provided using public key cryptography, is worth the expenses.
 
-It is very important to mention that the requirement of service-to-service authentication is only a consequence of the microservice architecture.
-Before evaluating the different authentication mechanism, developers should evaluate if the benefits of the microservice architecture are worth the resulting consequences.
-
 \section{Summary}
+Service-to-service authentication is a requirement caused by the migration to the microservice architecture.
+The function calls within the monolithic backend migrate to remote calls.
+The remote calls have to assure authentication, confidentiality and integrity.
+Confidentiality and integrity can be assured using TLS, but authentication of both parties requires additional mechanisms.
+
+This thesis compared two of the most pupular authentication mechanisms for service-to-service authentication.
+Therefore the fundamentals of both mechanisms were discussed and the concepts of the two authentication mechanisms were described in detail.
+Additionally an project that implements the authentication mechanisms was reviewed and a experiment that should give an assumption about the performance overhead of the authentication mechanisms was performed and interpreted.
+

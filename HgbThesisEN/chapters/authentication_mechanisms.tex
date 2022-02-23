@@ -222,7 +222,7 @@ This freedom of choice is not guaranteed with mTLS, because it is a strictly def
 %Moreover, the developers can vary some other parameters, which is not possible using mTLS because it is a strictly defined protocol.
 
 Sadly the biggest challenge of mTLS, which is the key management, can not be avoided using self-signed JWTs, because it also requires each service to have its key pair.
-Nevertheless, the key management can be simplified since it is unnecessary to have a CA responsible for signing each certificate.
+But, the key management can be simplified since it is unnecessary to have a CA responsible for signing each certificate.
 Still, regarding the webserver setup, it makes sense to have one superior authority, that is, the root of trust and whose chained certificates are trusted.
 
 As a result, self-signed JWTs are the preferred authentication mechanism when the target is to achieve nonrepudiation or when the system is very dependent on sharing the user context.
