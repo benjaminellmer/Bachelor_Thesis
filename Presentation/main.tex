@@ -1,0 +1,144 @@
+% DefaultFontSize: 10pt for conferences, 8/9pt for lectures
+\def \DefaultFontSize{9pt}
+
+% PresTextLayout (hyphenation, justification)
+%   Options:
+%      0   Don't modify anything, set text as-is (no hyphenation/justification)
+%      1   Never ever hyphenate anything, but justify text.
+%      2   Hyphenate only when absolutely necessary, and justify text.
+%      3   Hyphenate words whenever possible and justify text.
+\def \PresTextLayout{2}
+
+
+% Set path to template and include it
+\def \templatepath{FH-Beamer-Template}
+\input{\templatepath/fhooe-beamer-wide}
+
+% Data for first slide - should be self-explanatory
+\def \PresTitle      {Service-to-service authentication in a microservice deployment}
+\def \PresShortTitle {Bachelor Thesis Presentation}
+\def \PresSubTitle   {FH Hagenberg, WS 2021/2022}
+\def \PresAuthor     {Benjamin Ellmer}
+\def \PresAuthorTitle{Benjamin Ellmer}
+\def \PresHeading    {Bachelor Thesis Presentation}
+\def \PresFooter     {Mobile Computing}
+
+% Cover image, position, height and caption
+\def \IntroImage     {FH-Beamer-Template/fh-logo-wide.jpg}
+\def \IntroImageXPos {33}
+\def \IntroImageHeight{2cm}
+\def \IntroImageText {}
+
+\newfontscheme
+
+% That's it, let's go for some slides
+\begin{document}
+
+% Auto-generate cover slide using info provided above
+\fhfirstslide
+
+% Section title = Top title
+\section{Microservice Architecture}
+
+\subsection{Monolithic vs. Microservice Architecture}
+\fhslide{
+	\fhdualpage{.5}{.5}{
+		This text will be on the left side of the dual-page, and takes up
+		40 \% of the pagewidth. Lorem ipsum dolor
+		sit amet, consectetur adipisici elit, ...
+	}{
+		This text will be on the right side of the dual-page, and takes up
+		60 \% of the page width. Lorem ipsum dolor
+		sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut
+		labore et dolore magna aliqua.
+	}
+}
+
+% Sub-Section title = Sub-Top title
+\subsection{Presenting a regular slide}
+\fhslide{
+	This is a regular slide
+
+	\fhblock{Block title}{
+		And a basic block for emphasizing important information, using
+		\cmd{\textbackslash{}fhblock\{Title\}\{Text\}}. Below is
+		an example of the \cmd{\textbackslash{}fhdualpage} command, which
+		lets you define the pane proportions and content for each pane.
+	}
+
+	\vspace{5mm}
+	% Page proportions 4:6
+	\fhdualpage{.4}{.6}{
+		This text will be on the left side of the dual-page, and takes up
+		40 \% of the pagewidth. Lorem ipsum dolor
+		sit amet, consectetur adipisici elit, ...
+	}{
+		This text will be on the right side of the dual-page, and takes up
+		60 \% of the page width. Lorem ipsum dolor
+		sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut
+		labore et dolore magna aliqua.
+	}
+}
+
+\subsection{Presenting a list-slide with \textbackslash{}fhslist}
+\fhslist{
+	\item Many slides actually contain only multiple bullets, rather than
+	text in paragraphs
+	\item In order to keep it simple, theres the \cmd{\textbackslash{}fhslist}
+	command, which begins a new slide and opens an itemize environment
+	for your convenience.
+	\item After starting the slide with the command above, you can immediately
+	continue to provide \cmd{\textbackslash{}item} bullets.
+	\fhlist{
+		\item For sub-bullets, there's no need for begin/end blocks either.
+		Simply use \cmd{\textbackslash{}fhlist} command and drop your
+		\cmd{\textbackslash{}item}s.
+		\item By the way, monospaced and grey-backgrounded text can be
+		done with \cmd{\textbackslash{}cmd\{code-like text\}}
+	}
+
+	\ctr{Centered text via \cmd{\textbackslash{}ctr\{\}}}
+
+	\fhref{Bottom-references fia \cmd{\textbackslash{}fhref\{\}}}
+}
+
+\subsection{Topic slides}
+\fhtopicslide{\textbackslash{}fhtopicslide\{content\} renders a new
+slide, e.g. for a new topic, with large bold font and vertically centered
+text.}
+
+\subsection{Images, essential slides, and other macros}
+\fhslist{
+	\item There are a lot more easy-to-use macros
+	\item Just look at the first 40-something lines of the template tex
+	source file
+	\item There are commands for URL references, including images,
+	quad-pages, aligned math equations, fragile slides (e.g. for lstlistings),
+	etc.
+
+	\item Easy image inclusion with \cmd{\textbackslash{}fhimg[width]\{path\}}
+	\fhcimg[4cm]{\templatepath/android-attack2.png}
+
+	\item See the burning-hot icon on the top left? You can mark slides as
+	important using the \cmd{\textbackslash{}essential} command.
+
+	\essential
+
+	\item Theres also a \cmd{\textbackslash{}moot} command, if you want to tag
+	supplementary slides. Of course, the images can be easily changed - just
+	change the filepath in the source, or overwrite the image itself in the
+	template folder.
+}
+
+\subsection{That's it - have fun}
+\fhslist{
+	\item Just look at the provided \cmd{example.tex} file, how all these
+	commands are used in-source -- it's really easy
+	\item For a more complete list of available commands and macros, look
+	at the template source-code
+	\item If you find errors, have suggestions or even patches for new
+	commands and macros you think others can benefit from, don't hesitate
+	to tell me: \cmd{erik.sonnleitner@fh-hagenberg.at}
+}
+
+\end{document}
