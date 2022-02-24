@@ -7,7 +7,8 @@ Therefore the performance is already restricted, and the authentication mechanis
 
 \section{Experiment Setup}
 The setup consists of two components, the service, that responds to requests and the client, which performs requests and measures the taken time.
-The service of this experiment is developed in C\# using ASP.Net Core, same as the services of the flea market app, mentioned in chapter~\ref{cha:project_structure}.
+The components of this experiment are located in the same network and run on the same machine.
+The service is developed in C\# using ASP.Net Core, same as the services of the flea market app, mentioned in chapter~\ref{cha:project_structure}.
 The client is a console application, developed in C\# using .NET.
 It is not a microservice, but it acts as a service that is located within the deployment.
 In a usual deployment it is not good practice to access the services directly from an external application, bypassing the API Gateway.
@@ -38,8 +39,6 @@ First, an implementation of the self-signed JWT approach, in which a new JWT is 
 The second implementation uses the same JWT for all requests.
 This should give and idea how the performance using self-signed JWTs can be improved by efficiently reusing the tokens.
 
-%\subsection{Test Device Specifications}
-
 \section{Experimental Results}
 
 \subsection{Case A}
@@ -50,21 +49,28 @@ This should give and idea how the performance using self-signed JWTs can be impr
 \multicolumn{1}{c|}{} & \multicolumn{1}{c|}{first connection} & reusing connection \\ \hline
 mTLS & \multicolumn{1}{c|}{$199.66$ ms} & $10.18$ ms \\ \hline
 self-signed JWT & \multicolumn{1}{c|}{$226.83$ ms} & $15.38$ ms \\ \hline
-self-signed JWT (reusing token) & \multicolumn{1}{c|}{$216.1$ ms} & $8.75$ ms
+self-signed JWT (reusing token) & \multicolumn{1}{c|}{$216.1$ ms} & $8.75$ ms \\ \hline
+none & \multicolumn{1}{c|}{$216.1$ ms} & $8.75$ ms
 \end{tabular}
 \caption{Average request durations of the authentication mechanisms, when random numbers are fetched}
 \label{tab:experiment_case_1}
 \end{table}
 
 The results of the first experiment case are shown in table~\ref{tab:experiment_case_1}.
-The lowest duration for the first connection is achieved using mTLS.
+The lowest response durations are achieved without any authentication mechanisms.
+Since the authentication is performed only once per request it is not valid to say that the request duration increases by 1018\% when mTLS is used.
+The percentual value is only such significant, because the logic of this request is so simple.
+Therefore case B will show a more realistic test case.
+In this case the time offsets give a good overview about the performance overhead.
+
+The lowest duration for the first connection providing authentication is achieved using mTLS.
 This is reasonable, since the authentication using self-signed JWTs exchanges the certificate of the client in the first request using the extended TLS handshake same as mTLS.
 Therefore in all three cases the extended TLS handshake has to be performed but the JWT approaches have to attach the JWT additionally.
 The approach that reuses a previously created JWT needs about 10 ms less than the approach in which an new JWT has to be created.
 The first connection using an already created JWT takes still around 16 ms more than the first connection using mTLS.
 This time overhead is caused by the logic that checks the certificate and stores it into the truststore and then checks the validity of the JWT.
 
-The approach using-self signed JWTs with already created tokens is the most efficient approach considering the requests after the first connection.
+The approach using-self signed JWTs with already created tokens is the most efficient approach that provides authentication considering the requests after the first connection.
 Each request takes about 9.7 ms which is about 1.5 ms less than using mTLS.
 Nevertheless, the service has to create a new token in some situations, therefore both approaches would have about the same average request durations.
 The approach, creating a new JWT for each request has the worst performance.

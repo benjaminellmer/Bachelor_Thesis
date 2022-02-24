@@ -18,6 +18,12 @@ dataMTLS_03 = readmatrix("results-1000-MTLS_03.csv","DecimalSeparator",",","Deli
 dataMTLS_04 = readmatrix("results-1000-MTLS_04.csv","DecimalSeparator",",","Delimiter"," ");
 dataMTLS_05 = readmatrix("results-1000-MTLS_05.csv","DecimalSeparator",",","Delimiter"," ");
 
+dataNone_01 = readmatrix("results-1000-None_01.csv","DecimalSeparator",",","Delimiter"," ");
+dataNone_02 = readmatrix("results-1000-None_02.csv","DecimalSeparator",",","Delimiter"," ");
+dataNone_03 = readmatrix("results-1000-None_03.csv","DecimalSeparator",",","Delimiter"," ");
+dataNone_04 = readmatrix("results-1000-None_04.csv","DecimalSeparator",",","Delimiter"," ");
+dataNone_05 = readmatrix("results-1000-None_05.csv","DecimalSeparator",",","Delimiter"," ");
+
 jwtReuseAvg_01 = mean(dataJWT_reuse_01);
 jwtReuseAvg_02 = mean(dataJWT_reuse_02);
 jwtReuseAvg_03 = mean(dataJWT_reuse_03);
@@ -42,6 +48,14 @@ mtlsAvg_05 = mean(dataMTLS_05);
 total_mtls = (mtlsAvg_01 + mtlsAvg_02 + mtlsAvg_03 + mtlsAvg_04 + mtlsAvg_05) / 5;
 first_mtls = (dataMTLS_01(1) + dataMTLS_02(1) + dataMTLS_03(1) + dataMTLS_04(1) + dataMTLS_05(1)) / 5;
 
+noneAvg_01 = mean(dataNone_01);
+noneAvg_02 = mean(dataNone_02);
+noneAvg_03 = mean(dataNone_03);
+noneAvg_04 = mean(dataNone_04);
+noneAvg_05 = mean(dataNone_05);
+total_none = (noneAvg_01 + noneAvg_02 + noneAvg_03 + noneAvg_04 + noneAvg_05) / 5;
+first_none = (dataNone_01(1) + dataNone_02(1) + dataNone_03(1) + dataNone_04(1) + dataNone_05(1)) / 5;
+
 %noneAvg_01 = mean(dataNone_01);
 %noneAvg_02 = mean(dataNone_02);
 %noneAvg_03 = mean(dataNone_03);
@@ -61,16 +75,22 @@ windowSize = 30;
 a = 1;
 b = (1/windowSize)*ones(1,windowSize);
 
-y1 = filter(b,a,dataMTLS_01(2:1000));
-y2 = filter(b,a,dataJWT_recreate_02(2:1000));
-y3 = filter(b,a,dataJWT_reuse_01(2:1000));
+
+jwt_recreate_All = [rot90(dataJWT_recreate_01); rot90(dataJWT_recreate_02); rot90(dataJWT_recreate_03); rot90(dataJWT_recreate_04); rot90(dataJWT_recreate_05)];
+jwt_reuse_All = [rot90(dataJWT_reuse_01); rot90(dataJWT_reuse_02); rot90(dataJWT_reuse_03); rot90(dataJWT_reuse_04); rot90(dataJWT_reuse_05)];
+mtlsAll = [rot90(dataMTLS_01); rot90(dataMTLS_02); rot90(dataMTLS_03); rot90(dataMTLS_04); rot90(dataMTLS_05)];
+noneAll = [rot90(dataNone_01); rot90(dataNone_02); rot90(dataNone_03); rot90(dataNone_04); rot90(dataNone_05)];
+
+means_jwt_reuse = flip(rot90(mean(jwt_reuse_All)),1);
+means_jwt_recreate = flip(rot90(mean(jwt_recreate_All)),1);
+means_mtls = flip(rot90(mean(mtlsAll)),1);
+means_none = flip(rot90(mean(noneAll)),1);
 
 hold on
-
-plot(smooth(y1(30:999)));
-plot(smooth(y2(30:999)));
-plot(smooth(y3(30:999)));
-legend('mtls','jwt recreate','jwt reuse')
-ylim([0 20])
-%hold on
-%plot(smooth(dataMTLS_01(10:1000),100));
+plot(smooth(means_jwt_recreate,10));
+plot(smooth(means_mtls,10));
+plot(smooth(means_jwt_reuse,10));
+plot(smooth(means_none,10));
+legend({'JWT','mTLS','JWT (reuse)', 'none'},'FontSize',12)
+ylim([0 25])
+xlim([10 1000])
