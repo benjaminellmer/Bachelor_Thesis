@@ -1,6 +1,6 @@
 # Service-to-service authentication in a microservice deployment 
 
-## Expose
+### Expose
 In the past years the trend towards extremely scalable architectures, like the microservice architecture emerged in software engineering.
 The migration from monolithic architectures towards microservice architectures has enormous consequences regarding the security of software systems.
 In monolithic applications, external logic is called using “language-level calls”, which means methods and functions mostly inside the same project.
