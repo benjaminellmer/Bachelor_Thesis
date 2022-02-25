@@ -69,12 +69,38 @@ Only the \textbf{CertificateRequest} message of the sever and the \textbf{Certif
 One special case of the handshake is that the client responds to the \textbf{CertificateRequest} with an empty \textbf{Certificate} message.
 Depending on the configuration of the server, the connection without a certificate can be allowed or neglected~\cite{parsovs2013practical}.
 
+\newcommand{\newthreadShift}[4][gray!30]{
+  \newinst[#4]{#2}{#3}
+  \stepcounter{threadnum}
+  \node[below of=inst\theinstnum,node distance=0.8cm] (thread\thethreadnum) {};
+  \tikzstyle{threadcolor\thethreadnum}=[fill=#1]
+  \tikzstyle{instcolor#2}=[fill=#1]
+}
+
 \begin{figure}
 	\centering
-	\includegraphics{authentication-mechanisms/TikZ_handshake.pdf}
+	\begin{sequencediagram}
+		\renewcommand\unitfactor{0.8}
+		\newthread{A}{:Client}{}
+		\newthreadShift{B}{Server}{11cm}
+		%\newinst[11]{B}{:Server}{}
+		\begin{messcall}{A}{ClientHello$^1$}{B}{}
+			\mess{B}{ServerHello$^2$, Certificates$^3$, CertificateRequest$^4$, ServerHelloDone$^5$}{A}
+			\mess{A}{Certificate$^6$, ClientKeyExchange$^7$, CertificateVerify$^8$}{B}
+			\mess{B}{ChangeCipherSpec$^9$, Finished$^{10}$}{A}
+			\mess{A}{ChangeCipherSpec$^{11}$, Finished$^{12}$}{B}
+		\end{messcall}
+	\end{sequencediagram}
 	\caption{TLS handshake using mTLS~\cite{parsovs2013practical}}
 	\label{fig:tlshandshake}
 \end{figure}
+
+%\begin{figure}
+%	\centering
+%	\includegraphics{authentication-mechanisms/TikZ_handshake.pdf}
+%	\caption{TLS handshake using mTLS~\cite{parsovs2013practical}}
+%	\label{fig:tlshandshake}
+%\end{figure}
 
 % maybe look at yarygina2018overcoming on page 16 again...
 \subsection{Passing the end user context} \label{sec:mtls_end_user_context}
@@ -91,24 +117,71 @@ The token is then validated by a Security Token Service (STS).
 If the token is valid, the STS returns a JWT, which can then be used to consume other services.
 When one microservice calls another microservice, he sends the JWT, and if this microservice has to consume another microservice, he also passes the same token to the next microservice~\cite{dias2020microservices}.
 The workflow of this approach is shown in figure~\ref{fig:mtls_id_1}
+
 \begin{figure}
 	\centering
-	\includegraphics{images/authentication-mechanisms/TikZ_jwt_identity_1.pdf}
+	\begin{sequencediagram}
+		\newthread{client}{:Client}{}
+		\newinst[1]{gateway}{:API Gateway}{}
+		\newinst[1]{sts}{:STS}{}
+		\newinst[1]{s1}{:Service1}{}
+		\newinst[1]{s2}{:Service2}{}
+
+		\begin{call}{client}{access token}{gateway}{response}
+			\begin{call}{gateway}{access token}{sts}{JWT$^1$}
+			\end{call}
+			\begin{call}{gateway}{JWT$^1$}{s1}{response}
+				\begin{call}{s1}{JWT$^1$}{s2}{response}
+				\end{call}
+			\end{call}
+		\end{call}
+	\end{sequencediagram}
 	\caption{Use the same JWT for each request~\cite{dias2020microservices}}
 	\label{fig:mtls_id_1}
 \end{figure}
+
+%\begin{figure}
+%	\centering
+%	\includegraphics{images/authentication-mechanisms/TikZ_jwt_identity_1.pdf}
+%	\caption{Use the same JWT for each request~\cite{dias2020microservices}}
+%	\label{fig:mtls_id_1}
+%\end{figure}
 
 Another approach is that the STS is used to generate a new token for each request like it is shown in figure~\ref{fig:mtls_id_2}.
 When the STS generates a new token for each request, he fully knows all performed requests.
 Therefore the STS could implement further authorization logic~\cite{dias2020microservices}.
 Nevertheless, the frequent calls could result in an bigger workload for the STS and decrease the system's performance.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
-	\includegraphics{images/authentication-mechanisms/TikZ_jwt_identity_2.pdf}
+	\begin{sequencediagram}
+		\newthread{client}{:Client}{}
+		\newinst[1]{gateway}{:API Gateway}{}
+		\newinst[1]{sts}{:STS}{}
+		\newinst[1]{s1}{:Service1}{}
+		\newinst[1]{s2}{:Service2}{}
+
+		\begin{call}{client}{access token}{gateway}{response}
+			\begin{call}{gateway}{access token}{sts}{JWT$^1$}
+			\end{call}
+			\begin{call}{gateway}{JWT$^1$}{s1}{response}
+				\begin{call}{s1}{JWT$^1$}{sts}{JWT$^2$}
+				\end{call}
+				\begin{call}{s1}{JWT$^2$}{s2}{response}
+				\end{call}
+			\end{call}
+		\end{call}
+	\end{sequencediagram}
 	\caption{Generate new JWT for each request~\cite{dias2020microservices}}
 	\label{fig:mtls_id_2}
 \end{figure}
+
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics{images/authentication-mechanisms/TikZ_jwt_identity_2.pdf}
+%	\caption{Generate new JWT for each request~\cite{dias2020microservices}}
+%	\label{fig:mtls_id_2}
+%\end{figure}
 
 Both approaches result in some overhead, especially the approach in which a new JWT is needed for each request.
 Additionally, when the microservices are located in different trust domains, those approaches can get very complicated since a microservice only trusts the STS within its trust domain~\cite{dias2020microservices}.

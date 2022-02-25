@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage{pgf-umlsd}
+
+\begin{document}
+
+\begin{figure}
+	\centering
+	\begin{sequencediagram}
+		\newthread{A}{:Microservice}{}
+		\newinst[2]{B}{:Metatron}{}
+		\newinst[2]{C}{:Lemur}{}
+		\newinst[2]{D}{:CA}{}
+
+		\begin{call}{A}{obtain credentials}{B}{credentials}
+		\end{call}
+		\begin{call}{A}{obtain certificate}{C}{signed certificate}
+			\begin{call}{C}{CSR}{D}{signed certificate}
+			\end{call}
+		\end{call}
+	\end{sequencediagram}
+\end{figure}
+
+\end{document}
+

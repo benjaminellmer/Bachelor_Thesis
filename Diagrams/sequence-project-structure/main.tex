@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{pgf-umlsd}
+
+\begin{document}
+
+\begin{figure}
+	\centering
+	\begin{sequencediagram}
+		\newthread{app}{:Android App}{}
+		\newinst[1]{gateway}{:API Gateway}{}
+		\newinst[1]{fa}{:Firebase Authentication}{}
+		\newinst[1]{as}{:AdService}{}
+		\newinst[1]{us}{:UserService}{}
+
+		\begin{call}{app}{\shortstack{request$_{1}$}}{gateway}{response$_1$}
+			\begin{call}{gateway}{access token}{fa}{validity}
+			\end{call}
+			\begin{sdblock}{if}{validity == true}
+				\begin{call}{gateway}{request$_1$}{as}{response$_1$}
+					\begin{call}{as}{request$_2$}{us}{reponse$_2$}
+					\end{call}
+				\end{call}
+			\end{sdblock}
+		\end{call}
+	\end{sequencediagram}
+\end{figure}
+
+\end{document}
+

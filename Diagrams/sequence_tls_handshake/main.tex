@@ -1,0 +1,33 @@
+%\documentclass[tikz]{standalone}
+%\usetikzlibrary{calc}
+\documentclass{article}
+\usepackage{pgf-umlsd}
+
+\begin{document}
+
+\begin{figure}
+	\centering
+	\begin{sequencediagram}
+		\newthread{A}{:Client}{}
+		\newinst[11]{B}{:Server}{}
+		\begin{messcall}{A}{ClientHello$^1$}{B}{}
+			\mess{B}{ServerHello$^2$, Certificates$^3$, CertificateRequest$^4$, ServerHelloDone$^5$}{A}
+			\mess{A}{Certificate$^6$, ClientKeyExchange$^7$, CertificateVerify$^8$}{B}
+			\mess{B}{ChangeCipherSpec$^9$, Finished$^{10}$}{A}
+			\mess{A}{ChangeCipherSpec$^{11}$, Finished$^{12}$}{B}
+		\end{messcall}
+	\end{sequencediagram}
+\end{figure}
+
+\end{document}
+
+%\begin{messcall}{A}{ClientHello}{B}{}
+%	\begin{messcall}{B}{ServerHello, Certificates, CertificateRequest, ServerHelloDone}{A}{}
+%		\begin{messcall}{A}{Certificate, ClientKeyExchange, CertificateVerify}{B}{}
+%			\begin{messcall}{B}{ChangeCipherSpec, Finished}{A}{}
+%				\begin{messcall}{A}{ChangeCipherSpec, Finished}{B}{}
+%				\end{messcall}
+%			\end{messcall}
+%		\end{messcall}
+%	\end{messcall}
+%\end{messcall}

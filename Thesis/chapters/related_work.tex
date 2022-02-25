@@ -154,10 +154,29 @@ Instead, they have to implement the communication with the Lemur API.
 
 \begin{figure}
 	\centering
-	\includegraphics{images/related-work/netflix-provisioning.pdf}
-	\caption{Key provisioning of netflix using Lemur and Metatron~\cite{dias2020microservices} \textcolor{red}{TODO: UML Sequenzdiagramm}}
+	\begin{sequencediagram}
+		\newthread{A}{:Microservice}{}
+		\newinst[2]{B}{:Metatron}{}
+		\newinst[2]{C}{:Lemur}{}
+		\newinst[2]{D}{:CA}{}
+
+		\begin{call}{A}{obtain credentials}{B}{credentials}
+		\end{call}
+		\begin{call}{A}{obtain certificate}{C}{signed certificate}
+			\begin{call}{C}{CSR}{D}{signed certificate}
+			\end{call}
+		\end{call}
+	\end{sequencediagram}
+	\caption{Key provisioning of netflix using Lemur and Metatron~\cite{dias2020microservices}}
 	\label{fig:key_provisioning_netflix}
 \end{figure}
+
+%\begin{figure}
+%	\centering
+%	\includegraphics{images/related-work/netflix-provisioning.pdf}
+%	\caption{Key provisioning of netflix using Lemur and Metatron~\cite{dias2020microservices}}
+%	\label{fig:key_provisioning_netflix}
+%\end{figure}
 
 \section{Technologies}
 \subsection{X509.Certificate}

@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{pgf-umlsd}
+
+\begin{document}
+
+\begin{figure}
+	\centering
+	\begin{sequencediagram}
+		\newthread{client}{:Client}{}
+		\newinst[1]{gateway}{:API Gateway}{}
+		\newinst[1]{sts}{:STS}{}
+		\newinst[1]{s1}{:Service1}{}
+		\newinst[1]{s2}{:Service2}{}
+
+		\begin{call}{client}{access token}{gateway}{response}
+			\begin{call}{gateway}{access token}{sts}{JWT$^1$}
+			\end{call}
+			\begin{call}{gateway}{JWT$^1$}{s1}{response}
+				\begin{call}{s1}{JWT$^1$}{sts}{JWT$^2$}
+				\end{call}
+				\begin{call}{s1}{JWT$^2$}{s2}{response}
+				\end{call}
+			\end{call}
+		\end{call}
+	\end{sequencediagram}
+\end{figure}
+
+\end{document}
+
