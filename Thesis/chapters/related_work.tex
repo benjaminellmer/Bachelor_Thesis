@@ -289,7 +289,7 @@ The client and the server must own a private/public key pair, so it is more suit
 The authentication of the client is performed during the handshake.
 When mTLS is used, the client has presents his certificate to the server, before transferring the pre-master secret.
 
-\section{Discussion}
+\section{Conclusion}
 This chapter described the fundamentals to understand the details and differences between the later described authentication mechanisms.
 Furthermore, it was described why service-to-service authentication is needed and what additional mechanisms have to be implemented to secure a microservice deployment.
 
@@ -299,6 +299,6 @@ Each service and each layer of the deployment has to be appropriately secured.
 The problem with the microservice architecture is that one compromised service can be used to compromise other services.
 Therefore, choosing the correct security mechanisms and understanding how they work is crucial. 
 
-Additionally, the possibility of outsourcing the authentication to a service mesh was discussed.
-The authentication mechanisms stay the same regardless of whether they are performed bythe services themselves or using the service mesh pattern.
-For the simplicity, it is assumed that the authentication mechanisms are performed by the services themselves in the following chapters.
+%Additionally, the possibility of outsourcing the authentication to a service mesh was discussed.
+%The authentication mechanisms stay the same regardless of whether they are performed bythe services themselves or using the service mesh pattern.
+%For the simplicity, it is assumed that the authentication mechanisms are performed by the services themselves in the following chapters.

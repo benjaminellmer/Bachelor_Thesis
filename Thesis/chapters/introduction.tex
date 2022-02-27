@@ -1,36 +1,38 @@
 \chapter{Introduction}
 \label{cha:Introduction}
-The trend towards highly-scalable software systems, like the microservice architecture emerged in the past years.
+In the past years a trend towrds highly-scalable software systems like the microservice architecture emerged.
 The migration from the monolithic approach towards microservices has enormous consequences regarding the security of software systems~\cite{shmeleva2020microservices}. 
-Language-Level calls, which are calls within the same project migrate to remote calls over the network~\cite{chandramouli2019microservices}. 
-This offers a larger attack surface because intruders could spoof the communication among the services.
-Therefore authentication and confidentiality between services have to be implemented to secure the service-to-service communication.
-The confidentiality is usually provided using TLS, but the authentication requires the use of additional authentication mechanisms.
-The authentication is usually implemented using mutual TLS~\cite{dias2020microservices}, but the authentication can also be provided using JSON Web Tokens.
-Therefore this thesis will describe and compare this authentication mechanisms to work out their differences, advantages and disadvantages.
-%Even if microservices deployments are hidden behind an API Gateway, the zero-trust network approach is currently state-of-the art~\cite{dias2020microservices}. 
-%This means even if nobody from outside the deployment should be able to communicate with the services, the services do not trust any request.
+Language-Level calls, calls within the same project migrate to remote calls over the network~\cite{chandramouli2019microservices}. 
+This offers a larger attack surface, because intruders could spoof the communication among the services.
+Therefore the communication among the services has to provide authentication to prevent attackers from exploiting the system.
+Additionally the service-to-service communication has to provide confidentiality.
+Confidentiality is usually addressed using TLS, which also provides authentication, but it only authenticates the server to the client.
+Therefore additional authentication mechanisms are necessary to implement mutual authentication.
+The most popular approaches for service-to-service authentication are the mutual TLS (mTLS) and authentication using self-signed JSON Web Tokens (JWT)~\cite{dias2020microservices}.
+This thesis will describe and compare this mechanisms to work out differences advantages and disadvantages.
 
 \section{Motivation}
 The International Data Corporation (IDC) has predicted that by 2022, 90\% of all apps will feature microservice architectures~\cite{idcprediction2019}. 
 So it is inevitable to deal with the numerous mechanisms to secure such systems properly. 
 Authentication is one of the most important security challenges.
-Even if confidentiality is provided, when authentication is neglected intruders could perform attacks like the Man-in-the-middle-Attack to exploit the system.
-Such attacks could result in huge data leaks or could even allow attackers to abuse the system for their advantages.
+When authentication is neglected, attackers could perform attacks like the Main-in-the-middle-Attack to exploit the system, even if other security challenges like confidentiality are managed.
+Such attacks could result in huge data leaks or could even allow attackers to misuse the system for their advantages.
 
-The microservice architecture is based on having multiple services running on multiple servers.
+The microservice architecture is based on having multiple services running in multiple locations.
 This results in a bigger attack surface, because multiple machines are exposed to the internet making it simpler to find vulnerabilities.
 This is one of the reasons why Netflix received massive attacks on their microservice based-systems in the past years~\cite{pereira2019security}.
 
-This shows how vital microservice security is and the aim of this thesis is helping the microservice developers to choose the correct authentication mechanisms for their projects.
+This motivations show how vital microservice security is and the aim of this thesis is helping the microservice developers to choose the correct authentication mechanisms for their projects.
 
 \section{Challenges}
 Since the microservice architecture became as popular as in the last years, there is a lack of evaluation research and only limited insight into the particular security concerns, especially regarding service-to-service authentication. 
-The most popular solutions and existing implementations are closed source, like the mTLS\footnote{mutual Transport Layer Security is described in~\ref{sec:mtls}} Architecture of Netflix.
+The most popular solutions and existing implementations are closed source, like the mTLS Architecture of Netflix.
 Other freely available approaches are often poorly documented and therefore hard to understand~\cite{yarygina2018overcoming}.
-The migration from the monolithic architecture to the microservice architecture results in a performance overhead~\cite{ueda2016workload}.
-Furthermore, the security measures produce high latencies because the services have to communicate to centralized authorities.
+
+Additionally the migration from the monolithic architecture to the microservice architecture results in a performance overhead~\cite{ueda2016workload}.
+Furthermore, the authentication mechanisms produce high latencies, because the services have to communicate to centralized authorities in some cases.
 So the mechanisms have to be implemented very efficiently, and caching should to be applied to minimize the resulting performance overhead.
+
 The microservice architecture and the service-to-service authentication bring some more challenges and difficulties, which will be declared and discussed in the following chapters.
 
 \section{Chapter Overview}
