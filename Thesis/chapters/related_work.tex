@@ -1,14 +1,14 @@
 \chapter{Related Work}
 \label{cha:Related_Work}
-This chapter summarizes the state-of-the-art concepts for microservice security, public key-based authentication, and the used technologies.
-service-to-service authentication is only one part of microservice security.
+This chapter summarizes the state-of-the-art concepts for microservice security, public key-based authentication, and the later required technologies.
+Service-to-service authentication is only one part of microservice security.
 Therefore all related topics, considering microservice security, are shortly described.
 Furthermore, the concepts of public-key authentication are discussed since the authentication mechanisms compared in this thesis are based on public-key cryptography.
 
 \section{Microserivce Security}
 Siriwardena and Dias~\cite{dias2020microservices} gave an extensive guide of all topics related to microservice security. 
 They separated the security of a microservice deployment into edge-level security and service-level security.
-Since the microservice architecture splits the backend into multiple more minor services, it is insufficient to secure the system only on the edge or service level.
+Since the microservice architecture splits the backend into multiple minor services, it is insufficient to secure the system only on the edge or service level.
 Each part of the system must be appropriately secured regarding confidentiality, authentication, and authorization.
 
 \subsection{Edge-level security}
@@ -19,9 +19,10 @@ The API Gateway intercepts all requests targeted for the APIs of the services.
 After validating the requests, it dispatches the valid ones to the microservices.
 The main tasks of an API Gateway are authentication of the end-user, authorization, and throttling~\cite{dias2020microservices}.
 It authenticates the end-user using access tokens, which come from access delegation technologies like OAuth 2.0 or Open ID Connect~\cite{siriwardena2014advanced}.
-Due to outsourcing the end-user authentication to the API Gateway, the end-user has to be authenticated only once by the API Gateway and not multiple times by each service.
-The API Gateway can perform simple authorization assertions. 
-As soon as the authorization gets more granular, the microservices have to perform it on their own because the API Gateway does not know the business logic.
+By outsourcing the end-user authentication to the API Gateway, it has to be performed only once by the API Gateway and not multiple times by each service~\cite{dias2020microservices}.
+The API Gateway can perform authorization for all microservices. 
+In most cases authorization is performed the edge-level and the service-level. 
+The API Gateway performs only coarse authorization assertions, to prevent having a single-point-of-decision~\cite{barabanov2020authentication}.
 
 \subsection{Service-level security}
 Service-level security is defined as the security mechanisms that protect the communication among the microservices.
@@ -45,7 +46,7 @@ Service-to-service authentication can be implemented in the following ways~\cite
 Trust the Network is a security approach based on the assertion that nobody has access to the components within a network perimeter.
 All components rely on network security.
 Nevertheless, internal misbehavior can lead to exploits allowing attackers to intrude into the network perimeter and exploit the microservices~\cite{zaheer2019eztrust}. 
-Therefore the industry is heading towards zero-trust networks, and the TTN approach became deprecated~\cite{dias2020microservices}.
+Therefore the industry is heading towards zero-trust networks, and the TTN approach is not more used as primary authentication mechanism~\cite{barabanov2020authentication}.
 
 Service-to-service authentication based on mTLS and self-signed JWTs will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
@@ -67,7 +68,8 @@ The microservices can perform authorization based on the identity of the client~
 The chosen authentication mechanism has an impact on identity propagation. This will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
 \section{Public key-Based Authentication}
-Authentication can be performed in many ways. Two common approaches are symmetric cryptography and public-key cryptography.
+Authentication can be achieved in multiple ways 
+Two common approaches are symmetric cryptography and public-key cryptography.
 Both authentication mechanisms discussed in chapter~\ref{cha:authentication_mechanisms} are based on public-key cryptography.
 Public key cryptography provides higher security than symmetric cryptography.
 Therefore it is the preferred method to implement authentication mechanisms, although it requires higher computation and communication costs than symmetric cryptography~\cite{pubkeycrypto}.
@@ -75,14 +77,14 @@ Therefore it is the preferred method to implement authentication mechanisms, alt
 \subsection{Public key cryptography}
 Public key cryptography is also called asymmetric cryptography because the main idea is that different keys are used for encryption and decryption~\cite{anderson2020security}.
 Each participant is required to own at least one key pair.
-A key pair consists of a public key available to everyone and a private key that the owner only knows of the key pair.
+A key pair consists of a public key available to everyone and a private key that is only known by the owner of the key pair.
 Encrypting a message with the public key allows many people to encrypt messages so that only the person who owns the private key can read them.
 Furthermore, it allows one person to encrypt messages in a way that many people can read by encrypting the message with the private key~\cite{henriques2017using}.
 This is also known under the term digital signature. 
 Digital signatures can be used to provide authentication and integrity for messages~\cite{anderson2020security}.
 
 The commonly used algorithm for digital signatures is RSA.
-RSA is based on factoring, and the encryption key consists of the modulus $N$, which is hard to factor.
+RSA is based on factoring, its encryption key consists of the modulus $N$, which is hard to factor.
 The modulus $N$ is calculated by multiplying the large prime number $p$ and $q$ with each other.
 Additionally the encryption key has a public factor $e$ that has no common factors with either $p-1$ or $q-1$.
 The private key consists of the factors $p$ and $q$, which have to be kept secret~\cite{anderson2020security}.
@@ -94,13 +96,13 @@ An encrypted message can be decryped using the following formular:
 \begin{displaymath}
 	M = \sqrt[e]{C (mod N)}
 \end{displaymath}
-Only the owner of the private key can simply calculate the message from the cipher, using the Fermat's theorem\footnote{See~\cite{anderson2020security} for further information}.
+Only the owner of the private key can simply calculate the message from the cipher, using the Fermat's little theorem\footnote{See~\cite{fermatlittle} for further information}.
 
 The problem with asymmetric cryptography is that the encryption and decryption times are worse than symmetric cryptography.
 The restriction to use only asymmetric cryptography could decrease the system's performance.
 Therefore it is common sense to use hybrid systems as done in TLS.
 In TLS, public-key cryptography is used for authentication and key exchange, but symmetric cryptography is used to provide confidentiality for the communication~\cite{henriques2017using}.
-Henriques~\cite{henriques2017using} showed that this mechanism that the performance of the system can be improved using a hybrid approach.
+Henriques~\cite{henriques2017using} showed that the performance of the system can be improved using a hybrid approach.
 
 \subsection{PKI}
 Public key cryptography assumes that the receiver of a message already knows and trusts the sender's public key.
@@ -113,18 +115,18 @@ For this purpose, usually, X.509 certificates are used~\cite{anderson2020securit
 A PKI can either be an open PKI (global) or a closed PKI (self-hosted).
 Closed PKIs have a specific bounded context~\cite{hlavaty2003risk}.
 A common use case for closed PKIs is microservice deployments because they are usually company intern and have a specific bounded context~\cite{dias2020microservices}.
-The project, which is reviewed in chapter~\ref{cha:project_structure} makes use of a closed PKI.
+The project, which is reviewed in chapter~\ref{cha:project_structure} makes use of a closed PKI created with OpenSSH.
 Closed PKIs are a popular option because they allow risk management and provide secrecy of its code.
 Open PKIs can be inspected by the public, and based on the inspection, it is determined whether the PKI is trusted or not.
 Certificates are retrieved by making partnerships with CAs.
 The main advantage is that no proprietary software is needed since the PKIs are managed by the PKI vendors~\cite{hlavaty2003risk}.
 
 \subsection{Key Management} \label{sec:key_management}
-Key management is one requirement for public key based authentication mechanism.
-It results in being the most challenging part for the later discussed authentication mechanisms.
+Key management is a requirement for public key based authentication. 
+It results in being the most challenging part for the later discussed mechanisms.
 When the key management is very weak, it will have consequences for all parts of the system.
 Especially service-to-service authentication is affected by the quality of the key management.
-The authentication mechanism can be as secure as possible, but when the keys are compromised, the authentication mechanism cannot stay secure~\cite{dias2020microservices, fumy1993principles}.
+The authentication mechanism can not stay secure when the keys of the participants are compromised~\cite{dias2020microservices, fumy1993principles}.
 According to Fumy et al. ~\cite{fumy1993principles}, a key management service has to implement the following tasks:
 \begin{description}
 	\item[Entity Registration:] The service must provide a procedure to create a link between an authenticated identity and its keys.
@@ -140,7 +142,8 @@ It is performed in the following steps, which are visualized in figure~\ref{fig:
 \begin{enumerate}
     \item During the continuous delivery process, each microservice gets a set of credentials that are good enough to access the Lemur APIs.
 		This is done using a Netflix internal tool called Metatron.
-		Metatron credentials are long-lived credentials. They can be used for a longer period and repeat the following process multiple times.
+		Metatron credentials are long-lived credentials. 
+		They can be used for a longer timer period and the following steps can be repeated multiple times.
     \item The microservice talks to the Lemur API to obtain a signed certificate for its credentials.
 		This can happen either during the startup process of the microservice or when the microservice is rotating its keys.
     \item Lemur creates a certificate signing request (CSR) addressed to the CA.
@@ -188,8 +191,7 @@ Therefore manipulations can be detected, and manipulated certificates can be dec
 When a client wants to consume a service hosted on a server, it has to obtain the server's certificate.
 If the client does not know the public key of the CA who signed the server's certificate, he has to obtain it.
 Obtaining the public key often results in chains because the client may have to work his way up until he reaches a CA he trusts.
-Such chains are also called certification paths.
-The CA can configure how the clients can retrieve the CA certificates.
+Such chains are also called certification paths~\cite{x509rfc}.
 
 Depending on the version, a certificate can include more or less information.
 The information is always stored inside the tbsCertificate, signatureAlgorithm, and signatureValue fields and can be expanded using extensions.
@@ -207,18 +209,19 @@ The information is always stored inside the tbsCertificate, signatureAlgorithm, 
 Certificate revocation is a considerable problem with certificates.
 A certificate can be revocated for the following reasons: 
 \begin{itemize}
-    \item Private key of the CA is compromised
-    \item Private key of the microservice is compromised
+    \item The Private key of the CA is compromised
+    \item The Private key of the microservice is compromised
     \item The holder of the certificate is no longer the identity who requested the certificate 
     \item The CA finds out that the parameters provided in the CSR are invalid
 \end{itemize}
-The hardest part about the certificate revocation is to inform all participants about the certificates, which are revocated.
-This is done using certificate revocation lists (CRL) or other revocation mechanics.
-The big downside of CRLS is that the CA has to store a list of certificates, which are relocated, and the clients have to retrieve this list for every communication.
-Caching can be used to reduce latencies.
-Otherwise, it also reduces the security because a certificate can be revocated during the lifetime of the cache.
+The hardest part about the certificate revocation is informing all participants about the revocation of a certificate.
+This is done using certificate revocation lists (CRL) or other revocation mechanisms.
+The big downside of CRLS is that the CA has to store a list of certificates, which are revocated.
+The clients have to retrieve this list whenever they establish a connection to a server, which causes high latencies.
+The latencies can be reduced by caching.
+Otherwise, caching also reduces the security because a certificate can be revocated during the lifetime of the cache.
 Especially a case in which the CA does not respond to the CRL query is tough to handle.
-Therefore the certificate revocation is a significant downside of public-key-based authentication, even if the Online Certificate Status Protocol (OSCP) tries to remedy the situation\cite{dias2020microservices}.
+Therefore certificate revocation is a significant downside of public-key-based authentication, even if the Online Certificate Status Protocol (OSCP) tries to remedy the situation\cite{dias2020microservices}.
 
 \subsection{JSON Web Token}
 A JSON Web Token (JWT) is a container that can carry authentication and authorization assertions and further information in a cryptographically safe manner.
@@ -242,7 +245,7 @@ A valid JWT could look like the JWT shown in figure~\ref{fig:myjwt}.
     \label{fig:myjwt}
 \end{figure}
 
-The \textbf{header} contains the metadata related to the JWT, which is usually the type of the token and the signature algorithm.
+The \textbf{header} contains metadata related to the JWT, which is usually the type of the token and the signature algorithm.
 The specification defines that only HS256\footnote{HMAC SHA-256} and none algorithm must be implemented by conforming JWT implementation.
 It is recommended to additionally implement the algorithms RS256 and ES256\footnote{Elliptic Curve Digital Signature Algorithm (ECDSA) with 256-bit key}~\cite{jwtdocauth0, jwtrfc}.
 The base64 encoded header is the first part of the JWT.
@@ -254,7 +257,7 @@ The software architects can define custom claims on their own, depending on thei
 The custom claims registered in the IANA registry are called public claims, and those not registered in the IANA registry are called private claims~\cite{jwtdocauth0, jwtrfc}.
 The base64 encoded payload is the second part of the JWT.
 
-The chosen signature algorithm signs the base64 encoded header, the base64 encoded payload, and a secret.
+The chosen signature algorithm signs the base64 encoded header, the base64 encoded payload, and a secret (only with symmetric encryption like HMAC).
 The \textbf{signature} provides integrity for the message, and if it was signed with a private key, it additionally provides authentication~\cite{jwtdocauth0}.
 The base64 encoded signature is the third part of the JWT.
 
@@ -262,37 +265,40 @@ The base64 encoded signature is the third part of the JWT.
 The Transport Layer Security (TLS) Protocol provides authentication, integrity, and confidentiality for the communication between two parties.
 It consists of two layers, the handshake protocol and the record protocol~\cite{turnertls}.
 
-\subsubsection{mTLS} \label{sec:mtls}
-TLS itself is also called one-way TLS because it helps the client to identify the server, but not the server to identify the client.
-Therefore mTLS was introduced to provide authentication in both directions.
-The client and the server must own a private/public key pair, so it is more suited for the communication between two systems and not between users and servers~\cite{dias2020microservices}. 
-
 \subsubsection{Handshake Protocol}
-The handshake protocol is responsible for negotiating a cipher suite and for the authentication using X.509 certificates.
+The handshake protocol is responsible for negotiating a cipher suite and for providing authentication using X.509 certificates.
 The cipher suite declares the key exchange algorithm, the signature algorithm, the symmetric encryption algorithm, including the mode of the encryption algorithm and the hashing algorithm~\cite{turnertls, kurbatov2021design}.
 The handshake varies on the key exchange method, but it can be separated into the following steps~\cite{krawczyk2013security}:
 \begin{enumerate}
-    \item The server and the client exchange Hello messages
-    \item The server sends its certificate to the client
-    \item The client sends a pre-master secret to the server, and if mTLS is used, the client sends his certificate to the server
-    \item The client and the server finish the handshake, using the independently computed master secret
+    \item The server and the client exchange Hello messages.
+    \item The server sends its certificate to the client.
+    \item The client sends a pre-master secret to the server.
+    \item The client and the server finish the handshake, using the independently computed master secret.
 \end{enumerate}
 The steps of the handshake will be explained in more detail in chapter~\ref{sec:tlshandshake_details}.
 
 \subsubsection{Record Protocol}
-The record protocol provides a secure channel for communication between the parties.
+The record protocol provides a secure channel for the secure communication of two parties.
 This is done by using the algorithms declared in the cipher suite.
-Confidentiality is assured, using symmetric encryption, and Message Authentication Codes provide integrity (MAC)~\cite{kurbatov2021design, krawczyk2013security}.
+Confidentiality is assured, using symmetric encryption, and Message Authentication Codes (MAC) provide integrity~\cite{kurbatov2021design, krawczyk2013security}.
+
+\subsubsection{mTLS} \label{sec:mtls}
+TLS itself is also called one-way TLS because it helps the client to identify the server, but not the server to identify the client.
+Therefore mTLS was introduced to provide authentication in both directions.
+The client and the server must own a private/public key pair, so it is more suited for the communication between two systems and not between users and servers~\cite{dias2020microservices}. 
+The authentication of the client is performed during the handshake.
+When mTLS is used, the client has presents his certificate to the server, before transferring the pre-master secret.
 
 \section{Discussion}
-This chapter described the fundamentals to understand the details and differences between authentication mechanisms later described.
+This chapter described the fundamentals to understand the details and differences between the later described authentication mechanisms.
 Furthermore, it was described why service-to-service authentication is needed and what additional mechanisms have to be implemented to secure a microservice deployment.
 
 It is essential to understand that the whole system is compromised when one security mechanism does not work correctly.
 For example, the authorization can be affected when the authentication is neglected.
 Each service and each layer of the deployment has to be appropriately secured.
 The problem with the microservice architecture is that one compromised service can be used to compromise other services.
-Therefore, choosing the correct security mechanisms is crucial and understanding how they work.
+Therefore, choosing the correct security mechanisms and understanding how they work is crucial. 
 
 Additionally, the possibility of outsourcing the authentication to a service mesh was discussed.
-Since the authentication mechanisms stay the same, regardless of whether they are performed by the services themselves or using the service mesh pattern, it is assumed that the services do the authentication in the following chapters.
+The authentication mechanisms stay the same regardless of whether they are performed bythe services themselves or using the service mesh pattern.
+For the simplicity, it is assumed that the authentication mechanisms are performed by the services themselves in the following chapters.
