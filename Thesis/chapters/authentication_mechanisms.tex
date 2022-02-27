@@ -110,15 +110,7 @@ The most popular approach for passing the end-user context with mTLS is JSON Web
 The JWTs can be embedded within the HTTP Request body or using URL parameters.
 This approach can be implemented in multiple ways~\cite{dias2020microservices}.
 
-Generally, the user obtains an access token from any token service.
-This token could be an OAuth2, OpenID Connect, or any other token.
-The user has to send this token with each request.
-The token is then validated by a Security Token Service (STS).
-If the token is valid, the STS returns a JWT, which can then be used to consume other services.
-When one microservice calls another microservice, he sends the JWT, and if this microservice has to consume another microservice, he also passes the same token to the next microservice~\cite{dias2020microservices}.
-The workflow of this approach is shown in figure~\ref{fig:mtls_id_1}
-
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\begin{sequencediagram}
 		\newthread{client}{:Client}{}
@@ -139,6 +131,15 @@ The workflow of this approach is shown in figure~\ref{fig:mtls_id_1}
 	\caption{Use the same JWT for each request~\cite{dias2020microservices}}
 	\label{fig:mtls_id_1}
 \end{figure}
+
+Generally, the user obtains an access token from any token service.
+This token could be an OAuth2, OpenID Connect, or any other token.
+The user has to send this token with each request.
+The token is then validated by a Security Token Service (STS).
+If the token is valid, the STS returns a JWT, which can then be used to consume other services.
+When one microservice calls another microservice, he sends the JWT, and if this microservice has to consume another microservice, he also passes the same token to the next microservice~\cite{dias2020microservices}.
+The workflow of this approach is shown in figure~\ref{fig:mtls_id_1}
+
 
 %\begin{figure}
 %	\centering
