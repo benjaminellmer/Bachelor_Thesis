@@ -40,17 +40,45 @@
 % Section title = Top title
 \section{Microservice Architecture}
 
-\subsection{Monolithic vs. Microservice Architecture}
+\subsection{Monolithic Architecture vs. Microservice Architecture}
 \fhslide{
-	\fhdualpage{.5}{.5}{
-		This text will be on the left side of the dual-page, and takes up
-		40 \% of the pagewidth. Lorem ipsum dolor
-		sit amet, consectetur adipisici elit, ...
+	\fhdualpage{.3}{.7}{
+		\centering
+		\fhcimg[3cm]{images/TikZ_Monolith.pdf}
 	}{
-		This text will be on the right side of the dual-page, and takes up
-		60 \% of the page width. Lorem ipsum dolor
-		sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut
-		labore et dolore magna aliqua.
+		\centering
+		\fhcimg[9cm]{images/TikZ_Microservice.pdf}
+	}
+}
+
+\subsection{Monolithic Architecture}
+\fhslist{
+	\item Traditional way of building applications
+	\item All functions are managed and served in one place
+	\item Large codebase and a lack of modularity
+	\item Easy debugging and testing
+	\item Simple to develop
+	\item Simple to deploy
+	\item Become very complex, when they scale up
+	\item Making changes becomes very hard in such large and complex applications
+	\item When new technologies are applied, most parts of the application have to be rewritten
+}
+
+\subsection{Microservice Architecture}
+\fhslist{
+	\item All approaches that could centralize business logic are avoided
+	\item Independently deployed
+	\item Implementation details are hidden, to avoid coupling between services
+	\item Failures can be isolated
+	\item Declaration of service boundaries is very hard
+	\item Continuous Delivery and Continuous Integration are necessary
+	\item Language level calls become remote calls
+	\vspace{5mm}
+	\fhdualpage{.5}{.5}{
+		asdf
+	}{
+		\centering
+		pic1
 	}
 }
 
