@@ -5,7 +5,7 @@ Even if the performance is not the major decision point to choose the correct au
 Especially, because the migration from a monolithic architecture to the microservice architecture already results in a massive performance decrease of around 79.1\%~\cite{ueda2016workload}.
 Therefore the performance is already restricted, and the authentication mechanisms should not produce too much overhead.
 
-\section{Experiment Setup}
+\section{Setup}
 The setup consists of two components, the service, that responds to requests and the client, which performs requests and measures the taken time.
 Both components are located in the same network and run on the same machine.
 The service is developed in C\# using ASP.Net Core, same as the services of the flea market app, mentioned in chapter~\ref{cha:project_structure}.
@@ -39,18 +39,39 @@ First, an implementation of the self-signed JWT approach, in which a new JWT is 
 The second implementation uses the same JWT for all requests.
 This should give an idea how the performance using self-signed JWTs can be improved by efficiently reusing the tokens.
 Furthermore the experiment includes the response duration without using any authentication mechanism.
-This should show how much time is accounted for the authentication mechanisms and how much time is accounted for other tasks like the transport of the request or the calculation of the random number.
+This should show how much time is accounted for the authentication mechanisms and how much time is accounted for other tasks like the transport of the request or the generation of the random number.
 
-\section{Experimental Results}
+To simplify the interpretation of the results, the approaches are identified using the identifiers declared in table~\ref{tab:experiment_case_1}.
+%\begin{itemize}
+%	\item mTLS $\rightarrow \alpha$
+%	\item self-signed JWT $\rightarrow \beta$
+%	\item self-signed JWT (reusing token) $\rightarrow \gamma$
+%	\item none $\rightarrow \delta$
+%\end{itemize}
+%\begin{table}[H]
+%	\centering
+%	\begin{tabular}{c|c}
+%		\textbf{Authentication Mechanism} & \textbf{Identifier} \\ \hline
+%		mTLS & $\alpha$ \\ \hline
+%		self-signed JWT & $\beta$ \\ \hline
+%		self-signed JWT (reusing token) & $\gamma$ \\ \hline
+%		none & $\delta$ \\
+%	\end{tabular}
+%	\caption{Identifiers for the compared approaches}
+%	\label{tab:identifiers}
+%\end{table}
+
+\section{Results}
 
 \begin{table}[H]
-\begin{tabular}{c|cc}
-\multicolumn{1}{l|}{\textbf{Authentication Mechanism}} & \multicolumn{2}{c}{\textbf{Average Request Duration}} \\ \hline
-\multicolumn{1}{c|}{} & \multicolumn{1}{c|}{first connection} & reuse connection \\ \hline
-mTLS & \multicolumn{1}{c|}{$199.66$ ms} & $10.18$ ms \\ \hline
-self-signed JWT & \multicolumn{1}{c|}{$226.83$ ms} & $15.38$ ms \\ \hline
-self-signed JWT (reusing token) & \multicolumn{1}{c|}{$216.1$ ms} & $8.75$ ms 
-%\\ \hline none & \multicolumn{1}{c|}{$216.1$ ms} & $1.71$ ms
+	\centering
+\begin{tabular}{c|c|cc}
+	\multicolumn{1}{l|}{\textbf{Authentication Mechanism}} & \textbf{Identifier} & \multicolumn{2}{c}{\textbf{Average Request Duration}} \\ \hline
+	\multicolumn{1}{c|}{} & & \multicolumn{1}{c|}{first connection} & reuse connection \\ \hline
+	mTLS & $\alpha$ & \multicolumn{1}{c|}{$199.66$ ms} & $10.18$ ms \\ \hline
+	self-signed JWT & $\beta$ & \multicolumn{1}{c|}{$226.83$ ms} & $15.38$ ms \\ \hline
+	self-signed JWT (reusing token) & $\gamma$ & \multicolumn{1}{c|}{$216.1$ ms} & $8.75$ ms \\ \hline 
+	none & $\delta$ & \multicolumn{1}{c|}{$216.1$ ms} & $1.71$ ms
 \end{tabular}
 \caption{Average request durations of the authentication mechanisms, when random numbers are fetched}
 \label{tab:experiment_case_1}
@@ -59,34 +80,52 @@ self-signed JWT (reusing token) & \multicolumn{1}{c|}{$216.1$ ms} & $8.75$ ms
 The results of the experiment are shown in table~\ref{tab:experiment_case_1}.
 As already expected, the approach using no authentication mechanism is the most efficient approach.
 The first request takes only ... ms in average and the following requests take only 1... ms in average.
-Since the authentication is performed only once per request it is not valid to say that for example the request duration increases by 1018\% when mTLS is used.
-The percentual value is only so significant because the task of generating a random number is very simple.
-Therefore for this case only the time offsets are interesting.
-It shows that the approach using mTLS increases the request duration by about 8ms per request.
+Since the authentication is performed only once per request it is not valid to say that the request duration increases by 1018\% when mTLS is used.
+The percentual value is only such significant because the task of generating a random number is very simple.
+Therefore only the time offsets of this comparison are interesting.
+They show that the approach using mTLS increases the request duration by about ... ms on average and the approach using self-signed JWTs increases the duration by ... ms to ... ms on average dependening on the implementation.
 
-The lowest duration for the first connection is achieved using mTLS.
-This is reasonable, since the authentication using self-signed JWTs exchanges the certificate of the client in the first request using the extended TLS handshake same as mTLS.
-Therefore in all three cases the extended TLS handshake has to be performed but the JWT approaches have to attach the JWT additionally.
-The approach that reuses a previously created JWT needs about 10 ms less than the approach in which an new JWT has to be created.
-The first connection using an already created JWT takes still around 16 ms more than the first connection using mTLS.
-This time overhead is caused by the logic that checks the certificate and stores it into the truststore and then checks the validity of the JWT.
+When service-to-service authentication is provided, the lowest duration to establish the connection is achieved using self-signed JWTs with a precreated token.
+This is reasonable, since the approach using mTLS has to perform the extended TLS handshake that the service owns the private key of the certificate.
+When self signed-JWTs are used, the services have to proove that they own the private key of the transferred certificate by signing the JWTs.
+Therefore the extended handshake is not necessary, when JWTs are used as authentication mechanism.
+The results show that the approach using mTLS takes about ... ms longer than the approach using self-signed JWTs (reusing token) for establishing the first connection with a service.
+The approach reusing the JWT has a minimal advantage of ... ms over the approach recreating a new JWT, because it does not have to perform the JWT creation and signing process.
 
-The approach using-self signed JWTs with already created tokens is the most efficient approach that focusing on the requests after the first connection.
-Each request takes about 9.7 ms which is about 1.5 ms less than using mTLS.
+% fake news
+%When service-to-service authentication is provided, the lowest duration for the first connection is achieved using mTLS. 
+%This is reasonable, since the authentication using self-signed JWTs exchanges the certificate of the client in the first request using the extended TLS handshake same as mTLS.
+%Therefore in all three cases the extended TLS handshake has to be performed but the JWT approaches have to attach the JWT additionally.
+%The approach that reuses a previously created JWT needs about 10 ms less than the approach in which an new JWT has to be created.
+%The first connection using an already created JWT takes still around 16 ms more than the first connection using mTLS.
+%This time overhead is caused by the logic that checks the certificate and stores it into the truststore and then checks the validity of the JWT.
+
+Considering the requests after the connection was established, the approach using-self signed JWTs with already created tokens is the most efficient approach that provides authentication.
+Each request takes about ... ms which is about ... ms less than using mTLS.
 Nevertheless, the service has to create a new token in some situations. 
 Therefore both approaches would have about the same average request durations.
 The approach, creating a new JWT for each request has the worst performance.
-This shows that the JWT creation takes around 6.5 ms per token in average.
+The results show that the JWT creation takes around 6.5 ms per token in average.
 
-The trend between the request durations is additionally visualized in figure~\ref{fig:trend}.
-It shows that the all approaches have a very stable duration timespan except the approach creating a new JWT for each request.
+The trend between the request durations is visualized in figure~\ref{fig:trend}.
+It shows that the approach using mTLS and the approach reusing an JWT have very stable response times.
+The approach creating a new JWT for each request has a very unstable performance.
+The response durations vary between ....
 
 \begin{figure}
 	\centering
 	\includegraphics[trim=0 200 0 200, clip, width=\textwidth]{images/experiment/experiment-trend.pdf}
-	\caption{Trend of the request duration of the compared approaches excluding the first request}
+	\caption{Smoothened trend of the average request duration comparing the discussed authentication mechanisms excluding the first request}
 	\label{fig:trend}
 \end{figure}
 
 \section{Conclusion}
+This experiment compared the request durations of the two previously authentication mechanisms.
+The results showed that the request durations between the mechanism using self-signed JWTs and mTLS are very similiar.
+Depending on the implementation of the JWT approach it can consume up to ...\% more time or up to ...\% less time.
+Therefore the performance is not the most crucial criterion when the two authentication mechanisms are compared since it's just a matter of milliseconds. 
+
+Nevertheless for time critical projects in which each millisecond matters, self-signed JWTs are the better choice, since the performance can be optimized in multiple ways.
+For example the certificates of the services can be distributed even before the first request is performed.
+Or the validity timespan of the tokens can be increased so the same tokens can be used for a longer timespan.
 

@@ -233,17 +233,17 @@ For example, a JWT can include the information, whether the user is an admin or 
 \subsubsection{Structure}
 A JWT is decomposed into the header, the payload, and the signature.
 The three parts are concatenated and separated by a dot~\cite{jwtdocauth0}.
-A valid JWT could look like the JWT shown in figure~\ref{fig:myjwt}.
-\begin{figure}
-    \textcolor{red}{Header}.
-	\textcolor{blue}{Payload}.
-	\textcolor{darkgreen}{Signature} \\ \\
-    \textcolor{red}{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9}.
-	\textcolor{blue}{eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQi\\OjE1MTYyMzkwMjIsInVzZXJuYW1lIjoiYmVuamFtaW4uZWxsbWVyIiwiZW1haWw\\iOiJiZW5qYW1pbi5lbGxtZXJAeWFob28uY29tIiwiYWRtaW4iOmZhbHNlfQ}.
-	\textcolor{darkgreen}{0ksqN7\\1oloNvq3IrY7w72uoTgPz9Gpn08p-KSbFulY0}
-    \caption{Sample JSON Web Token}
-    \label{fig:myjwt}
-\end{figure}
+%A valid JWT could look like the JWT shown in figure~\ref{fig:myjwt}.
+%\begin{figure}
+%    \textcolor{red}{Header}.
+%	\textcolor{blue}{Payload}.
+%	\textcolor{darkgreen}{Signature} \\ \\
+%    \textcolor{red}{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9}.
+%	\textcolor{blue}{eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQi\\OjE1MTYyMzkwMjIsInVzZXJuYW1lIjoiYmVuamFtaW4uZWxsbWVyIiwiZW1haWw\\iOiJiZW5qYW1pbi5lbGxtZXJAeWFob28uY29tIiwiYWRtaW4iOmZhbHNlfQ}.
+%	\textcolor{darkgreen}{0ksqN7\\1oloNvq3IrY7w72uoTgPz9Gpn08p-KSbFulY0}
+%    \caption{Sample JSON Web Token}
+%    \label{fig:myjwt}
+%\end{figure}
 
 The \textbf{header} contains metadata related to the JWT, which is usually the type of the token and the signature algorithm.
 The specification defines that only HS256\footnote{HMAC SHA-256} and none algorithm must be implemented by conforming JWT implementation.
