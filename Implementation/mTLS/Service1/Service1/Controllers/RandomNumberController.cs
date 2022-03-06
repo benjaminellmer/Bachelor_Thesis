@@ -9,7 +9,7 @@ namespace Service1.Controllers {
     public class RandomNumberController : ControllerBase {
         Random rnd = new Random();
 
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public int Get() {
             return rnd.Next();
