@@ -94,3 +94,9 @@ plot(smooth(means_none,10));
 legend({'JWT','mTLS','JWT (reuse)', 'none'},'FontSize',12)
 ylim([0 25])
 xlim([10 1000])
+
+jwt_recreate_All(:,1) = jwt_recreate_All(:,2);
+jwt_reuse_All(:,1) = jwt_reuse_All(:,2);
+mtlsAll(:,1) = mtlsAll(:,2);
+jwt_recreate_All(:,1) = jwt_recreate_All(:,2);
+
