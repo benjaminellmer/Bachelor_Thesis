@@ -78,19 +78,19 @@ To simplify the interpretation of the results, the approaches are identified usi
 \end{table}
 
 The results of the experiment are shown in table~\ref{tab:experiment_case_1}.
-As already expected, the approach using no authentication mechanism is the most efficient approach.
+As expected, $\delta$ is the most efficient approach.
 The first request takes only ... ms in average and the following requests take only 1... ms in average.
-Since the authentication is performed only once per request it is not valid to say that the request duration increases by 1018\% when mTLS is used.
+Since the authentication is performed only once per request it is not valid to say that the request duration between $\delta$ and $\alpha$ increases by 1018\%.
 The percentual value is only such significant because the task of generating a random number is very simple.
 Therefore only the time offsets of this comparison are interesting.
-They show that the approach using mTLS increases the request duration by about ... ms on average and the approach using self-signed JWTs increases the duration by ... ms to ... ms on average dependening on the implementation.
+They show that $\alpha$ increases the request duration by about ... ms on average and the approaches using self-signed JWTs increase the duration by ... ms ($\gamma$) to ... ms ($\beta$) on average dependening. 
 
-When service-to-service authentication is provided, the lowest duration to establish the connection is achieved using self-signed JWTs with a precreated token.
-This is reasonable, since the approach using mTLS has to perform the extended TLS handshake that the service owns the private key of the certificate.
+When service-to-service authentication is provided, the lowest duration to establish the connection is achieved using $\gamma$.
+This is reasonable, since $\alpha$ has to perform the extended TLS handshake to transfer the certificate and proove that it owns the corresponding private key.
 When self signed-JWTs are used, the services have to proove that they own the private key of the transferred certificate by signing the JWTs.
-Therefore the extended handshake is not necessary, when JWTs are used as authentication mechanism.
-The results show that the approach using mTLS takes about ... ms longer than the approach using self-signed JWTs (reusing token) for establishing the first connection with a service.
-The approach reusing the JWT has a minimal advantage of ... ms over the approach recreating a new JWT, because it does not have to perform the JWT creation and signing process.
+Therefore the extended handshake is not necessary, for the approaches $\beta$ and $\gamma$.
+The results show that $\alpha$ takes about ... ms longer than $\gamma$ for establishing the first connection with a service.
+Approach $\gamma$ has a minimal advantage of ... ms over $\beta$ for establishing the connection, because it does not have to perform the JWT creation and signing process.
 
 % fake news
 %When service-to-service authentication is provided, the lowest duration for the first connection is achieved using mTLS. 
@@ -100,12 +100,10 @@ The approach reusing the JWT has a minimal advantage of ... ms over the approach
 %The first connection using an already created JWT takes still around 16 ms more than the first connection using mTLS.
 %This time overhead is caused by the logic that checks the certificate and stores it into the truststore and then checks the validity of the JWT.
 
-Considering the requests after the connection was established, the approach using-self signed JWTs with already created tokens is the most efficient approach that provides authentication.
-Each request takes about ... ms which is about ... ms less than using mTLS.
-Nevertheless, the service has to create a new token in some situations. 
-Therefore both approaches would have about the same average request durations.
-The approach, creating a new JWT for each request has the worst performance.
-The results show that the JWT creation takes around 6.5 ms per token in average.
+Considering the requests after the connection was established, $\gamma$ is the most efficient approach except $\delta$, which does not provide authentication.
+Each request takes about ... ms which is about ... ms less than using $\alpha$ and ... ms less than approach $\beta$.
+Nevertheless in a more realistic example it is not possbile to reuse the same token for each request.
+Therefore using self-signed JWTs would result in a request duration between $\beta$ and $\gamma$ which is around the request duration of $\alpha$.
 
 The trend between the request durations is visualized in figure~\ref{fig:trend}.
 It shows that the approach using mTLS and the approach reusing an JWT have very stable response times.
