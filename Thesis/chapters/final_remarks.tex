@@ -16,6 +16,11 @@ On the other hand the implementation of self-signed JWTs is more challenging and
 Therefore choosing JWTs over mTLS would be unnecessary overhead when the target is implementing only service-to-service authentication.
 The decision if the additional control of the approach using self-signed JWTs is worth the overhead has to be evaluated for each project independently.
 
+The experiment of chapter~\ref{cha:experiment} showed that the performance of the compared authentication mechanisms is very similiar.
+The performance of the approach using self-signed JWTs is very dependent on the implementation of the mechanims.
+In some cases the approach using self-signed JWTs results in a lower response duration, but in some situations it results in a higher response duration.
+Therefore the performance is not a criterica that makes any authentication mechanism superior to the other.
+
 The biggest challenge of both authentication mechanisms is the key-management.
 Both mechanisms require a PKI and require to handle all associated key management tasks.
 Therefore the implementation of the authentication mechanisms is much less work than the key management.
@@ -29,5 +34,6 @@ Confidentiality and integrity can be assured using TLS, but authentication of bo
 
 This thesis compared two of the most pupular authentication mechanisms for service-to-service authentication.
 Therefore the fundamentals of both mechanisms were discussed and the concepts of the two authentication mechanisms were described in detail.
-Additionally an project that implements the authentication mechanisms was reviewed and a experiment that should give an assumption about the performance overhead of the authentication mechanisms was performed and interpreted.
+Additionally an project that implements the authentication mechanisms was reviewed. 
+In the end an experiment comparing the performance of the discussed authentication mechanisms was performed and the results were discussed.
 

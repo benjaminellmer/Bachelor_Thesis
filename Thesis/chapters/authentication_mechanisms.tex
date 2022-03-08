@@ -196,7 +196,7 @@ mTLS is an efficient mechanism to implement service-to-service authentication.
 Since the communication between the services is usually done using HTTPS, the services already use TLS.
 Therefore, mTLS does not cause much configuration overhead, and no new technologies are necessary~\cite{dias2020microservices}.
 
-One crucial advantage of the TLS handshake is that the private keys are never exchanged, and the session keys are always different due to the usage of the randomness.
+A crucial advantage of the TLS handshake is that the private keys are never exchanged, and the session keys are always different due to the usage of the randomness.
 This means that even if an intruder can get the session key of a communication channel, he cannot use this key for another session.
 Furthermore, it is not possible to retrieve any information about the private key of the communication partners with the knowledge of the session key.
 This shows how secure mTLS is, even for advanced attacks~\cite{parsovs2013practical}.

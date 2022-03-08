@@ -223,6 +223,7 @@ Otherwise, caching also reduces the security because a certificate can be revoca
 Especially a case in which the CA does not respond to the CRL query is tough to handle.
 Therefore certificate revocation is a significant downside of public-key-based authentication, even if the Online Certificate Status Protocol (OSCP) tries to remedy the situation\cite{dias2020microservices}.
 
+
 \subsection{JSON Web Token}
 A JSON Web Token (JWT) is a container that can carry authentication and authorization assertions and further information in a cryptographically safe manner.
 An authentication assertion can be anything that authenticates the user.
@@ -275,7 +276,6 @@ The handshake varies on the key exchange method, but it can be separated into th
     \item The client sends a pre-master secret to the server.
     \item The client and the server finish the handshake, using the independently computed master secret.
 \end{enumerate}
-The steps of the handshake will be explained in more detail in chapter~\ref{sec:tlshandshake_details}.
 
 \subsubsection{Record Protocol}
 The record protocol provides a secure channel for the secure communication of two parties.
