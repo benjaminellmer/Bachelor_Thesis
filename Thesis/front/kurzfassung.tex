@@ -1,7 +1,26 @@
 \chapter{Kurzfassung}
 
 \begin{german}
-An dieser Stelle steht eine Zusammenfassung der Arbeit, Umfang
-max.\ 1 Seite. 
-...
+	Die Microservice Architektur ist ein aufstrebendes Pattern in der Softwareentwicklung.
+	Eine Applikation welche anhand der Microservice Architektur aufgebaut ist, besteht aus vielen sogenannten Services.
+	Jeder Service eines Deployments erfüllt genau einen Zweck.
+	Das bedeutet die Applikation besteht aus vielen Services mit weniger Logik anstatt aus einer riesigen Komponente, welche die gesamte Logik implementiert.
+	Die verschiedenen Services müssen miteinander kommunizieren um die Logik der anderen Services zu nutzen.
+	Somit werden Funktionsaufrufe innerhalb der Applikation zu Funktionsaufrufen über das Netzwerk.
+	Diese Netzwerkkommunikation muss Vertraulichkeit, Integrität und Authentisierung gewährleisten.
+	Durch die Verwendung des Transport Layer Security (TLS) Protokolls werden Integrität und Vertraulichkeit gewährleistet.
+	Ausserdem wird mittels dem TLS Protokoll der Server gegenüber dem Client authentisiert, jedoch der Client nicht gegenüber dem Server.
+	Hierfür werden zusätzliche Mechanismen benötigt.
+
+	Die verbreitetsten Service-zu-Service Authentisierungsmechanismen sind self-signed JSON Web Tokens (JWT) und mutual TLS (mTLS).
+	Mutual TLS ist eine sehr einfache und effeziente Erweiterung des TLS Protokolls.
+	Andererseits hat man bei mTLS nur wenig Adaptierungsmöglichkeiten, somit ist es schwer für andere Zwecke anpassbar.
+	Self-signed JWTs ermöglichen es zusätzliche Parameter in die JWTs zu integrieren.
+	Somit kann der Authentisierungsmechanismus so angepasst werden, dass weitere Aufgaben wie das weitergeben des End-User Contexts vereinfacht werden.
+	Zusätzlich haben self-signed JWTs gegenüber mTLS den Vorteil, dass nonrepudiation gewährleistet werden kann, indem die erhaltenen Requests und JWTs gespeichert werden.
+
+	Schlussendlich kann man nicht sagen, dass einer der beiden Authentisierungsmechanismen in jedem Fall dem anderem gegenüber überlegen ist.
+	Self-signed JWTs sind der bevorzugte Authentisierungsmechanismus, wenn nonrepudiation eine Anforderung ist, oder wenn die Applikation dazu neigt den End-User Context zu benötigen.
+	mTLS ist der bevorzugte Authentisierungsmechanismus, wenn das Ziel ist, so einfach wie Möglich Service-zu-Service Authentisierung zu implementieren.
+	Wobei man nicht sagen kann, dass man mTLS nicht für komplexe Anwendungsfälle verwenden soll und dass man self-signed JWTs nicht für einfache Anwendungsfälle verwenden soll.
 \end{german}
