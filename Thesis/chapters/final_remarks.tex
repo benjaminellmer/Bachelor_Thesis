@@ -2,24 +2,24 @@
 \label{cha:final_remarks}
 
 \section{Discussion}
-This thesis explained and compared two authentication mechanisms for the service-to-service security in a microservice deployment.
-Both mechanisms are based on public key cryptography, but each mechanism has its own advantages and disadvantages.
+This thesis compared and explained the most popular mechanisms for the authentication in a microservice deployment.
+Both mechanisms are based on public key cryptography, but each mechanism comes with its own motivations and challenges.
 
 Mutual TLS is a very efficient and straightforward authentication mechanism.
 The implementation of mTLS is very simple, since the work is handled by the TLS protocol.
-mTLS does not provide many configuration parameters and it does not allow to add custom functionalities, like sharing the user context without another technology.
-Nevertheless if an developer aims to implement only service-to-service authentication, mTLS is the superior authentication mechanism.
+mTLS does not provide many configuration parameters and it does not allow to add custom functionalities, like sharing the user context without additional technologies.
+Nevertheless if an developer aims to implement only service-to-service authentication, mTLS is the preferred authentication mechanism.
 
-As soon as nonrepudiation is an requirement self signd JWTs are the superior authentication mechanism.
+As soon as nonrepudiation is an requirement self-signed JWTs are the superior authentication mechanism.
 Furthermore JWTs make the identity propagation more convenient and allow the developers to customize the authentication mechanism and add additional parameters.
 On the other hand the implementation of self-signed JWTs is more challenging and requires each service to know how to work with JWTs.
 Therefore choosing JWTs over mTLS would be unnecessary overhead when the target is implementing only service-to-service authentication.
 The decision if the additional control of the approach using self-signed JWTs is worth the overhead has to be evaluated for each project independently.
 
 The experiment of chapter~\ref{cha:experiment} showed that the performance of the compared authentication mechanisms is very similiar.
-The performance of the approach using self-signed JWTs is very dependent on the implementation of the mechanims.
-In some cases the approach using self-signed JWTs results in a lower response duration, but in some situations it results in a higher response duration.
-Therefore the performance is not a criterica that makes any authentication mechanism superior to the other.
+According to the experiment results, the performance of the approach using self-signed JWTs is very dependent on the implementation of the mechanims.
+In some cases the approach using self-signed JWTs results in a lower request duration, but in some situations it results in a higher request duration.
+Therefore the performance is not a criterica that makes any mechanism superior to the other.
 
 The biggest challenge of both authentication mechanisms is the key-management.
 Both mechanisms require a PKI and require to handle all associated key management tasks.
@@ -32,8 +32,8 @@ The function calls within the monolithic backend migrate to remote calls.
 The remote calls have to assure authentication, confidentiality and integrity.
 Confidentiality and integrity can be assured using TLS, but authentication of both parties requires additional mechanisms.
 
-This thesis compared two of the most pupular authentication mechanisms for service-to-service authentication.
-Therefore the fundamentals of both mechanisms were discussed and the concepts of the two authentication mechanisms were described in detail.
-Additionally an project that implements the authentication mechanisms was reviewed. 
+This thesis compared two of the most popular authentication mechanisms for service-to-service authentication.
+Therefore the fundamentals and concepts of the compared authentication mechanisms were described in detail.
+Additionally an project using the discussed mechanisms was reviewed and the consequences of the different mechanisms were described.
 In the end an experiment comparing the performance of the discussed authentication mechanisms was performed and the results were discussed.
 
