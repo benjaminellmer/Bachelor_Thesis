@@ -1,18 +1,18 @@
 \chapter{Abstract}
 The microservice architecture is a currently emerging pattern in software engineering.
-Instead of having one huge application, the logic is split into numerous smaller units that aim to fullfill one single purpose.
+Instead of having one huge application, the logic is split into numerous smaller units that fulfill one single purpose.
 Therefore function calls within the application migrate to remote calls over the network.
-The remote calls between te services of the deployment have to provide confidentiality integrity and authentication.
-The Transport Layer Security (TLS) protocol provides confidentiality, integrity and authenticates the server to the client, but not the client to the server.
-Therefore additional mechanisms are neccessary for the mutual authentication of the services.
+The remote calls between the services have to provide confidentiality, integrity, and authentication.
+The Transport Layer Security (TLS) protocol provides confidentiality integrity and authenticates the server to the client, but not the client to the server.
+Therefore additional mechanisms are necessary for the mutual authentication of the services.
 
 The most popular service-to-service authentication mechanisms are self-signed JSON Web Tokens (JWT) and mutual TLS (mTLS).
 Mutual TLS is an adaptation of the TLS protocol that provides a simple and efficient implementation of service-to-service authentication.
-On the other hand it has few configuration possibilities making it hard to adapt the mechanisms for other purposes than service-to-service authentication.
-Self-signed JWTs provide the possibility to embed additional parameters within the JWTs allowing to adapt the authentication mechanisms to simplify tasks like sharing the end-user context.
-Additionally, self-signed JWTs have the significant advantage over mTLS that they allow to achieve nonrepudiation by storing the received JWTs and requests.
+On the other hand, it has few configuration possibilities making it hard to adapt the mechanisms for purposes other than service-to-service authentication.
+Self-signed JWTs provide the possibility to embed additional parameters within the JWTs, allowing to adapt the authentication mechanisms to simplify tasks like sharing the end-user context.
+Additionally, self-signed JWTs have the significant advantage over mTLS that they allow achieving nonrepudiation by storing the received JWTs and requests.
 
-In the end, it is not valid to say that one authentication mechanisms is superior in each situation.
-Self-signed JWTs are the preferred authentication mechanism when nonrepudiation is a requirement or when the application tends to share the end-user context.
-mTLS is the preferred authentication mechanism, when the aim is implementing service-to-service authentication as simple as possible.
-Nevertheless this does not mean that mTLS is must not be used for complex applications or that self-signed JWTs are inappropriate for simple applications.
+In the end, it is not valid to say that one authentication mechanism is superior in each situation.
+Self-signed JWTs are the preferred authentication mechanism when nonrepudiation is required or when the application shares the end-user context.
+mTLS is the preferred authentication mechanism when the aim is to implement service-to-service authentication as simply as possible.
+Nevertheless, this does not mean that mTLS is must not be used for complex applications or that self-signed JWTs are inappropriate for simple applications.
