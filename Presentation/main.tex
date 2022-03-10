@@ -40,45 +40,135 @@
 % Section title = Top title
 \section{Microservice Architecture}
 
+\subsection{Swapindo}
+\fhslide{
+	\fhdualpage{.6}{.4}{
+		\fhlist{
+			\item Flea market app developed in android (so far)
+			\item Easy and playful swapping
+			\item Simple and safe lending and renting
+			\item Fast and secure buying and selling
+			\item All-in-one-platform as mobile application
+			\item Backend based on the microservice architecture
+			}
+	} {
+		\fhcimg[4cm]{images/logo.png}
+	}
+
+	\fhcimg[6.5cm]{images/triple.png}
+
+}
+
 \subsection{Monolithic Architecture vs. Microservice Architecture}
 \fhslide{
 	\fhdualpage{.3}{.7}{
-		\centering
 		\fhcimg[3cm]{images/TikZ_Monolith.pdf}
 	}{
-		\centering
 		\fhcimg[9cm]{images/TikZ_Microservice.pdf}
 	}
 }
 
-\subsection{Monolithic Architecture}
-\fhslist{
-	\item Traditional way of building applications
-	\item All functions are managed and served in one place
-	\item Large codebase and a lack of modularity
-	\item Easy debugging and testing
-	\item Simple to develop
-	\item Simple to deploy
-	\item Become very complex, when they scale up
-	\item Making changes becomes very hard in such large and complex applications
-	\item When new technologies are applied, most parts of the application have to be rewritten
-}
+%\subsection{Monolithic Architecture}
+%\fhslist{
+%	\item All functions are managed and served in one place
+%	\item Large codebase and a lack of modularity
+%	\item Easy development, debugging and testing
+%	\item Become very complex, when they scale up
+%	\item Making changes becomes very hard in such large and complex applications
+%	\item When new technologies are applied, most parts of the application have to be rewritten
+%}
+
 
 \subsection{Microservice Architecture}
 \fhslist{
 	\item All approaches that could centralize business logic are avoided
-	\item Independently deployed
+	\item Declaration of service boundaries is very hard
 	\item Implementation details are hidden, to avoid coupling between services
 	\item Failures can be isolated
-	\item Declaration of service boundaries is very hard
-	\item Continuous Delivery and Continuous Integration are necessary
 	\item Language level calls become remote calls
 	\vspace{5mm}
-	\fhdualpage{.5}{.5}{
-		asdf
+	\fhdualpage{.4}{.6}{
+		\centering
+		Language-Level Call:
+		\fhcimg[5cm]{images/call_01.png}
 	}{
 		\centering
-		pic1
+		Remote Call:
+		\fhcimg[8cm]{images/call_02.png}
+	}
+}
+
+
+\subsection{Remote Calls and Authentication}
+\fhslide{
+	\fhblock{Term Description}{
+		\textbf{Confidentiality} guarantees that only the sender and the receiver are allowed to read and understand the communication between them. \\
+		\textbf{Integrity} guarantees the trustworthiness and correctness of data, by providing the ability to detect unauthorized modifications. \\
+		\textbf{Authentication} is the process of identifying the communication partner to protect a system from spoofing. 
+	}
+	\fhlist{
+		\item Remote calls have to provide confidentiality, integrity and authentication
+		\item Confidentiality and integrity are assured using TLS
+		\item TLS also authenticates the server to the client, but not the client to the server 
+		\item Most popular service-to-service authentication mechanisms are mutual TLS and self-signed JWTs
+		\item Trust the network is a deprecated approach for service-to-service authentication
+	}
+}
+
+\subsection{Mutual TLS}
+\fhslide{
+	\fhlist{
+		\item Each service owns a certificate, signed by a Certificate Authority 
+		\item The certificates are exchanged during the TLS-handshake
+		\item When the signature of the certificate is valid, the service is trusted
+		\item Efficient and straightforward
+		\item Based on the TLS protocol, therefore hard to adapt for other purposes like sharing the user-context
+	}
+	\fhdualpage{.3}{.4}{
+		\fhcimg[4cm]{images/TikZ_mTLS_base_structure.pdf}
+	}{
+		\fhcimg[6cm]{images/tls-handshake.png}
+	}
+}
+
+\subsection{Self-signed JWT}
+\fhslide{
+	\fhlist{
+		\item Each service owns a key pair
+		\item A JWT signed with the private key has to be embedded within the Authorization header
+		\item Additional parameters can be embedded within the JWT
+		\item User-context is usually shared using a nested JWT
+		\item Nonrepudiation can be achieved by storing the received JWTs and requests
+		\fhdualpage{.2}{.4}{
+			\fhcimg[4cm]{images/TikZ_jwt_base_structure.pdf}
+		}{
+			\fhcimg[6cm]{images/jwt.png}
+		}
+	}
+}
+
+\subsection{Comparison Result}
+\fhslide{
+	\textbf{mTLS:}
+	\fhlist{
+		\item Each service owns a key pair
+	}
+	\vspace{5mm}
+	\textbf{Self-signed JWT:}
+	\fhlist{
+		\item Each service owns a key pair
+	}
+}
+
+
+\subsection{Best authentication mechanism for your project}
+\fhslide{
+	\fhlist{
+		\item Is the microservice architecture fitted for your project?
+		\item Is nonrepudiation an requirement ? $\rightarrow$ \textbf{self-signed JWT}
+		\item Does your application tend to share the user-context? $\rightarrow$ \textbf{self-signed JWT}
+		\item Does your authentication require custom parameters ? $\rightarrow$ \textbf{self-signed JWT}
+		\item None of the previous reasons ? $\rightarrow$ \textbf{mTLS}
 	}
 }
 

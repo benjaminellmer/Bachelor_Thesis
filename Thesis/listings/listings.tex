@@ -1,0 +1,18 @@
+% Is just a file for the listings of the presentation, because the LaTeX template does not provide a simple way to include code
+\chapter{Listings}
+
+\begin{CsCode}
+	...
+	var userManagement = new UserMangagement();
+	User user = userManagement.getUser(userId);
+	...
+\end{CsCode}
+
+\begin{CsCode}
+	...
+	var userClient = new UserMangagementClient("http://usermanagement.swapindo.com/", Program.httpClient);
+	User user = userClient.UserAsync(userId)
+		.GetAwaiter()
+		.GetResult();
+	...
+\end{CsCode}
