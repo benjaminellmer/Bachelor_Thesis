@@ -1,5 +1,5 @@
 % DefaultFontSize: 10pt for conferences, 8/9pt for lectures
-\def \DefaultFontSize{9pt}
+\def \DefaultFontSize{10pt}
 
 % PresTextLayout (hyphenation, justification)
 %   Options:
@@ -38,84 +38,88 @@
 \fhfirstslide
 
 % Section title = Top title
-\section{Microservice Architecture}
 
-\subsection{Swapindo}
+\section{Introduction} % 10 Sekunden
+
+\subsection{Swapindo} % 1 Minute
 \fhslide{
-	\fhdualpage{.6}{.4}{
+	\fhdualpage{.5}{.5}{
 		\fhlist{
-			\item Flea market app developed in android (so far)
+			\item Flea market app developed for android (so far)
 			\item Easy and playful swapping
 			\item Simple and safe lending and renting
 			\item Fast and secure buying and selling
-			\item All-in-one-platform as mobile application
-			\item Backend based on the microservice architecture
-			}
+			\item Backend based on the microservice architecture developed in C\# with ASP.NET
+		}
 	} {
 		\fhcimg[4cm]{images/logo.png}
+		\vspace{2mm}
+		\fhcimg[6cm]{images/triple.png}
 	}
-
-	\fhcimg[6.5cm]{images/triple.png}
-
 }
 
-\subsection{Monolithic Architecture vs. Microservice Architecture}
+\section{Microservice Architecture}
+\subsection{Service-to-service authentication} % 2 Minuten
 \fhslide{
-	\fhdualpage{.3}{.7}{
-		\fhcimg[3cm]{images/TikZ_Monolith.pdf}
+	\fhblock{Term Description}{
+		\textbf{Authentication} is the process of identifying the communication partner to protect a system from spoofing. 
+	}
+	\fhdualpage{.55}{.45}{
+		\fhlist{
+			\item Function calls become remote calls
+			\item Remote calls have to provide authentication
+			\item TLS authenticates the server to the client, but not the client to the server 
+			\item Most popular mechanisms are mutual TLS and self-signed JWTs
+		}
 	}{
-		\fhcimg[9cm]{images/TikZ_Microservice.pdf}
+		\fhimg[6.5cm]{images/TikZ_Microservice.pdf}
 	}
 }
 
-%\subsection{Monolithic Architecture}
-%\fhslist{
-%	\item All functions are managed and served in one place
-%	\item Large codebase and a lack of modularity
-%	\item Easy development, debugging and testing
-%	\item Become very complex, when they scale up
-%	\item Making changes becomes very hard in such large and complex applications
-%	\item When new technologies are applied, most parts of the application have to be rewritten
+%\subsection{Microservice Architecture}
+%\fhslide{
+%	\fhdualpage{.55}{.45}{
+%		\fhlist{
+%			\item All approaches that could centralize business logic are avoided
+%			\item Declaration of service boundaries is very hard
+%			\item Implementation details are hidden, to avoid coupling between services
+%			\item Failures can be isolated
+%			\item Language level calls become remote calls
+%
+%		}
+%	}{
+%		\fhimg[6.5cm]{images/TikZ_Microservice.pdf}
+%	}
+%	\vspace{3mm}
+%	\fhdualpage{.4}{.6}{
+%		\centering
+%		Language-Level Call:
+%		\fhcimg[5cm]{images/call_01.png}
+%	}{
+%		\centering
+%		Remote Call:
+%		\fhcimg[8cm]{images/call_02.png}
+%	}
 %}
 
 
-\subsection{Microservice Architecture}
-\fhslist{
-	\item All approaches that could centralize business logic are avoided
-	\item Declaration of service boundaries is very hard
-	\item Implementation details are hidden, to avoid coupling between services
-	\item Failures can be isolated
-	\item Language level calls become remote calls
-	\vspace{5mm}
-	\fhdualpage{.4}{.6}{
-		\centering
-		Language-Level Call:
-		\fhcimg[5cm]{images/call_01.png}
-	}{
-		\centering
-		Remote Call:
-		\fhcimg[8cm]{images/call_02.png}
-	}
-}
 
+%\subsection{Remote Calls and Authentication}
+%\fhslide{
+%	\fhblock{Term Description}{
+%		\textbf{Authentication} is the process of identifying the communication partner to protect a system from spoofing. 
+%	}
+%	\fhlist{
+%		\item Remote calls have to provide authentication
+%		\item TLS authenticates the server to the client, but not the client to the server 
+%		\item Most popular service-to-service authentication mechanisms are mutual TLS and self-signed JWTs
+%		\item Trust the network is a deprecated approach for service-to-service authentication
+%	}
+%}
 
-\subsection{Remote Calls and Authentication}
-\fhslide{
-	\fhblock{Term Description}{
-		\textbf{Confidentiality} guarantees that only the sender and the receiver are allowed to read and understand the communication between them. \\
-		\textbf{Integrity} guarantees the trustworthiness and correctness of data, by providing the ability to detect unauthorized modifications. \\
-		\textbf{Authentication} is the process of identifying the communication partner to protect a system from spoofing. 
-	}
-	\fhlist{
-		\item Remote calls have to provide confidentiality, integrity and authentication
-		\item Confidentiality and integrity are assured using TLS
-		\item TLS also authenticates the server to the client, but not the client to the server 
-		\item Most popular service-to-service authentication mechanisms are mutual TLS and self-signed JWTs
-		\item Trust the network is a deprecated approach for service-to-service authentication
-	}
-}
+\section{Authentication Mechanisms}
 
-\subsection{Mutual TLS}
+\subsection{Mutual TLS} % 2 Min
 \fhslide{
 	\fhlist{
 		\item Each service owns a certificate, signed by a Certificate Authority 
@@ -131,7 +135,7 @@
 	}
 }
 
-\subsection{Self-signed JWT}
+\subsection{Self-signed JWT} % 2 Min - 2:30 Min
 \fhslide{
 	\fhlist{
 		\item Each service owns a key pair
@@ -147,116 +151,41 @@
 	}
 }
 
-\subsection{Comparison Result}
-\fhslide{
-	\textbf{mTLS:}
-	\fhlist{
-		\item Each service owns a key pair
-	}
-	\vspace{5mm}
-	\textbf{Self-signed JWT:}
-	\fhlist{
-		\item Each service owns a key pair
-	}
+%\subsection{Performance Experiment} % grob 1:30 wahrscheinlich eher 2 min oder 2:30
+%\fhslide{
+%
+%	\fhdualpage{.5}{.5}{
+%		\fhcimg[8cm]{images/experiment-results.png}
+%	}{
+%		\fhcimg[6cm]{images/experiment-trend.png}
+%	}
+%}
+
+\subsection{Key Management} % ca. 1:30
+\fhslist{
+	\item Most challenging part of both mechanisms
+	\item Consequence of public key cryptography
+	\item Certification
+	\item Generate/Distribute keys
+	\item Rotate keys
+	\item Simple in the beginning, gets hard as the number of services grows
 }
 
-
-\subsection{Best authentication mechanism for your project}
+\subsection{Choosing the correct mechanism} % 2 Min
 \fhslide{
+	\fhblock{Hint}{Before thinking about the correct authentication mechanism, the developers should evaluate, if the microservice architecture is the correct technology for the project.}
+
 	\fhlist{
-		\item Is the microservice architecture fitted for your project?
 		\item Is nonrepudiation an requirement ? $\rightarrow$ \textbf{self-signed JWT}
 		\item Does your application tend to share the user-context? $\rightarrow$ \textbf{self-signed JWT}
-		\item Does your authentication require custom parameters ? $\rightarrow$ \textbf{self-signed JWT}
+		\item Does your authentication mechanism require custom adaptations ? $\rightarrow$ \textbf{self-signed JWT}
+		\item Does the project require to work without TLS? $\rightarrow$ \textbf{self-signed JWT}
 		\item None of the previous reasons ? $\rightarrow$ \textbf{mTLS}
 	}
 }
 
-% Sub-Section title = Sub-Top title
-\subsection{Presenting a regular slide}
-\fhslide{
-	This is a regular slide
 
-	\fhblock{Block title}{
-		And a basic block for emphasizing important information, using
-		\cmd{\textbackslash{}fhblock\{Title\}\{Text\}}. Below is
-		an example of the \cmd{\textbackslash{}fhdualpage} command, which
-		lets you define the pane proportions and content for each pane.
-	}
-
-	\vspace{5mm}
-	% Page proportions 4:6
-	\fhdualpage{.4}{.6}{
-		This text will be on the left side of the dual-page, and takes up
-		40 \% of the pagewidth. Lorem ipsum dolor
-		sit amet, consectetur adipisici elit, ...
-	}{
-		This text will be on the right side of the dual-page, and takes up
-		60 \% of the page width. Lorem ipsum dolor
-		sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut
-		labore et dolore magna aliqua.
-	}
-}
-
-\subsection{Presenting a list-slide with \textbackslash{}fhslist}
-\fhslist{
-	\item Many slides actually contain only multiple bullets, rather than
-	text in paragraphs
-	\item In order to keep it simple, theres the \cmd{\textbackslash{}fhslist}
-	command, which begins a new slide and opens an itemize environment
-	for your convenience.
-	\item After starting the slide with the command above, you can immediately
-	continue to provide \cmd{\textbackslash{}item} bullets.
-	\fhlist{
-		\item For sub-bullets, there's no need for begin/end blocks either.
-		Simply use \cmd{\textbackslash{}fhlist} command and drop your
-		\cmd{\textbackslash{}item}s.
-		\item By the way, monospaced and grey-backgrounded text can be
-		done with \cmd{\textbackslash{}cmd\{code-like text\}}
-	}
-
-	\ctr{Centered text via \cmd{\textbackslash{}ctr\{\}}}
-
-	\fhref{Bottom-references fia \cmd{\textbackslash{}fhref\{\}}}
-}
-
-\subsection{Topic slides}
-\fhtopicslide{\textbackslash{}fhtopicslide\{content\} renders a new
-slide, e.g. for a new topic, with large bold font and vertically centered
-text.}
-
-\subsection{Images, essential slides, and other macros}
-\fhslist{
-	\item There are a lot more easy-to-use macros
-	\item Just look at the first 40-something lines of the template tex
-	source file
-	\item There are commands for URL references, including images,
-	quad-pages, aligned math equations, fragile slides (e.g. for lstlistings),
-	etc.
-
-	\item Easy image inclusion with \cmd{\textbackslash{}fhimg[width]\{path\}}
-	\fhcimg[4cm]{\templatepath/android-attack2.png}
-
-	\item See the burning-hot icon on the top left? You can mark slides as
-	important using the \cmd{\textbackslash{}essential} command.
-
-	\essential
-
-	\item Theres also a \cmd{\textbackslash{}moot} command, if you want to tag
-	supplementary slides. Of course, the images can be easily changed - just
-	change the filepath in the source, or overwrite the image itself in the
-	template folder.
-}
-
-\subsection{That's it - have fun}
-\fhslist{
-	\item Just look at the provided \cmd{example.tex} file, how all these
-	commands are used in-source -- it's really easy
-	\item For a more complete list of available commands and macros, look
-	at the template source-code
-	\item If you find errors, have suggestions or even patches for new
-	commands and macros you think others can benefit from, don't hesitate
-	to tell me: \cmd{erik.sonnleitner@fh-hagenberg.at}
-}
+\subsection{End}
+\fhtopicslide{Thank you for your attention!}
 
 \end{document}
