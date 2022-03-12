@@ -1,14 +1,16 @@
 \documentclass{article}
+
 \usepackage{pgf-umlsd}
+\usepackage[a4paper, left= 2cm, textwidth=10cm]{geometry}
 
 \begin{document}
 
+	\noindent
 \begin{figure}
-	\centering
 	\begin{sequencediagram}
 		\newthread{app}{:Android App}{}
 		\newinst[1]{gateway}{:API Gateway}{}
-		\newinst[1]{fa}{:Firebase Authentication}{}
+		\newinst[1]{fa}{:Firebase}{}
 		\newinst[1]{as}{:AdService}{}
 		\newinst[1]{us}{:UserService}{}
 
