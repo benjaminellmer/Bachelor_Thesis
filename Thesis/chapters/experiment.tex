@@ -28,8 +28,8 @@ Two different implementations of the approach using self-signed JWTs are compare
 First, an implementation of the self-signed JWT approach, in which a new JWT is created for each request, is shown.
 The second implementation uses the same JWT for all requests.
 This should illustrate how the performance using self-signed JWTs can be improved by efficiently reusing the tokens.
-Furthermore, the experiment includes the request duration without using any authentication mechanism.
-This should show how much time is accounted by the authentication mechanisms and how much time is accounted by other tasks like the transport or the random number generation.
+Furthermore, the experiment includes the request duration, when only TLS is used.
+This should show how much time is accounted by the service-to-service authentication mechanisms and how much time is accounted by other tasks like the transport or the random number generation.
 
 \section{Results}
 
@@ -41,7 +41,7 @@ This should show how much time is accounted by the authentication mechanisms and
 	mTLS & $\alpha$ & \multicolumn{1}{c|}{$228.03$ ms} & $9.87$ ms \\ \hline
 	self-signed JWT & $\beta$ & \multicolumn{1}{c|}{$193.52$ ms} & $13.57$ ms \\ \hline
 	self-signed JWT (reusing token) & $\gamma$ & \multicolumn{1}{c|}{$184.88$ ms} & $8.10$ ms \\ \hline 
-	none & $\delta$ & \multicolumn{1}{c|}{$175.78$ ms} & $1.31$ ms
+	only TLS & $\delta$ & \multicolumn{1}{c|}{$175.78$ ms} & $1.31$ ms
 \end{tabular}
 \caption{Average request durations of the authentication mechanisms, when random numbers are fetched}
 \label{tab:experiment_case_1}
@@ -51,23 +51,23 @@ The results of the experiment are shown in table~\ref{tab:experiment_case_1}.
 Furthermore, the trend of the average request duration is visualized in figure~\ref{fig:trend}.
 To simplify the interpretation of the results, the approaches are identified using the identifiers declared in table~\ref{tab:experiment_case_1}.
 
-According to the experiment results, $\delta$ is the most efficient approach since it does not handle any additional authentication mechanism.
+According to the experiment results, $\delta$ is the most efficient approach since it only authenticates the server to the client, but not the client to the server.
 The first request takes only 175.78 ms on average, and the following requests take only 1.31 ms on average.
 Comparing $\delta$ with $\alpha$ shows that $\alpha$ takes in average 8.56 ms longer than $\delta$.
-Since the authentication is performed only once per request, it is not valid to say that the request duration between $\delta$ and $\alpha$ increases by 750\%.
+Since the mutual authentication is performed only once per request, it is not valid to say that the request duration between $\delta$ and $\alpha$ increases by 750\%.
 The percentual value is only such significant because generating a random number is very simple.
 Therefore only the time offsets of this comparison are valuable.
 They show that $\alpha$ increases the request duration by 8.56 ms on average compared to $\delta$.
 The approaches using self-signed JWTs increase the average request duration by 6.79 ms ($\gamma$) to 12.26 ms ($\beta$) on average compared to $\delta$. 
 
-When service-to-service authentication is provided, the lowest duration to establish the first connection is achieved using $\gamma$.
+When mutual authentication is provided, the lowest duration to establish the first connection is achieved using $\gamma$.
 This is reasonable since $\alpha$ has to perform the extended TLS handshake to transfer the certificate and prove that it owns the corresponding private key.
 When self signed-JWTs are used, the services have to prove that they own the private key of the transferred certificate by signing the JWTs.
 Therefore the extended handshake is unnecessary for the approaches $\beta$ and $\gamma$.
 The results show that $\alpha$ takes on average 52.52 ms longer than $\gamma$ for establishing the first connection with a service.
 $\gamma$ has a minimal advantage of 8.64 ms on average for establishing the first connection compared to $\beta$ because it does not have to create a JWT.
 
-Considering the requests after the connection was established, $\gamma$ is the most efficient approach that provides authentication.
+Considering the requests after the connection was established, $\gamma$ is the most efficient approach that provides mutual authentication.
 Each request takes about 8.10 ms on average, which is 1.23 ms less than $\alpha$ and 5.47 ms less than $\beta$.
 Nevertheless, it is not possible to reuse the same token for each request in a more realistic example.
 Therefore using self-signed JWTs would result in a request duration between $\beta$ and $\gamma$, which is about the request duration of $\alpha$.
