@@ -91,7 +91,7 @@ plot(smooth(means_jwt_recreate,10));
 plot(smooth(means_mtls,10));
 plot(smooth(means_jwt_reuse,10));
 plot(smooth(means_none,10));
-legend({'\beta JWT','\alpha mTLS','\gamma JWT (reuse)', '\delta none'},'FontSize',12)
+legend({'\beta JWT','\alpha mTLS','\gamma JWT (reuse)', '\delta only TLS'},'FontSize',12)
 xlabel('iteration')
 ylabel('average reqeust duration [ms]')
 ylim([0 25])
