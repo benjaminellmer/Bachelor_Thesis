@@ -155,10 +155,9 @@ Both the \textbf{CertificateAuthorityService} and the \textbf{JWTValidationServi
 \noindent \begin{minipage}{\linewidth}
 	\begin{CsCode}[label={lst:ITokenValidationService}, caption={ITokenValidationService interface, which is implemented by the injected JWTValidationService},captionpos=b]
 		public interface ITokenValidationService {
-			public bool PutIntoTruststore(X509Certificate2 certificate);
+			public void PutIntoTruststore(X509Certificate2 certificate);
 			public bool ContainsIssuerInTruststore(String issuer);
 			public bool ValidateTokenWithTruststore(String token, string issuer);
-			public bool ValidateTokenWithTruststore(String token);
 		}
 	\end{CsCode}
 \end{minipage}
