@@ -4,7 +4,7 @@ The microservice architecture is a currently emerging pattern in software engine
 Instead of having one huge application, the logic is split into numerous smaller units that fulfill one single purpose.
 Therefore function calls within the application migrate to remote calls over the network.
 The remote calls between the services have to provide mutual authentication, so secure the system from intruders.
-Therefore service-to-service authentication mechanisms are necessary to provide mutual authentication among the services.
+Therefore service-to-service authentication mechanisms are necessary. 
 
 % Lösungsansatz, Methodik
 The most popular service-to-service authentication mechanisms are self-signed JSON Web Tokens (JWT) and mutual TLS (mTLS).
@@ -13,6 +13,8 @@ Furthermore a project, which implements the compared authentication mechanisms w
 This thesis aims to help developers to choose the correct authentication mechanism for their project.
 
 % Wichtigste Ergebnisse, Erkenntnisse 
+Both mechanisms are very efficient and provide the same level of security.
+Therefore none of the mechanisms is superior for all cases.
 Self-signed JWTs are the preferred authentication mechanism, when nonrepudiation is a requirement, when the application tends to share the user-context, or when the developers require to adapt the authentication mechanism with additional parameters.
 When none of this requirements apply, mTLS is the preferred approach, since it keeps the system efficient and simple.
 
