@@ -1,7 +1,7 @@
 \chapter{Authentication Mechanisms}
 \label{cha:authentication_mechanisms}
 This chapter explains the concepts and details of the two compared authentication mechanisms.
-Only the mTLS approach and the authentication using self-signed JWTs approach are discussed in more detail since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
+Only the mutual TLS (mTLS) approach and the authentication using self-signed JWTs approach are discussed in more detail since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
 
 %\begin{figure}
 %	\centering
@@ -16,7 +16,7 @@ Securing the communication with TLS already provides integrity confidentiality a
 Since TLS does not provide authentication from the client to the server, it is insufficient for service-to-service security.
 Therefore mutual TLS is used, which provides an efficient and straightforward approach to authenticating the client to the server.
 
-The authentication using mTLS requires a PKI, same as TLS on the internet.
+The authentication using mTLS requires a Public Key Infrastructure (PKI~\ref{sec:pki}), same as TLS on the internet.
 It is possible to use the already existing PKI of the internet, but this would make the key management much harder and would not bring any advantages.
 Therefore it is good practice to use a self-hosted PKI to have a root of trust within the network~\cite{dias2020microservices}.
 %The setup of a microservice deployment using mTLS is shown in figure~\ref{fig:auth_mechanisms_mtls}.

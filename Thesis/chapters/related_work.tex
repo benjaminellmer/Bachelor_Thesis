@@ -2,10 +2,10 @@
 \label{cha:Related_Work}
 This chapter summarizes the state-of-the-art concepts for microservice security, public key-based authentication, and the later required technologies.
 Service-to-service authentication is only one part of microservice security.
-Therefore all related topics, considering microservice security, are shortly described.
-Furthermore, the concepts of public-key authentication are discussed since the authentication mechanisms compared in this thesis are based on public-key cryptography.
+Therefore all related topics, considering microservice security, are discussed.
+Furthermore, the concepts of public-key authentication are explained since the authentication mechanisms compared in this thesis are based on public-key cryptography.
 
-\section{Microserivce Security}
+\section{Microservice Security}
 Siriwardena and Dias~\cite{dias2020microservices} gave an extensive guide of all topics related to microservice security. 
 They separated the security of a microservice deployment into edge-level security and service-level security.
 Since the microservice architecture splits the backend into multiple minor services, it is insufficient to secure the system only on the edge or service level.
@@ -104,7 +104,7 @@ Therefore it is common sense to use hybrid systems as done in TLS.
 In TLS, public-key cryptography is used for authentication and key exchange, but symmetric cryptography is used to provide confidentiality for the communication~\cite{henriques2017using}.
 Henriques~\cite{henriques2017using} showed that the performance of the system can be improved using a hybrid approach.
 
-\subsection{PKI}
+\subsection{Public Key Infrastructure} \label{sec:pki}
 Public key cryptography assumes that the receiver of a message already knows and trusts the sender's public key.
 Public Key Infrastructures (PKI) are used to achieve this assertion.
 They are responsible for providing a possibility to retrieve the public key of a participant in a trusted way.

@@ -8,9 +8,9 @@ Both mechanisms are based on public key cryptography, but each mechanism comes w
 Mutual TLS is a very efficient and straightforward authentication mechanism.
 The implementation of mTLS is very simple, since the work is handled by the TLS protocol.
 mTLS does not provide many configuration parameters and it does not allow to add custom functionalities, like sharing the user context without additional technologies.
-Nevertheless if an developer aims to implement only service-to-service authentication, mTLS is the preferred authentication mechanism.
+Nevertheless if a developer aims to implement only service-to-service authentication, mTLS is the preferred authentication mechanism.
 
-As soon as nonrepudiation is an requirement self-signed JWTs are the superior authentication mechanism.
+As soon as nonrepudiation is a requirement self-signed JWTs are the superior authentication mechanism.
 Furthermore JWTs make the identity propagation more convenient and allow the developers to customize the authentication mechanism and add additional parameters.
 On the other hand the implementation of self-signed JWTs is more challenging and requires each service to know how to work with JWTs.
 Therefore choosing JWTs over mTLS would be unnecessary overhead when the target is implementing only service-to-service authentication.
