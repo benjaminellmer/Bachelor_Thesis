@@ -7,14 +7,13 @@ Furthermore some recommendations about the use cases of the microservice archite
 \section{Motivation}
 Companies like Netflix, Amazon, and Uber are front-runners for building software solutions using the microservice architecture~\cite{dias2020microservices}.
 The main idea is to split the business logic of an application into small autonomous services that work together.
-This means the programmers have to avoid the temptation of developing too large systems.
-This approach results in the following benefits~\cite{newman2021building}: 
+This means the programmers have to avoid the temptation of developing too large systems, resulting in the following benefits~\cite{newman2021building}:
 \begin{itemize}
     \item Technology heterogeneity is achieved through the possibility to use different technology stacks for different services, depending on the needs of the services.
-		It is even possible to use different data storage for the different microservices (e.g., graph database for users).
+		It is even possible to use different data storages for the different microservices (e.g., graph database for users).
     \item Resilience is achieved since component failures can be isolated, so the rest of the system can carry on working by degrading the functionality of the system. 
     \item Scaling is much more effective due to the possibility to scale only the parts of the system that really need scaling.
-    \item The deployment is much more convenient because a single microservice can be deployed instead of deploying the whole application, even for small changes.
+    \item The deployment process is much more convenient because a single microservice can be deployed instead of deploying the whole application, even for small changes.
     \item The organizational alignment can be improved by assigning the work to small teams that work on smaller codebases, resulting in higher productivity.
     \item Composability is achieved, considering that the functionalities can be consumed in different ways for different purposes.
     \item Replaceability is optimized since rewriting a tiny service is much more manageable than replacing a few parts of a vast application.
@@ -34,8 +33,8 @@ A monolithic application has a single unit containing the user interface layer (
 Therefore it is much simpler to manage but brings the following downsides regarding the codebase~\cite{kalske2017challenges}:
 \begin{itemize}
     \item New features and modifications of old features are harder to implement.
-    \item Refactoring changes can reflect many parts of the software
-    \item Code duplication raises since it is almost impossible to reuse existing code
+    \item Refactoring changes can reflect many parts of the software.
+    \item Code duplication raises since it is almost impossible to reuse existing code.
 \end{itemize}
 The microservice architecture consists of multiple services focused on only one function of the business logic.
 Those services communicate with other services using remote calls (e.g., over HTTP), which causes higher latencies.
@@ -48,8 +47,8 @@ It is hard to define principles, which will apply to all microservice architectu
     \item[Modelled around business concepts:] The functionalities are structured around the business contexts instead of the technical concepts.
     \item[Adopting culture of automation:] The microservice deployments embrace the culture of automation by using automated tests, continuous delivery, automated servers, and much more automation tools.
     \item[Hiding implementation details:] The microservices hide as many implementation details as possible to avoid coupling.
-		Especially the databases of the services should be hidden and can be accessed by other services using APIs.
-    \item[Decentralising all The things:] All approaches that could centralize business logic are avoided to keep associated data and logic within the service boundaries.
+		Especially the databases of the services should be hidden and can be accessed by other services using the APIs of the services.
+    \item[Decentralising all the things:] All approaches that could centralize business logic are avoided to keep associated data and logic within the service boundaries.
     \item[Independently deployed:] The microservices should provide the possibility to deploy them without having to deploy any other service.
 		Therefore the autonomy of the teams can be increased, and new features can be released faster.
     \item[Isolates failures:] The microservices have to deal with misbehaving parts of the system and keep on providing as much functionality as possible, to prevent cascading failure.
@@ -58,11 +57,10 @@ It is hard to define principles, which will apply to all microservice architectu
 \end{description}
 
 \section{Challenges} \label{sec:microservice_challenges}
-There are some benefits of using the microservice architecture.
-It also introduces a set of challenges, which could argue to avoid the microservice architecture in some cases.
+The microservice architecture brings numerous benefits, but it also introduces a set of challenges, which could argue to avoid the microservice architecture in some cases.
 According to Kalske et al.~\cite{kalske2017challenges} the microservice architecture brings the following technical challenges with it: 
 \begin{itemize}
-    \item The declaration of the service boundaries is very hard~\cite{kalske2017challenges}, especially if the developers do not know the domain that well~\cite{newman2021building}.
+    \item The declaration of the service boundaries is very hard~\cite{kalske2017challenges}, especially if the developers do not know the domain very well~\cite{newman2021building}.
     \item The services should not become too fine-grained to prevent performance overhead.
 		Otherwise, if they are not decomposed enough, changes to one service can affect multiple services.
     \item Continuous Delivery and Continuous Integration are  necessary to manage the services and validate their functionality.
@@ -73,7 +71,7 @@ According to Kalske et al.~\cite{kalske2017challenges} the microservice architec
 The microservice architecture is gaining popularity, even if it produces so many challenges, showing how crucial its advantages are.
 
 \section{Usage Situation}
-According to Newman~\cite{newman2021building} it is better to start with a monolithic application if the architect does not fully understand the domain and has problems declaring the boundaries for the services.
+According to Newman~\cite{newman2021building} it is better to start with a monolithic application if the architect does not fully understand the domain and has problems declaring the boundaries of the services.
 In such cases, it is better to spend some time learning what the system does first and then break things down to microservices when the system is stable.
 Furthermore, Newman recommends eliminating legacy monitoring systems before splitting the application into more and more microservices.
 Otherwise, it could get very messy to stay in knowledge about the system's status.

@@ -1,7 +1,8 @@
 \chapter{Authentication Mechanisms}
 \label{cha:authentication_mechanisms}
 This chapter explains the concepts and details of the two compared authentication mechanisms.
-Only the mutual TLS (mTLS) approach and the authentication using self-signed JWTs approach are discussed in more detail since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
+Only mutual TLS (mTLS) and self-signed JWTs are discussed in more detail since the Trust the Network (TTN) approach is deprecated and should not be used anymore~\cite{dias2020microservices}.
+Additionally the most popular approaches for user-context sharing are discussed, since the chosen authentication mechanisms affects the way how the user-context is shared.
 
 %\begin{figure}
 %	\centering
@@ -17,7 +18,7 @@ Since TLS does not provide authentication from the client to the server, it is i
 Therefore mutual TLS is used, which provides an efficient and straightforward approach to authenticating the client to the server.
 
 The authentication using mTLS requires a Public Key Infrastructure (PKI~\ref{sec:pki}), same as TLS on the internet.
-It is possible to use the already existing PKI of the internet, but this would make the key management much harder and would not bring any advantages.
+It is possible to use the already existing PKI of the internet, but this would make the key management much harder and would not bring significant advantages.
 Therefore it is good practice to use a self-hosted PKI to have a root of trust within the network~\cite{dias2020microservices}.
 %The setup of a microservice deployment using mTLS is shown in figure~\ref{fig:auth_mechanisms_mtls}.
 
@@ -43,20 +44,20 @@ The following sequence and figure~\ref{fig:tlshandshake} should give an overview
 	\item The server responds with a \textbf{ServerHello}, in which he chooses one cipher suite of the \textbf{ClientHello} message.
 		Furthermore, the \textbf{ServerHello} contains the server's randomness.
 	\item The server sends the \textbf{Certificate} message, containing one or more certificates, which can be used to build the certificate chain.
-		The client validates the sent certificates with his own trusted store.
+		The client validates the sent certificates with his own truststore.
 		If it trusts the sent certificate chain, the handshake is continued.
 	\item The server sends the \textbf{CertificateRequest} message, in which the trusted CAs of the server are listed.
 		The client can use this list to choose the correct certificate he has to present for the Client Certificate Authentication.
 	\item The server sends the \textbf{ServerHelloDone} message, signalizing that the server finished his Hello message.
 	\item The client responds with his \textbf{Certificate} message, which is similar to the servers \textbf{Certificate} message, but contains the client's certificate chain.
 	\item The client then generates a random value, the pre-master secret, which is later used to derive symmetric keys for the cryptographic operations defined in the cipher suite.
-		The pre-master secret is then encrypted using the server's public key.
-		Therefore, only the owner of the corresponding private key, the server, can decrypt this message.
+		The pre-master secret is encrypted using the server's public key.
+		Therefore, only the owner of the corresponding private key, which is the server, can decrypt this message.
 		In the end, the encrypted pre-master secret is transferred to the server within the \textbf{ClientKeyExchange} message.
 	\item The client has to prove that he owns the corresponding private key of the certificate he sent.
 		Therefore he has to encrypt the hash of all previous messages with his private key.
 		This encrypted hash is then sent to the server within the \textbf{CertificateVerify} message.
-		The server can decrypt the hash with the certificate's public key and can calculate the hash on its own to check whether the decrypted hash is correct or not.
+		The server can decrypt the hash with the public key, which is embedded in the certificate and can calculate the hash on its own to check whether the decrypted hash is correct or not.
 	\item The client sends a \textbf{ChangeCipherSpec} message to signal the server that all following messages will be protected with the protection mechanisms defined in the cipher suite.
 	\item The last message of the handshake is the \textbf{Finished} message, which is an encrypted hash of all previous messages.
 	%\item[11-12] Same as steps 9-10 but from the server.
@@ -65,9 +66,9 @@ The following sequence and figure~\ref{fig:tlshandshake} should give an overview
 \end{enumerate}
 After the TLS handshake, both participants know the secret, that is used to encrypt and decrypt messages.
 The handshake would have almost the same steps when mTLS is not used.
-Only the \textbf{CertificateRequest} message of the sever and the \textbf{Certificate} message and the \textbf{CertificateVerify} message of the client are unique for mTLS.
-One special case of the handshake is that the client responds to the \textbf{CertificateRequest} with an empty \textbf{Certificate} message.
-Depending on the configuration of the server, the connection without a certificate can be allowed or neglected~\cite{parsovs2013practical}.
+Only the \textbf{CertificateRequest} message of the sever and the \textbf{Certificate} message and the \textbf{CertificateVerify} message of the client are unique for mTLS~\cite{parsovs2013practical}.
+%One special case of the handshake is that the client responds to the \textbf{CertificateRequest} with an empty \textbf{Certificate} message.
+%Depending on the configuration of the server, the connection without a certificate can be allowed or neglected~\cite{parsovs2013practical}.
 
 \newcommand{\newthreadShift}[4][gray!30]{
   \newinst[#4]{#2}{#3}
@@ -104,9 +105,9 @@ Depending on the configuration of the server, the connection without a certifica
 
 % maybe look at yarygina2018overcoming on page 16 again...
 \subsection{Passing the end user context} \label{sec:mtls_end_user_context}
-For some functionalities, the identity of the microservice is not relevant. Instead, the identity of the end-user is relevant.
-In those cases, the microservices have to pass the end-user context when they consume the logic of other microservices.
-The most popular approach for passing the end-user context with mTLS is JSON Web Tokens.
+In some cases, not only the identity of the microservice, but also the identity of the end-user is relevant.
+Then, the microservices have to pass the end-user context when they consume the logic of other microservices.
+The most popular approach for passing the end-user context are JSON Web Tokens.
 The JWTs can be embedded within the HTTP Request body or using URL parameters.
 This approach can be implemented in multiple ways~\cite{dias2020microservices}.
 
@@ -134,7 +135,7 @@ This approach can be implemented in multiple ways~\cite{dias2020microservices}.
 
 Generally, the user obtains an access token from any token service.
 This token could be an OAuth2, OpenID Connect, or any other token.
-The user has to send this token with each request.
+The user has to embed his token within the Authorization header of each request.
 The token is then validated by a Security Token Service (STS).
 If the token is valid, the STS returns a JWT, which can then be used to consume other services.
 When one microservice calls another microservice, he sends the JWT, and if this microservice has to consume another microservice, he also passes the same token to the next microservice~\cite{dias2020microservices}.
@@ -193,8 +194,7 @@ Therefore it is necessary to use mTLS together with JWT.
 
 \subsection{Conclusion}
 mTLS is an efficient mechanism to implement service-to-service authentication.
-Since the communication between the services is usually done using HTTPS, the services already use TLS.
-Therefore, mTLS does not cause much configuration overhead, and no new technologies are necessary~\cite{dias2020microservices}.
+Since the communication between the services is usually secured using TLS, the configuration of mTLS does not cause much overhead, and no new technologies are necessary~\cite{dias2020microservices}.
 
 A crucial advantage of the TLS handshake is that the private keys are never exchanged, and the session keys are always different due to the usage of the randomness.
 This means that even if an intruder can get the session key of a communication channel, he cannot use this key for another session.
@@ -208,7 +208,7 @@ The service which acts as the client has to be configured to send his certificat
 Most HTTP Client libraries support simply attaching the certificate to each HTTP request.
 Nevertheless, the developers do not have to implement much logic resulting in the problem that they do not have much control over the system.
 The developers have to rely on the implementation of the webserver developers.
-This means that if a web server has security-related bugs, the microservice developers can not solve them independently.
+Therefore, when a web server has security-related bugs, the microservice developers can not solve them independently.
 For example, the apache webserver, one of the most popular webservers, had many issues in combination with CCA.
 Arnis Parsovs~\cite{parsovs2013practical} researched the problems of the apache webserver and gave an extensive guide on how to circumvent all bugs when CCA is configured.
 
@@ -216,7 +216,7 @@ The biggest challenge of mTLS is the key management, which was described in more
 Key management is responsible for key provisioning, key revocation, key rotation, and more management tasks.
 Usually, the key management requires a self-hosted PKI for the deployment.
 For small applications, the key management can be kept very simple.
-Nevertheless, as soon as the deployment grows and many services are running simultaneously, automation tools are required.
+As soon as the deployment grows and many services are running simultaneously, automation tools are required.
 Therefore the management overhead of mTLS is much harder to handle than the implementation of mTLS itself~\cite{dias2020microservices}.
 
 The previously mentioned challenges and motivation result in the conclusion that mTLS is a beneficial and efficient approach when the developers do not require to fully control each aspect of the authentication.
@@ -226,7 +226,7 @@ This is the reason why mTLS is the most popular approach for service-to-service 
 
 \section{Authentication based on self-signed JWTs}
 Self-signed JWTs can be used to provide authentication for service-to-service communication.
-Same as mTLS, it is based on asymmetric cryptography, and each service needs to own a key pair.
+Same as mTLS, authentication using self-signed JWTs is based on asymmetric cryptography, and each service needs to own a key pair.
 The main idea is that the sender creates a JWT, which is signed with his private key.
 The receiving service can then check the signature of the JWT with the public key of the sending service.
 The signed JWT is transferred within the Authorization header of the HTTP request~\cite{dias2020microservices}.
@@ -246,13 +246,13 @@ Therefore TLS should be used to provide confidentiality for the service-to-servi
 Since the authentication is not dependent on TLS, it is possible to use other mechanisms instead of TLS.
 For example, JSON Web Encryption or any other encryption mechanism can be used, but usually, it does not make sense to exchange TLS~\cite{dias2020microservices}.
 
-The usage of self-signed JWTs additionally provides non-reputability.
-This means each action is bound to the service that created the JWT, and the service can not repudiate that the JWT was created by him~\cite{dias2020microservices}.
-Whenever non-reputability is a requirement of the system, self-signed JWTs are the superior authentication mechanism.
+The usage of self-signed JWTs additionally provides nonrepudiation.
+Therefore each action is bound to the service that created the JWT, and the service can not repudiate that the JWT was created by him~\cite{dias2020microservices}.
+Whenever nonrepudiation is a requirement of the system, self-signed JWTs are the superior authentication mechanism.
 
-\subsection{Non Repudability}
-Digital signatures can be used to achieve non-reputability cryptographically.
-Nonrepudability binds the actions performed by a service, to the service or API Gateway who initiated the action.
+\subsection{Nonrepudiation}
+Digital signatures can be used to achieve nonrepudiation cryptographically.
+Nonrepudiation binds the actions performed by a service, to the service or API Gateway who initiated the action.
 In general the recipient of a message is provided with a proove of the origin of the message.
 Therefore the recipient is protected against situations in which a sender denies that the sent a message~\cite{wu20131200}.
 
@@ -260,15 +260,15 @@ Nonrepudability and authentication are very similar.
 Authentication is about convincing the other party that an event is valid.
 With nonrepudiation, it is even possible to prove the truth of an event to a third party~\cite{wu20131200}.
 
-A practical example in which non-reputability is useful would be an online shop.
+A practical example in which nonrepudiation is useful would be an online shop.
 Assuming that the shop has an \textbf{OrderService} and a \textbf{PaymentService}.
 When the payment is sucessfully accomplished using the functionalities of the \textbf{PaymentService}, it has to signalize the \textbf{OrderService}, that the order was paied.
 Therefore the \textbf{PaymentService} would send a request to the \textbf{OrderService} containing a JWT signed using the private key of the \textbf{PaymentService}.
 When the \textbf{OrderService} stores the JWT and the request, it can always proove that the request was originated by the \textbf{PaymentService}.
-It could not be an other service, because only the \textbf{PaymentService} can create a valid signature for the public key of the \textbf{PaymentService}.
+No other service could have created the JWT, because only the \textbf{PaymentService} is able to create a valid signature for his public key.
 
 \subsection{Passing the end-user context}
-The approaches to how the end-user context is passed between the services are similar to the approaches explained in~\ref{sec:mtls_end_user_context}.
+The mechanisms how the end-user context is passed between the services are similar to the mechanisms explained in~\ref{sec:mtls_end_user_context}.
 The big difference is how the JWT is transferred among the services.
 While with mTLS, the JWT was embedded within the body or as a URL parameter, with self-signed JWTs, it can be embedded within the JWT that already has to be transferred.
 This is done by appending a nested JWT within the claims of the self-signed JWT.
@@ -284,7 +284,7 @@ It is insufficient to configure the webserver correctly and append a certificate
 Every service has to know how to encode and decode JWTs.
 Furthermore, to achieve nonrepudiation, all received JWTs must be stored for an adequate timespan, requiring additional database storage.
 
-One major advantage of the authentication using self-signed JWTs is, that the developers can vary the implementation depending on their needs.
+One major advantage of authentication using self-signed JWTs is, that the developers can vary the implementation depending on their needs.
 For example the developers can vary the technology used to provide confidentiality, even if this might not be necessary in most cases, the possibility can be an advantage~\cite{dias2020microservices}.
 Furthermore the developers can define additional parameters, which have to be provided within the transferred JWTs.
 This freedom of choice is not guaranteed with mTLS, because it is a strictly defined protocol and has very few configuration options.

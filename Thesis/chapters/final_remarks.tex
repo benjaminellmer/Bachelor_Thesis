@@ -2,7 +2,7 @@
 \label{cha:final_remarks}
 
 \section{Discussion}
-This thesis compared and explained the most popular mechanisms for the authentication in a microservice deployment.
+This thesis compared and explained the most popular mechanisms for the mutual authentication in a microservice deployment.
 Both mechanisms are based on public key cryptography, but each mechanism comes with its own motivations and challenges.
 
 Mutual TLS is a very efficient and straightforward authentication mechanism.
@@ -23,13 +23,13 @@ Therefore the performance is not a criterica that makes any mechanism superior t
 
 The biggest challenge of both authentication mechanisms is the key-management.
 Both mechanisms require a PKI and require to handle all associated key management tasks.
-Therefore the implementation of the authentication mechanisms is much less work than the key management.
+Therefore the implementation of the authentication mechanisms is less challenging than the key management.
 Nevertheless, the level of security that is provided using public key cryptography, is worth the expenses.
 
 \section{Summary}
 Service-to-service authentication is a requirement caused by the migration to the microservice architecture.
-The function calls within the monolithic backend migrate to remote calls.
-The remote calls have to assure authentication, confidentiality and integrity.
+Function calls within the monolithic backend migrate to remote calls.
+Remote calls have to assure authentication, confidentiality and integrity.
 Confidentiality and integrity can be assured using TLS, but authentication of both parties requires additional mechanisms.
 
 This thesis compared two of the most popular authentication mechanisms for service-to-service authentication.
