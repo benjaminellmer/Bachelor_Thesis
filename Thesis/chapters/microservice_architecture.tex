@@ -1,12 +1,13 @@
 \chapter{Microservice Architecture}
 \label{cha:Microservice_Architecture}
-This chapter introduces the microservice architecture concepts, which are necessary to understand why the later discussed approaches are needed.
+This chapter introduces the microservice architecture concepts necessary to understand why the later discussed approaches are needed.
 The principles used to design microservices lead to some characteristics, resulting in the motivations and challenges declared in this chapter.
-Furthermore some recommendations about the use cases of the microservice architecture are provided and the caused security consequences are declared.
+Furthermore, some recommendations about the use cases of the microservice architecture are provided, and the caused security consequences are declared.
 
 \section{Motivation}
 Companies like Netflix, Amazon, and Uber are front-runners for building software solutions using the microservice architecture~\cite{dias2020microservices}.
 The main idea is to split the business logic of an application into small autonomous services that work together.
+% TODO: Unclear antecedent
 This means the programmers have to avoid the temptation of developing too large systems, resulting in the following benefits~\cite{newman2021building}:
 \begin{itemize}
     \item Technology heterogeneity is achieved through the possibility to use different technology stacks for different services, depending on the needs of the services.
@@ -39,7 +40,7 @@ Therefore it is much simpler to manage but brings the following downsides regard
 The microservice architecture consists of multiple services focused on only one function of the business logic.
 Those services communicate with other services using remote calls (e.g., over HTTP), which causes higher latencies.
 Depending on the needs of the services, each service can have its own database, which can differ from the database system of the other services.
-It is also possible to share one database for multiple services, but this should be avoided to reduce coupling between the services. 
+It is also possible to share one database for multiple services, but this should be avoided to reduce coupling. 
 
 \section{Design Principles}
 It is hard to define principles, which will apply to all microservice architectures, but according to Newman, most of them will adhere to the following principles~\cite{newman2021building}: 
@@ -62,8 +63,8 @@ According to Kalske et al.~\cite{kalske2017challenges} the microservice architec
 \begin{itemize}
     \item The declaration of the service boundaries is very hard~\cite{kalske2017challenges}, especially if the developers do not know the domain very well~\cite{newman2021building}.
     \item The services should not become too fine-grained to prevent performance overhead.
-		Otherwise, if they are not decomposed enough, changes to one service can affect multiple services.
-    \item Continuous Delivery and Continuous Integration are  necessary to manage the services and validate their functionality.
+		Otherwise, if they are not decomposed enough, one service can affect multiple services.
+    \item Continuous Delivery and Continuous Integration are necessary to manage the services and validate their functionality.
     \item The integration of the services into other services can become very hard due to the requirement to be available for all used technologies.
     \item Good logging mechanisms have to be used to recognize failures of microservices as soon as possible.
     \item Fault tolerance mechanisms have to be implemented to react to situations in which needed services do not respond.
@@ -71,13 +72,13 @@ According to Kalske et al.~\cite{kalske2017challenges} the microservice architec
 The microservice architecture is gaining popularity, even if it produces so many challenges, showing how crucial its advantages are.
 
 \section{Usage Situation}
-According to Newman~\cite{newman2021building} it is better to start with a monolithic application if the architect does not fully understand the domain and has problems declaring the boundaries of the services.
+According to Newman~\cite{newman2021building}, it is better to start with a monolithic application if the architect does not fully understand the domain and has problems declaring the boundaries of the services.
 In such cases, it is better to spend some time learning what the system does first and then break things down to microservices when the system is stable.
 Furthermore, Newman recommends eliminating legacy monitoring systems before splitting the application into more and more microservices.
 Otherwise, it could get very messy to stay in knowledge about the system's status.
 
 Fowler~\cite{fowlerpremium} recommends considering microservices only when a system gets too complex to manage as a monolith.
-His essence is keeping the system simple enough to avoid the need of microservices since the microservice architecture can slow down the development considerably.
+His essence is to keep the system simple enough to avoid the need for microservices since the microservice architecture can considerably slow down the development.
 The correlation between the development productivity and the complexity of a system comparing the microservice architecture with a monolithic architecture is shown in figure~\ref{fig:fowler_productivity}.
 
 \begin{figure}[H]

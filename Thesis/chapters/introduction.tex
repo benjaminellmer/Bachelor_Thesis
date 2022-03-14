@@ -3,13 +3,14 @@
 In the past years, a trend towards highly-scalable software systems like the microservice architecture emerged.
 The migration from a monolithic architecture towards microservices has enormous consequences regarding the security of software systems~\cite{shmeleva2020microservices}. 
 Function calls within the same project migrate to remote calls over the network~\cite{chandramouli2019microservices}. 
+%TODO: Unclear antecedent
 This offers a larger attack surface because intruders could spoof the communication among the services.
 Therefore the communication among the services has to provide mutual authentication to prevent attackers from exploiting the system.
 Additionally, service-to-service communication has to provide confidentiality.
 Confidentiality is usually addressed using TLS, which also provides authentication, but it only authenticates the server to the client.
 Therefore additional authentication mechanisms are necessary to implement mutual authentication.
 The most popular approaches for service-to-service authentication are mutual TLS (mTLS) and authentication using self-signed JSON Web Tokens (JWT)~\cite{dias2020microservices}.
-This thesis will describe and compare those authentication mechanisms to work out differences, advantages, and disadvantages.
+This thesis will describe and compare those authentication mechanisms to discover differences, advantages, and disadvantages.
 
 \section{Motivation}
 The International Data Corporation (IDC) has predicted that by 2022, 90\% of all apps will feature microservice architectures~\cite{idcprediction2019}. 
@@ -19,10 +20,12 @@ When authentication is neglected, attackers could perform attacks like the Main-
 Such attacks could result in substantial data leaks or allow attackers to misuse the system for their advantage.
 
 The microservice architecture is based on having multiple services running in multiple locations.
+%TODO: Unclear antecedent
 This results in a bigger attack surface because multiple machines are exposed to the internet, making it simpler to find vulnerabilities.
+%TODO: Unclear antecedent
 This is one of the reasons why Netflix received massive attacks on their microservice based-systems in the past years~\cite{pereira2019security}.
 
-This motivations show how vital microservice security is, and this thesis aims to help microservice developers choose the correct authentication mechanisms for their projects.
+These motivations show how vital microservice security is, and this thesis aims to help microservice developers choose the correct authentication mechanisms for their projects.
 
 \section{Challenges}
 Since the microservice architecture became as popular as in the last years, there is a lack of evaluation research and only limited insight into the particular security concerns, especially regarding service-to-service authentication. 
@@ -30,8 +33,8 @@ The most popular solutions and existing implementations are closed source, like 
 Other freely available approaches are often poorly documented and therefore hard to understand~\cite{yarygina2018overcoming}.
 
 Additionally, the migration from the monolithic architecture to the microservice architecture results in a performance overhead~\cite{ueda2016workload}.
-Furthermore the authentication mechanisms produce latencies, because additional operations have to be performed.
-Therefore it is important to choose the correct authentication mechanism and implement it as efficient as possible.
+Furthermore, the authentication mechanisms produce latencies because additional operations have to be performed.
+Therefore it is crucial to choose the correct authentication mechanism and implement it as efficiently as possible.
 
 The microservice architecture and the service-to-service authentication bring some more challenges and difficulties, which will be declared and discussed in the following chapters.
 
@@ -43,7 +46,7 @@ It should explain why the later discussed authentication mechanisms are a requir
 Furthermore, it describes the fundamentals of the required technologies for the later discussed authentication mechanisms.
 
 \noindent Chapter~\ref{cha:authentication_mechanisms} describes the fundamentals and concepts of the compared authentication mechanisms in detail.
-Especially the motivations, challenges and differences between them are analyzed.
+Especially the motivations, challenges, and differences between them are analyzed.
 
 \noindent Chapter~\ref{cha:project_structure} shows the backend of an app, which implements the discussed authentication mechanisms.
 Additionally, it provides some implementation details using the ASP.Net framework.
