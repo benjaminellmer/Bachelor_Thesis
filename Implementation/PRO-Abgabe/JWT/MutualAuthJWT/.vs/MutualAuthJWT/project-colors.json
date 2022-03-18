@@ -1,0 +1,26 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "2b9ecaa4-fc7b-474e-9b90-e895435417af": {
+      "ProjectGuid": "2b9ecaa4-fc7b-474e-9b90-e895435417af",
+      "DisplayName": "AdService",
+      "ColorIndex": 0
+    },
+    "9f48a6df-08f3-4a63-9a65-c837a2a9fe34": {
+      "ProjectGuid": "9f48a6df-08f3-4a63-9a65-c837a2a9fe34",
+      "DisplayName": "UserService",
+      "ColorIndex": 1
+    },
+    "4bde5509-7432-44d0-b628-a451dff5bb4b": {
+      "ProjectGuid": "4bde5509-7432-44d0-b628-a451dff5bb4b",
+      "DisplayName": "MutualAuthenticationLibrary",
+      "ColorIndex": 2
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Sonstige Dateien",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 3
+}
