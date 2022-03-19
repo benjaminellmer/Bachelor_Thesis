@@ -3,11 +3,11 @@
 
 \section{Discussion}
 This thesis compared and explained the most popular mechanisms for mutual authentication in a microservice deployment.
-Both mechanisms are based on public-key cryptography, but each has its own motivations and challenges.
+Both mechanisms are based on public-key cryptography, but each mechanism has its own motivations and challenges.
 
 Mutual TLS is a very efficient and straightforward authentication mechanism.
-The implementation of mTLS is very simple since the TLS protocol handles the work.
-mTLS does not provide many configuration parameters, and it does not allow to add custom functionalities, like sharing the user context without additional technologies.
+The implementation of mTLS is very simple since the TLS protocol handles the authentication.
+Otherwise, mTLS does not provide many configuration parameters, and it does not allow to add custom functionalities, like sharing the user context without additional technologies.
 Nevertheless, if a developer aims to implement only service-to-service authentication, mTLS is the preferred authentication mechanism.
 
 As soon as nonrepudiation is required, self-signed JWTs are the superior authentication mechanism.
@@ -21,9 +21,9 @@ According to the experiment results, the performance of the approach using self-
 In some cases, using self-signed JWTs results in a lower request duration, but in some situations, it results in a higher request duration.
 Therefore the performance is not a criterion that makes any mechanism superior to the other.
 
-The biggest challenge of both authentication mechanisms is the key management.
+The biggest challenge of both authentication mechanisms is key management.
 Both mechanisms require a PKI and require handling all associated key management tasks.
-Therefore, implementing the authentication mechanisms is less challenging than the key management.
+Therefore, implementing the authentication mechanisms is less challenging than key management.
 Nevertheless, the level of security that is provided using public-key cryptography is worth the expenses.
 
 \section{Summary}

@@ -3,14 +3,14 @@
 The microservice architecture is a currently emerging pattern in software engineering.
 Instead of having one huge application, the logic is split into numerous smaller units that fulfill one single purpose.
 Therefore function calls within the application migrate to remote calls over the network.
-The remote calls between the services have to provide mutual authentication to secure the system from intruders.
+Remote calls between the services have to provide mutual authentication to secure the system from spoofing.
 Therefore service-to-service authentication mechanisms are necessary. 
 
 % Lösungsansatz, Methodik
 The most popular service-to-service authentication mechanisms are self-signed JSON Web Tokens (JWT) and mutual TLS (mTLS).
 This thesis describes the fundamental concepts and discusses the motivations and challenges of both mechanisms.
 Furthermore, a project which implements the compared authentication mechanisms is reviewed, and some implementation details are shown.
-With the knowledge provided in this thesis, developers should be able to choose the correct authentication mechanisms for their projects. 
+Developers should be able to choos the correct authentication mechanisms for their projects, with the knowledge provided in this thesis.
 
 % Wichtigste Ergebnisse, Erkenntnisse 
 The comparisons showed that both mechanisms are very efficient and provide the same level of security.

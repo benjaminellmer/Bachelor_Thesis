@@ -25,7 +25,7 @@ This means the programmers have to avoid the temptation of developing too large 
     \centering
     \includegraphics[width=0.3\textwidth]{./images/microservice_architecture/TikZ_Monolith.pdf}
     \includegraphics[width=0.69\textwidth]{./images/microservice_architecture/TikZ_Microservice.pdf}
-    \caption{Example of monolithic architecture and a microservice architecture~\cite{kalske2017challenges}}
+    \caption{Comparison of a monolith application and a microservice based application~\cite{kalske2017challenges}}
     \label{fig:monolithvsmicroservice}
 \end{figure}
 
@@ -38,7 +38,7 @@ Therefore it is much simpler to manage but brings the following downsides regard
     \item Code duplication raises since it is almost impossible to reuse existing code.
 \end{itemize}
 The microservice architecture consists of multiple services focused on only one function of the business logic.
-Those services communicate with other services using remote calls (e.g., over HTTP), which causes higher latencies.
+Those services communicate with other services using remote calls (e.g., over HTTP), which causes additional latencies.
 Depending on the needs of the services, each service can have its own database, which can differ from the database system of the other services.
 It is also possible to share one database for multiple services, but this should be avoided to reduce coupling. 
 
@@ -59,7 +59,7 @@ It is hard to define principles, which will apply to all microservice architectu
 
 \section{Challenges} \label{sec:microservice_challenges}
 The microservice architecture brings numerous benefits, but it also introduces a set of challenges, which could argue to avoid the microservice architecture in some cases.
-According to Kalske et al.~\cite{kalske2017challenges} the microservice architecture brings the following technical challenges with it: 
+According to Kalske et al.~\cite{kalske2017challenges} the microservice architecture causes the following technical challenges with it: 
 \begin{itemize}
     \item The declaration of the service boundaries is very hard~\cite{kalske2017challenges}, especially if the developers do not know the domain very well~\cite{newman2021building}.
     \item The services should not become too fine-grained to prevent performance overhead.
@@ -92,5 +92,5 @@ The correlation between the development productivity and the complexity of a sys
 The migration to the microservice architecture brings many consequences regarding the security of a deployment.
 Especially the network communications among the services introduce a set of vulnerabilities.
 Confidentiality, integrity, and availability have to be assured.
-The need for authentication mechanisms is a common issue of network security, but the migration from language-level calls to remote calls causes the need for authentication between microservices.
+The need for authentication mechanisms is a common issue of network security, but the migration from language-level calls to remote calls causes the need for mutual authentication between microservices.
 Therefore, the authentication mechanisms discussed in this thesis are a consequence of the microservice architecture and can be neglected with a monolithic architecture.

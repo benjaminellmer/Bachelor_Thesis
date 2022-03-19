@@ -19,9 +19,9 @@ It intercepts all requests targeted for the APIs of the services.
 After validating the requests, it dispatches the valid ones to the microservices.
 The main tasks of an API Gateway are authentication of the end-user, authorization, and throttling~\cite{dias2020microservices}.
 It authenticates the end-user using access tokens, which come from access delegation technologies like OAuth 2.0 or Open ID Connect~\cite{siriwardena2014advanced}.
-By outsourcing the end-user authentication to the API Gateway, it has to be performed only once and not multiple times by each service~\cite{dias2020microservices}.
-The API Gateway could perform the authorization for all requests, but in most cases, it is performed on both levels, the edge-level, and the service-level. 
-Therefore the API Gateway performs only coarse authorization assertions, preventing a single-point-of-decision~\cite{barabanov2020authentication}.
+By outsourcing the end-user authentication to the API Gateway, the user has to authenticate himself only once and not multiple times to each service~\cite{dias2020microservices}.
+The API Gateway could handle the authorization for all requests, but in most cases, it is performed on both levels, the edge-level, and the service-level. 
+Therefore the API Gateway is only responsible for coarse authorization assertions, preventing a single-point-of-decision~\cite{barabanov2020authentication}.
 
 \subsection{Service-level security}
 Service-level security is defined as the security mechanisms that protect the communication among the microservices.
@@ -63,7 +63,7 @@ The most popular technic for identity propagation is extracting the user's conte
 The tokens are passed between the microservices and the API Gateway.
 The propagated identity of the user can be extracted from the token, and the token's signature must be checked.
 The microservices can perform authorization based on the identity of the client~\cite{barabanov2020authentication, dias2020microservices}.
-The way how the identity propagation is performed is implemented depends on the used authentication mechanism.
+The way how the identity propagation is implemented depends on the used authentication mechanism.
 %unclear antecedent
 This will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
@@ -99,11 +99,11 @@ An encrypted message can be decryped using the following formular:
 \end{displaymath}
 Only the owner of the private key can simply calculate the message from the cipher, using the Fermat's little theorem\footnote{See~\cite{fermatlittle} for further information}.
 
-The problem with asymmetric cryptography is that the encryption and decryption times are worse than symmetric cryptography.
+The problem with asymmetric cryptography is that the encryption and decryption times are worse than using symmetric cryptography.
 The restriction to use only asymmetric cryptography could decrease the system's performance.
 Therefore it is common sense to use hybrid systems as done in TLS.
-In TLS, public-key cryptography is used for authentication and key exchange, but symmetric cryptography is used to provide confidentiality for the communication~\cite{henriques2017using}.
-Henriques~\cite{henriques2017using} showed that the performance of the system can be improved using a hybrid approach.
+In TLS, public-key cryptography is used for authentication, but symmetric cryptography is used to provide confidentiality for the communication~\cite{henriques2017using}.
+Henriques~\cite{henriques2017using} showed that the performance of systems can be improved using a hybrid approach.
 
 \subsection{Public Key Infrastructure} \label{sec:pki}
 Public key cryptography assumes that the receiver of a message already knows and trusts the sender's public key.
@@ -150,7 +150,7 @@ It is performed in the following steps, which are visualized in figure~\ref{fig:
     \item The microservice talks to the Lemur API to obtain a signed certificate for its credentials.
 % Unclear antecedent
 		This can happen either during the startup process of the microservice or when the microservice is rotating its keys.
-    \item Lemur creates a certificate signing request (CSR) addressed to the CA.
+    \item Lemur creates a Certificate Signing Request (CSR) addressed to the CA.
     \item The certificate is signed using the CA.
 		Lemur is not a CA, but it knows how to integrate with a CA to generate signed certificates.
     \item Lemur returns the signed certificate to the microservice, who can then use it to authenticate itself to other services.
@@ -192,13 +192,13 @@ They are used to assure the user of a certificate that the certificate's subject
 The most significant advantage of certificates is that they can be exchanged using untrusted communication channels because the signature becomes invalid when the content of a certificate is changed.
 Therefore manipulations can be detected, and manipulated certificates can be declined~\cite{x509rfc}.
 
-When a client wants to consume a server hosted on a server, it must obtain the server's certificate.
+When a client wants to consume a service hosted on a server, it must obtain the server's certificate.
 If the client does not know the public key of the CA who signed the server's certificate, he has to obtain it.
 Obtaining the public key often results in chains because the client may have to work his way up until he reaches a CA he trusts.
 Such chains are also called certification paths~\cite{x509rfc}.
 
-Depending on the version, a certificate can include more or less information.
-The information is always stored inside the tbsCertificate, signatureAlgorithm, and signatureValue fields and can be expanded using extensions.
+Depending on the version of the standard, a certificate can include more or less information.
+The information is always stored inside the tbsCertificate, signatureAlgorithm, and signatureValue fields and can be expanded using extensions~\cite{x509rfc}.
 \begin{description}
 	\item[TbsCertificate:] contains the data of the certificate, including the subject of the certificate, the issuer of the certificate, the public key of the subject, the validity period, and additional information~\cite{x509rfc}.
 	\item[signatureAlogrithm:] declares the cryptographic algorithm used to sign the certificate.
@@ -222,23 +222,21 @@ A certificate can be revocated for the following reasons~\cite{dias2020microserv
 The hardest part about certificate revocation is informing all participants about the revocation of a certificate.
 % Unclear antecedent
 This is done using certificate revocation lists (CRL) or other revocation mechanisms.
-The big downside of CRLS is that the CA has to store a list of certificates, which are revocated.
-The clients have to retrieve this list whenever they establish a connection to a server, which causes high latencies.
-The latencies can be reduced by caching.
+The big downside of CRLs is that each CA has to store a list of revocated certificates and the clients have to retrieve this list whenever they establish a connection to a server.
+This causes high latencies, which can be reduced by caching.
 Otherwise, caching also reduces security because a certificate can be revocated during the lifetime of the cache.
 Especially a case in which the CA does not respond to the CRL query is tough to handle~\cite{dias2020microservices}.
 
 
 \subsection{JSON Web Token}
-A JSON Web Token (JWT) is a container that can carry authentication and authorization assertions and further information in a cryptographically safe manner.
-An authentication assertion can be anything that authenticates the user.
+A JSON Web Token (JWT) is a container that can carry authentication assertions, authorization assertions and further information in a cryptographically safe manner.
+An authentication assertion can be anything that identifies the user.
 Usually, usernames or e-mail addresses are used to identify a user uniquely.
 An authorization assertion can be any information about the access permissions.
 For example, a JWT can include the information, whether the user is an admin or an unprivileged user~\cite{dias2020microservices}. 
 
 \subsubsection{Structure}
-A JWT is decomposed into the header, the payload, and the signature.
-The three parts are concatenated and separated by a dot~\cite{jwtdocauth0}.
+A JWT is decomposed into the header, the payload, and the signature, which are concatenated and separated by a dot~\cite{jwtdocauth0}.
 %A valid JWT could look like the JWT shown in figure~\ref{fig:myjwt}.
 %\begin{figure}
 %    \textcolor{red}{Header}.
@@ -252,7 +250,7 @@ The three parts are concatenated and separated by a dot~\cite{jwtdocauth0}.
 %\end{figure}
 
 The \textbf{header} contains metadata related to the JWT, which is usually the type of the token and the signature algorithm.
-The specification defines that only HS256\footnote{HMAC SHA-256} and none algorithm must be implemented by conforming JWT implementation.
+The specification defines that only HS256\footnote{HMAC SHA-256} and the none algorithm must be implemented by conforming JWT implementation.
 It is recommended to additionally implement the algorithms RS256 and ES256\footnote{Elliptic Curve Digital Signature Algorithm (ECDSA) with 256-bit key}~\cite{jwtdocauth0, jwtrfc}.
 The base64 encoded header is the first part of the JWT.
 
@@ -290,15 +288,14 @@ Confidentiality is assured using symmetric encryption.
 Integrity is provided using Message Authentication Codes (MAC)~\cite{kurbatov2021design, krawczyk2013security}.
 
 \subsubsection{mTLS} \label{sec:mtls}
-TLS itself is also called one-way TLS because it helps the client to identify the server, but not the server to identify the client.
+TLS itself is also called one-way TLS because it allows the client to identify the server, but not the server to identify the client.
 Therefore mTLS was introduced to provide authentication in both directions.
 The server and the client must own a private/public key pair.
 Therefore it is more appropriate for the communication between systems instead of the communication between users and servers~\cite{dias2020microservices}. 
-Authentication is performed during the TLS handshake.
-When mTLS is used, the client must present his certificate to the server before transferring the pre-master secret.
+When mTLS is used, the client must present his certificate to the server during the TLS handshake.
 
 \section{Conclusion}
-This chapter described the fundamentals to understand the details and differences between authentication mechanisms later described.
+This chapter described the fundamentals to understand the details and differences between the later described authentication mechanisms.
 Furthermore, it was described why service-to-service authentication is needed and what additional mechanisms have to be implemented to secure a microservice deployment.
 
 It is essential to understand that the whole system is compromised when one security mechanism does not work correctly.
