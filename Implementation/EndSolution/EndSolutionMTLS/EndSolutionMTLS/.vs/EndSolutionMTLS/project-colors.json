@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "bd9ac2da-8138-489d-bc22-727085c5bb51": {
+      "ProjectGuid": "bd9ac2da-8138-489d-bc22-727085c5bb51",
+      "DisplayName": "MutualAuthenticationLibrary",
+      "ColorIndex": 0
+    },
+    "61bfce79-8c62-47c9-98fe-6e2bdd01bfa6": {
+      "ProjectGuid": "61bfce79-8c62-47c9-98fe-6e2bdd01bfa6",
+      "DisplayName": "EndSolutionMTLS",
+      "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Sonstige Dateien",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 2
+}
