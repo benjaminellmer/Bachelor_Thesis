@@ -9,10 +9,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MutualAuthenticationLibrary\MutualAuthenticationLibrary.csproj" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+	  <ProjectReference Include="..\..\..\MutualAuthenticationLibrary\MutualAuthenticationLibrary.csproj" />
 	</ItemGroup>
 </Project>
