@@ -1,27 +1,23 @@
 # Service-to-service authentication in a microservice deployment 
 
-### Expose
-In the past years the trend towards extremely scalable architectures, like the microservice architecture emerged in software engineering.
-The migration from monolithic architectures towards microservice architectures has enormous consequences regarding the security of software systems.
-In monolithic applications, external logic is called using “language-level calls”, which means methods and functions mostly inside the same project.
-In microservice applications, external logic is called by using the APIs (Application Programmable Interface) which are provided by external microservices of the same deployment [1].
-Of course, this service-to-service communication must be secured properly.
-For this problem, there are multiple common approaches that have their own advantages and disadvantages [2].
-Usually, in a huge microservice deployment the implementation of the microservices is partitioned into several teams.
-In many cases, each team implements the security mechanisms for their microservices on their own, which offers a large attack surface for potential attackers.
-This is a tremendous problem because an attacker can exploit the weakness of a single microservice to misuse each other microservice [3].   
-  
-The target of this bachelor thesis is to compare the most popular approaches for the service-to-service communication in a microservice architecture and point out their advantages and disadvantages.
-The common approaches for this problem are trusted networks, mTLS (mutual transport layer security), and JWTs (JSON Web Token) [2]. 
-The result of this bachelor thesis shall be an analysis of the different security mechanisms including their use cases and their potential security threats.  
-  
-### References
-[1] Ramaswamy Chandramouli. Microservices-based application systems. NIST
-Special Publication, 800:204, 2019.  
-  
-[2] Wajjakkara Kankanamge Anthony Nuwan Dias and Prabath Siriwardena.
-Microservices Security in Action. Simon and Schuster, 2020.  
-  
-[3] Kai Jander, Lars Braubach, and Alexander Pokahr. Defense-in-depth and
-role authentication for microservice systems. Procedia computer science,
-130:456–463, 2018
+## Abstract
+The microservice architecture is a currently emerging pattern in software engineering.
+Instead of having one huge application, the logic is split into numerous smaller units that fulfill one single purpose.
+Therefore function calls within the application migrate to remote calls over the network.
+Remote calls between the services have to provide mutual authentication to secure the system from spoofing.
+Therefore service-to-service authentication mechanisms are necessary.  
+
+The most popular service-to-service authentication mechanisms are self-signed JSON Web Tokens (JWT) and mutual TLS (mTLS).
+This thesis describes the fundamental concepts and discusses the motivations and challenges of both mechanisms.
+Furthermore, a project that implements the compared authentication mechanisms is reviewed, and the implementation details are shown.
+Developers should be able to choose the correct authentication mechanisms for their projects with the knowledge provided in this thesis.  
+
+The comparisons showed that both mechanisms are very efficient and provide the same level of security.
+Therefore none of the mechanisms is superior for all cases.
+Self-signed JWTs are the preferred authentication mechanism when nonrepudiation is a requirement, when the application tends to share the user-context, or when the developers require to adapt the authentication mechanism with additional parameters.
+When none of these requirements apply, mTLS is the preferred approach since it keeps the system simple.
+
+## Videos
+[Presentation Video] (https://filebox.fhooecloud.at/index.php/s/dd2rB84fWPjYeJ9)  
+[Official Promovideo] (https://drive.google.com/file/d/1kwnXZHeul1EyKZvslPQLISg2FJRT6bwO/view?usp=sharing)  
+[Project Teaser] (https://filebox.fhooecloud.at/index.php/s/DqLwGTbncibgM3n)  
