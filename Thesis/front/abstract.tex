@@ -9,12 +9,12 @@ Therefore service-to-service authentication mechanisms are necessary.
 % Lösungsansatz, Methodik
 The most popular service-to-service authentication mechanisms are self-signed JSON Web Tokens (JWT) and mutual TLS (mTLS).
 This thesis describes the fundamental concepts and discusses the motivations and challenges of both mechanisms.
-Furthermore, a project which implements the compared authentication mechanisms is reviewed, and some implementation details are shown.
-Developers should be able to choos the correct authentication mechanisms for their projects, with the knowledge provided in this thesis.
+Furthermore, a project that implements the compared authentication mechanisms is reviewed, and the implementation details are shown.
+Developers should be able to choose the correct authentication mechanisms for their projects with the knowledge provided in this thesis.
 
 % Wichtigste Ergebnisse, Erkenntnisse 
 The comparisons showed that both mechanisms are very efficient and provide the same level of security.
 Therefore none of the mechanisms is superior for all cases.
 Self-signed JWTs are the preferred authentication mechanism when nonrepudiation is a requirement, when the application tends to share the user-context, or when the developers require to adapt the authentication mechanism with additional parameters.
-When none of these requirements apply, mTLS is the preferred approach since it keeps the system as simple as possible.
+When none of these requirements apply, mTLS is the preferred approach since it keeps the system simple.
 

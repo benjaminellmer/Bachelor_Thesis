@@ -1,0 +1,143 @@
+\documentclass[14pt,a4paper]{extarticle}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{pdfpages}
+\usepackage{libertine}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\usepackage{float}
+\usepackage{hyperref}
+
+\begin{document}
+	\begin{titlepage}
+		\centering
+		{\scshape\LARGE Swapindo \par}
+		\vspace{2.5cm}
+		{\huge\bfseries Requirements Specification Service-to-service authentication \par}
+		\vfill
+		Version 1.0\par
+		von\par
+		Benjamin Ellmer (\textsc{S1910237013}) 
+	
+		\vfill
+		{\large \today\par}
+	\end{titlepage}
+	\newpage
+
+	\tableofcontents
+	\newpage
+	
+	\section{Einleitung}
+	\subsection{Zweck des Dokuments}
+	Der Zweck des Dokuments ist es eine Übersicht über das Projekt "Swapindo Service-to-service authentication", welches ein Teilprojekt des Projekts "Swapindo" ist zu geben.
+	Es werden die wichtigsten Fakten und Anforderungen in einem Dokument zusammengefasst.
+	Darüberhinaus soll ein Überblick gegeben werden, wie diese Anforderungen umgesetzt werden.
+
+	\subsection{Gültigkeit des Dokuments}
+	Dieses Dokument ist nur für das Teilprojekt "Swapindo Service-to-service authentication" gütlig.
+	In diesem Teilprojekt sollen die beliebtsten Service-zu-Service Authentifizierungsmechanismen verglichen und implementiert werden.
+	Es ist die erste Version des Pflichtenhefts und für dieses Teilprojekt und Benjamin Ellmer ist für Änderungen in diesem Dokument verantwortlich.
+
+	\subsection{Begriffsbestimmungen und Abkürzungen}
+	\begin{description}
+		\item[TLS:] Transport Layer Security
+		\item[mTLS:] mutual TLS
+		\item[JSON:] JavaScript Object Notation
+		\item[JWT:] JSON Web Token
+	\end{description}
+
+	\subsection{Zusammenhang mit anderen Dokumenten}
+	Dieses Pflichtenheft erweitert das Pflichtenheft vom Wintersemester 2020 und Sommersemester 2021.
+
+	\section{Allgemeine Beschreibung des Produkts}
+	Es handelt sich um einen Teil der Realisierung des Projekts "Swapindo" der Swapindo GmbH.
+	Im Projekt "Swapindo" gilt es grundsätzlich eine Flohmarkt-Plattform zu erschaffen.
+	In diesem Projekt (Swapindo Service-zu-Service Authentication) geht es darum die Kommunikation der Microservices des Backends vom Projekt "Swapindo" zu schützen.
+	Es soll eine Klassenbibliothek geschrieben werden, welche die Integration der Authentifizierungsmechanismen so einfach wie möglich gestaltet.
+
+	\subsection{Zusammenhang mit bereits laufenden Projekten}
+	Im Zuge des PRO Moduls werden zwei weitere Teilprojekte vom Projekt Swapindo von zwei Kollegen entwickelt.
+	In einem der Teilprojekte geht es um die Entwicklung eines Empfehlungssystems und im zweitem Teilprojekt geht es um die Implementierung von effizienten Caching Mechanismen.
+
+	\subsection{Zusammenhang mit Vorgänger- und Nachfolgeprojekten}
+	Das Projekt "Swapindo Service-to-service authentication" ist der dritte Teil des Gesamtprojekts "Swapindo" und ist der Nachfolger vom Projekt "Swapindo Frontend" aus dem Sommersemester 2021.
+	In weiterer Folge wird das Gesamtprojekt "Swapindo" im Namen der Swapindo GmbH weiterentwickelt.
+
+	\subsection{Zweck des Produkts}
+	Der Zweck des Produkts ist die Absicherung des Backends vor ungewollten Zugriffen.
+	Da es mehrere Mechanismen hierfür gibt, werden die bekanntesten Mechanismen mTLS und self-signed JWT beide implementiert und Verglichen.
+	Am Ende dieses Projekts soll es nicht mehr möglich sein ohne Authentifizierung auf die Services des Backends von Swapindo zuzugreifen.
+
+	\subsection{Abgrenzung und Einbettung des Produkts}
+	Da andere Entwicklungsprozesse nicht unterbrochen werden sollen, sollen die Authentifizierungsmechanismen noch nicht in die aktiven Servies eingebaut werden.
+	Es soll lediglich die Grundlage geschaffen werden, um die Services mit den implementierten Authentifizierungsmechanismen auszustatten.
+	Das Endprodukt des Prjekts soll eine Klassenbibliothek sein, die mit wenig Zeilen Code die Einbettung der Authentifizierungsmechanismen in ASP.Net Services erlaubt.
+
+	\subsection{Überblick über die geforderte Funktionalität}
+	\begin{itemize}
+		\item Das Produkt soll ermöglichen, dass von Kommunikationspartner eine Authentifizierung gefordert wird (Serverseite)
+		\item Das Produkt soll die Authentifizierung gegenüber einem Kommunikationspartner ermöglichen (Clientseite)
+	\end{itemize}
+
+	\subsection{Allgemeine Einschränkungen}
+	Das Teilprojekt beschäftigt sich hauptsächlich mit der Authentifizierung zwischen den Microservices.
+	Um das Backend vollständig zu schützen wird auch Authorisierung benötigt.
+	Außerdem wird auch End-User Authentifizierung benötigt, welche hauptsächlich im Vorgängerprojekt implementiert wurde und in diesem Projekt in das Backend eingebettet wurde.
+
+	\subsection{Vorgaben zu Hardware und Software}
+	Zur Versionierung soll GIT verwendet werden.
+	Das Produkt soll mit so wenig Aufwand wie möglich in die bereits bestehenden Microservices des Backends vom Projekt "Swapindo" eingebettet werden können.
+	Diese Microservices sind in der Programmiersprache C\# geschrieben und wurden mit dem ASP.Net Core 5.0 Framework entwickelt.
+
+	\subsection{Benutzer des Produkts}
+	Die Benutzer des Produkts sind die Backend-Entwickler von Swapindo.
+	Diese sind nach Fertigstellung des Projekts dafür zuständig die Mechanismen in die Services des Backends einzubetten.
+
+	\section{Detaillierte Beschreibung der geforderten Produktmerkmale}
+	Gefordert:
+	\begin{itemize}
+		\item Klassenbibliothek zu einfachen Integration von Service-to-service authentication mit mTLS
+		\item Klassenbibliothek zu einfachen Integration von Service-to-service authentication mit self-signed JWTs
+	\end{itemize}
+
+	\subsection{Lieferumfang}
+	Der Lieferumfang beträgt den Source Code der Klassenbibliothek, sowie zwei Beispielservices, an denen die Verwendung der Klassenbibliothek gezeigt wird.
+
+	\subsection{Abläufe von Interaktionen mit der Umgebung}
+	Die Backend Entwickler müssen die Bibliothek als referenziertes Projekt einbinden. 
+	Wenn diese eingebunden ist, können sie mit wenigem Befehlen die geforderten Authentifizierungsmechanismen integrieren.
+
+	\subsection{Ziele des Benuters}
+	Die Bibliothek soll mit wenigen Zeilen Code eingebunden werden können.
+	Außerdem sollen die eingebundenen Mechanismen eine fehlerfreie und effiziente Authentifizierung implementieren.
+	Das Ziel des Benutzers ist die Absicherung seines Backends von unauthentifizierten Zugriffen.
+
+	\subsection{Geforderte Funktionen des Produkts}
+	\subsubsection{Authentifizierung-Serverseite}
+	Auf der Serverseite soll eine Authentifizierung des Clients verlangt werden.
+	Wenn die Authentifizierung fehlschlägt, kann der Client auf keine Ressourcen zugreifen.
+	Es soll möglich sein, zwischen self-signed JWTs und mTLS auszuwählen.
+
+	\subsubsection{Authentifizierung-Clientseite}
+	Es soll eine Möglichkeit für die Clients geboten werden, sich gegenüber einem Server zu authentifizieren.
+	Hierbei soll die Möglichkeit bestehen, zwischen self-sigend JWTs und mTLS auszuwählen.
+
+	\subsection{Externe Schnittstellen des Produkts}
+
+	\subsubsection{Benutzerschnittstellen}
+	Die Benutzer können die Klassenbibliothek in ihre Projekte einbinden.
+	Da es sich um eine reine Ansammlung von Code handelt gibt es keine grafischen Schnittstellen.
+
+	\section{Vorgaben an die Projektabwicklung}
+	\subsection{Anforderungen an die Realisierung}
+	Software:
+	\begin{itemize}
+		\item Die Bilbliothek soll für das ASP.Net Framework 5.0 geschrieben werden
+		\item GIT soll für die Versionsverwaltung verwendet werden
+	\end{itemize}
+
+\end{document}
+

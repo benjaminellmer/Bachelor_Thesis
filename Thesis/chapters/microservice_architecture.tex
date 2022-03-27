@@ -38,15 +38,15 @@ Therefore it is much simpler to manage but brings the following downsides regard
     \item Code duplication raises since it is almost impossible to reuse existing code.
 \end{itemize}
 The microservice architecture consists of multiple services focused on only one function of the business logic.
-Those services communicate with other services using remote calls (e.g., over HTTP), which causes additional latencies.
-Depending on the needs of the services, each service can have its own database, which can differ from the database system of the other services.
+Those services communicate with other services using remote calls (e.g., over HTTP), causing additional latencies.
+Depending on the needs of the services, each service can have its own database that can differ from the database system of the other services.
 It is also possible to share one database for multiple services, but this should be avoided to reduce coupling. 
 
 \section{Design Principles}
-It is hard to define principles, which will apply to all microservice architectures, but according to Newman, most of them will adhere to the following principles~\cite{newman2021building}: 
+It is hard to define principles that will apply to all microservice architectures, but according to Newman, most of them will adhere to the following principles~\cite{newman2021building}: 
 \begin{description}
     \item[Modelled around business concepts:] The functionalities are structured around the business contexts instead of the technical concepts.
-    \item[Adopting culture of automation:] The microservice deployments embrace the culture of automation by using automated tests, continuous delivery, automated servers, and much more automation tools.
+    \item[Adopting a culture of automation:] The microservice deployments embrace the culture of automation by using automated tests, continuous delivery, automated servers, and much more automation tools.
     \item[Hiding implementation details:] The microservices hide as many implementation details as possible to avoid coupling.
 		Especially the databases of the services should be hidden and can be accessed by other services using the APIs of the services.
     \item[Decentralising all the things:] All approaches that could centralize business logic are avoided to keep associated data and logic within the service boundaries.
@@ -58,8 +58,8 @@ It is hard to define principles, which will apply to all microservice architectu
 \end{description}
 
 \section{Challenges} \label{sec:microservice_challenges}
-The microservice architecture brings numerous benefits, but it also introduces a set of challenges, which could argue to avoid the microservice architecture in some cases.
-According to Kalske et al.~\cite{kalske2017challenges} the microservice architecture causes the following technical challenges with it: 
+The microservice architecture brings numerous benefits, but it also introduces a set of challenges, that could argue to avoid the microservice architecture in some cases.
+According to Kalske et al.~\cite{kalske2017challenges} the microservice architecture causes the following technical challenges: 
 \begin{itemize}
     \item The declaration of the service boundaries is very hard~\cite{kalske2017challenges}, especially if the developers do not know the domain very well~\cite{newman2021building}.
     \item The services should not become too fine-grained to prevent performance overhead.

@@ -11,7 +11,7 @@ Both components are located in the same network and run on the same machine.
 The service is developed in C\# using ASP.Net Core, same as the services of the flea market app, mentioned in chapter~\ref{cha:project_structure}.
 The client is a console application developed in C\# using .NET.
 The console application is not a microservice, but it acts as a service located within the deployment.
-It is not good-practice to access the services directly from an external application bypassing the API Gateway.
+It is not good practice to access the services directly from an external application bypassing the API Gateway.
 Nevertheless, this makes the experiment setup simpler and reduces falsifications by other components. 
 
 The experiment simulates that the client service (the console application) performs 1000 requests to another service.
@@ -25,13 +25,13 @@ The exact durations are not relevant since they are influenced by many factors, 
 The tests were performed five times to minimize distortions between the test runs.
 
 Two different implementations of the approach using self-signed JWTs are compared to the performance using mTLS.
-First, an implementation of the self-signed JWT approach, in which a new JWT is created for each request, is shown.
+First, an implementation of the self-signed JWT approach that creates a new JWT for each request is shown.
 The second implementation uses the same JWT for all requests.
 % Unclear antecedent
 This should illustrate how the performance using self-signed JWTs can be improved by efficiently reusing the tokens.
 Furthermore, the experiment includes the request duration when only TLS is used.
 % Unclear antecedent
-This should show how much time is accounted by the service-to-service authentication mechanisms and how much time is accounted by other tasks like the transport, the random number generation and the standard TLS-handshake.
+This should show how much time is accounted by the service-to-service authentication mechanisms and how much time is accounted by other tasks like the transport, the random number generation, and the standard TLS-handshake.
 
 \section{Results}
 
@@ -87,8 +87,8 @@ Therefore using self-signed JWTs would result in a request duration between $\be
 This experiment compared the request durations of the two previous authentication mechanisms.
 The results showed that the request durations of the mechanism using self-signed JWTs and mTLS are very similar.
 Depending on the implementation of the JWT approach, it can consume up to 34\% more time or up to 20\% less time.
-Therefore, performance is not the most crucial criterion when the two authentication mechanisms are compared, because they result in almost similar request durations.
+Therefore, performance is not the most crucial criterion when the two authentication mechanisms are compared because they result in almost similar request durations.
 
-Nevertheless, for time-critical projects in which each millisecond matters, self-signed JWTs are the better choice since the performance can be optimized in multiple ways.
+Nevertheless, for time-critical projects where each millisecond matters, self-signed JWTs are the better choice since the performance can be optimized in multiple ways.
 For example, the certificates of the services can be distributed even before the first request is performed.
 Or the validity timespan of the tokens can be increased so the same tokens can be used for a longer timespan.

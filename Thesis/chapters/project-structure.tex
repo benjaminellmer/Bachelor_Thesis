@@ -1,8 +1,8 @@
 \chapter{Project Structure}
 \label{cha:project_structure}
-This chapter aims to show the concrete structure and communication of a project, which implements the previously discussed authentication mechanisms.
+This chapter aims to show the concrete structure and communication of a project that implements the previously discussed authentication mechanisms.
 The focus of this chapter is showing the effects of the different authentication mechanisms on the project itself.
-For simplicity, this chapter does not handle topics like authorization, key management and user context sharing.
+For simplicity, this chapter does not handle topics like authorization, key management, and user context sharing.
 The visualizations are based on the backend of a flea market app.
 
 \section{Flea Market App}
@@ -32,7 +32,7 @@ In this example, the user fetches all ads in his surroundings.
 Therefore the AdService is used to retrieve the ads from the database, and the UserService is needed to preview information about the seller.
 The following components are necessary for the declared use case:
 \begin{description}
-	\item[Android App:] The Android App is the User Interface for the client, that allows the users to access the functionalities of the services.
+	\item[Android App:] The Android App is the User Interface for the client that allows the users to access the functionalities of the services.
 		The requests sent by the Android App are sent in beyond of the user.
 	\item[Firebase:] The Firebase service is responsible for validating the access tokens transferred by the users.
 		The app also communicates with the Firebase service to get an access token, but this is done earlier.
@@ -79,7 +79,7 @@ The following components are necessary for the declared use case:
 		The communication between the API Gateway and the app is secured using HTTPS.
 		Therefore the server is authenticated to the client using TLS.
 		The client is authenticated to the server by embedding a firebase access token within the Authorization header.
-	\item[2.] The API Gateway sends the received token to the Firebase service for the validation.
+	\item[2.] The API Gateway sends the received token to the Firebase service for validation.
 		This procedure is defined as a policy within the policy file of the API Gateway.
 		\newpage
 	\item[3.] The Firebase service returns the information whether the presented token is valid or not.
@@ -91,7 +91,7 @@ The following components are necessary for the declared use case:
 	\item[5.] After processing the request from the API Gateway, the \textbf{AdService} sends a request to the \textbf{UserService} to retrieve additional information about the owner of the ad.
 		The communication between the \textbf{UserService} and the \textbf{AdService} is also protected using mTLS.
 		Therefore the \textbf{AdService} implements the same authentication mechanism as the \textbf{UserService}.
-		The certificate is appended to the request using an HTTPClient, which is injected to the Controller of the WebService using Dependency Injection.
+		The certificate is appended to the request using an HTTPClient, that is injected to the Controller of the WebService using Dependency Injection.
 	\item[6.] When the \textbf{UserService} processed the request, it responds to the request.
 		The response does not require performing the authentication again since the TCP connection between the \textbf{AdService} and the \textbf{UserService} is still opened.
 	\item[7.] After the \textbf{AdService} processed the response from the \textbf{UserService}, it uses the opened connection with the API Gateway and transfers its response.
@@ -102,7 +102,7 @@ The following components are necessary for the declared use case:
 
 \subsection{Workflow using JWT}
 The workflow using JWT and the workflow using mTLS are pretty similar.
-Therefore, only the steps which differ between the mechanisms are described again.
+Therefore, only the steps that differ between the mechanisms are described again.
 \begin{enumerate}
 	\item[4.] The request from the client is forwarded to the \textbf{UserService}. 
 		Therefore the API Gateway has to create a valid JWT to communicate with the \textbf{UserService}.
@@ -122,7 +122,7 @@ Therefore, only the steps which differ between the mechanisms are described agai
 As already discussed in chapter~\ref{cha:authentication_mechanisms}, the implementation of mutual TLS does not require much logic on the service side.
 The best way to implement mTLS in an ASP.Net Core API is using the \textbf{Microsoft.AspNetCore.Authentication.Certificate} library.
 It provides the mechanism to add certificate authentication as \textbf{AuthenticationScheme} and implement custom \textbf{CertificateAuthenticationEvents}.
-The \textbf{CertificateAuthorityService}, implements the interface \textbf{ICertificateAuthorityService} which is shown in listing~\ref{lst:ICertificateAuthorityService}.
+The \textbf{CertificateAuthorityService}, implements the interface \textbf{ICertificateAuthorityService}, shown in listing~\ref{lst:ICertificateAuthorityService}.
 It provides features to manage a custom certificate truststore and validate certificates using this truststore.
 An instance of the \textbf{CertificateAuthorityService} is injected to the \textbf{CertificateAuthenticationEvents}.
 The dependency injection is managed by the \textbf{Microsoft.Extensions.DependencyInjection} library.
@@ -131,13 +131,13 @@ The functions of the API Controllers have to be marked with the \textbf{[Authori
 
 The client has to attach his certificate to the request.
 In ASP.Net this is done, by creating a custom \textbf{HTTPHandler}, and setting the \textbf{ClientCertificate} property.
-The \textbf{HTTPHandler} is then used to create a \textbf{HTTPClient}, which is used to perform the requests.
-It is good-practice to create the \textbf{HTTPClient} once and then inject it into the Controllers using dependency injection.
+The \textbf{HTTPHandler} is then used to create a \textbf{HTTPClient}, that can be used to perform requests.
+It is good practice to create the \textbf{HTTPClient} once and then inject it into the Controllers using dependency injection.
 % Unclear antecedent
 This helps improve the performance and especially prevents the service certificate from being parsed multiple times.
 
 \noindent \begin{minipage}{\linewidth}
-	\begin{CsCode}[label={lst:ICertificateAuthorityService}, caption={ICertificateAuthorityService interface, which is implemented by the injected CertificateAuthorityService},captionpos=b]
+	\begin{CsCode}[label={lst:ICertificateAuthorityService}, caption={ICertificateAuthorityService interface that is, implemented by the injected CertificateAuthorityService},captionpos=b]
 		public interface ICertificateAuthorityService {
 			public void AppendCertificate(X509Certificate2 certificate);
 			public bool ValidateCertificate(X509Certificate2 certificate);
@@ -150,13 +150,13 @@ The best way to implement mutual authentication using self-signed JWTs in ASP.Ne
 A custom middleware provides the possibility to perform actions on the receiving request before the API Controllers handle them.
 The \textbf{JWTAuthenticationMiddleware} validates the JWTs and certificates of all received requests.
 The validation is performed like it is shown in algorithm~\ref{alg:jwt}.
-When a client certificate is transferred within the TLS handshake, it is checked using a service that implements the \textbf{ICertificateAuthorityService}, which was shown in listing~\ref{lst:ICertificateAuthorityService}.
+When a client certificate is transferred within the TLS handshake, it is checked using a service that implements the \textbf{ICertificateAuthorityService}, shown in listing~\ref{lst:ICertificateAuthorityService}.
 If the certificate is valid, it is mapped to the issuer of the certificate within a custom truststore of the \textbf{JWTValidationService}.
-The \textbf{JWTValidationService} implements the \textbf{ITokenValidationService} interface which is shown in listing~\ref{lst:ITokenValidationService}.
+The \textbf{JWTValidationService} implements the \textbf{ITokenValidationService} interface shown in listing~\ref{lst:ITokenValidationService}.
 Both the \textbf{CertificateAuthorityService} and the \textbf{JWTValidationService} are injected into the \textbf{Invoke} function of the \textbf{JWTAuthenticationMiddleware} using dependecy injection.
 
 \noindent \begin{minipage}{\linewidth}
-	\begin{CsCode}[label={lst:ITokenValidationService}, caption={ITokenValidationService interface, which is implemented by the injected JWTValidationService},captionpos=b]
+	\begin{CsCode}[label={lst:ITokenValidationService}, caption={ITokenValidationService interface, that is implemented by the injected JWTValidationService},captionpos=b]
 		public interface ITokenValidationService {
 			public void PutIntoTruststore(X509Certificate2 certificate);
 			public bool ContainsIssuerInTruststore(String issuer);
@@ -166,14 +166,14 @@ Both the \textbf{CertificateAuthorityService} and the \textbf{JWTValidationServi
 \end{minipage}
 
 The client has to implement the logic for creating JWTs and attaching them to the requests within the Authorization header.
-The JWTs are created, using the \textbf{JWTCreatorService} that implements the \textbf{ITokenCreatorService} which is shown in~\ref{lst:ITokenCreatorService}.
+The JWTs are created, using the \textbf{JWTCreatorService} that implements the \textbf{ITokenCreatorService}, shown in~\ref{lst:ITokenCreatorService}.
 The \textbf{JWTCreatorService} and a \textbf{HTTPClient} are injected to the API Controllers using dependency injection.
 The Controllers can choose between two clients, one containing the service certificate and one that does not contain a certificate.
 In both cases, the Controller has to use the \textbf{JWTCreatorService} to create a JWT and append it to the Authorization header of each request.
 The header and the body of an authentication JWT, created by the \textbf{JWTCreatorService} is shown in figure~\ref{fig:jwt_en_decoded}.
 
 \noindent \begin{minipage}{\linewidth}
-	\begin{CsCode}[label={lst:ITokenCreatorService}, caption={ITokenCreatorService interface, which is injected to the API Controllers},captionpos=b]
+	\begin{CsCode}[label={lst:ITokenCreatorService}, caption={ITokenCreatorService interface, that is injected to the API Controllers},captionpos=b]
 		public interface ITokenCreatorService {
 			public string CreateToken(string audience);
 			public string CreateToken(string audience, TimeSpan validityPeriod);
@@ -242,7 +242,7 @@ The header and the body of an authentication JWT, created by the \textbf{JWTCrea
 \end{algorithm}
 
 \section{Conclusion}
-This chapter showed a concrete project which implements the previously discussed authentication concepts.
+This chapter showed a concrete project that implements the previously discussed authentication concepts.
 Furthermore, some implementation details were shown to give an idea of how the concepts can be implemented.
 The implementation also proved that the authentication mechanism using self-signed JWTs requires more code than the implementation of mTLS.
 
