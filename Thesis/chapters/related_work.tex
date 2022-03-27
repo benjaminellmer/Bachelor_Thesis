@@ -18,17 +18,17 @@ Therefore, it is the only entry point to the microservice deployment.
 It intercepts all requests targeted for the APIs of the services.
 After validating the requests, it dispatches the valid ones to the microservices.
 The main tasks of an API Gateway are authentication of the end-user, authorization, and throttling~\cite{dias2020microservices}.
-It authenticates the end-user using access tokens, coming from access delegation technologies like OAuth 2.0 or Open ID Connect~\cite{siriwardena2014advanced}.
+It authenticates the end-user using access tokens coming from access delegation technologies like OAuth 2.0 or Open ID Connect~\cite{siriwardena2014advanced}.
 By outsourcing the end-user authentication to the API Gateway, the user has to authenticate himself only once and not multiple times to each service~\cite{dias2020microservices}.
-The API Gateway could handle authorization for all requests, but in most cases, it is performed on both levels, the edge-level, and the service-level. 
+The API Gateway could handle authorization for all requests, but in most cases, it is performed on both levels, the edge-level, and the service level. 
 Therefore the API Gateway is only responsible for coarse authorization assertions, preventing a single-point-of-decision~\cite{barabanov2020authentication}.
 
 \subsection{Service-level security}
 Service-level security is defined as the security mechanisms that protect the communication among the microservices.
-According to Barabanov and Makrushin~\cite{barabanov2020authentication} service-level security can be decomposed into the sub-functions service-level authentication, service-level authorization, and external identity propagation.
+According to Barabanov and Makrushin~\cite{barabanov2020authentication}, service-level security can be decomposed into the sub-functions service-level authentication, service-level authorization, and external identity propagation.
 Service-level security can either be implemented by the microservices themselves or by a service-mesh.
-A service mesh can be seen as a dedicated infrastructure layer, that manages the service-to-service communication of containerized services.
-In a typical microservice deployment with a service mesh, each microservice has its service proxy, that works in a transparent manner~\cite{dias2020microservices}.
+A service mesh can be seen as a dedicated infrastructure layer that manages the service-to-service communication of containerized services.
+In a typical microservice deployment with a service mesh, each microservice has its service proxy that works in a transparent manner~\cite{dias2020microservices}.
 The service mesh takes care of service discovery, routing, load balancing, traffic configuration, authentication, authorization, and monitoring~\cite{chandramouli2019microservices}.
 Therefore the services can focus on exactly the tasks they are intended for and do not have to care about security-related tasks~\cite{dias2020microservices}.
 
@@ -63,7 +63,7 @@ The most popular technic for identity propagation is extracting the user's conte
 The tokens are passed between the microservices and the API Gateway.
 The propagated identity of the user can be extracted from the token, and the token's signature must be checked.
 The microservices can then perform authorization based on the identity of the client~\cite{barabanov2020authentication, dias2020microservices}.
-The way how the identity propagation is implemented depends on the used authentication mechanism.
+The way how identity propagation is implemented depends on the authentication mechanism used.
 %unclear antecedent
 This will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
@@ -85,7 +85,7 @@ This is also known under the term digital signature.
 Digital signatures can be used to provide authentication and integrity for messages~\cite{anderson2020security}.
 
 The commonly used algorithm for digital signatures is RSA.
-RSA is based on factoring, its encryption key consists of the modulus $N$, that are hard to factor.
+RSA is based on factoring, its encryption key consists of the modulus $N$, which is hard to factor.
 The modulus $N$ is calculated by multiplying two large prime numbers $p$ and $q$ with each other.
 Additionally the encryption key has a public factor $e$ that has no common factors with either $p-1$ or $q-1$.
 The private key consists of the factors $p$ and $q$, that have to be kept secret~\cite{anderson2020security}.
@@ -103,7 +103,7 @@ The problem with asymmetric cryptography is that the encryption and decryption t
 The restriction to use only asymmetric cryptography could decrease the system's performance.
 Therefore it is common sense to use hybrid systems as done in TLS.
 In TLS, public-key cryptography is used for authentication, but symmetric cryptography is used to provide confidentiality for the communication~\cite{henriques2017using}.
-Henriques~\cite{henriques2017using} showed that the performance of systems can be improved using a hybrid approach.
+Henriques~\cite{henriques2017using} showed that the performance of systems could be improved using a hybrid approach.
 
 \subsection{Public Key Infrastructure} \label{sec:pki}
 Public key cryptography assumes that the receiver of a message already knows and trusts the sender's public key.
@@ -223,13 +223,13 @@ The hardest part about certificate revocation is informing all participants abou
 % Unclear antecedent
 This is done using certificate revocation lists (CRL) or other revocation mechanisms.
 The big downside of CRLs is that each CA has to store a list of revocated certificates and the clients have to retrieve this list whenever they establish a connection to a server.
-This causes high latencies, that can be reduced by caching.
+This causes high latencies that can be reduced by caching.
 Otherwise, caching also reduces security because a certificate can be revocated during the lifetime of the cache.
 Especially when the CA does not respond to the CRL query is tough to handle~\cite{dias2020microservices}.
 
 
 \subsection{JSON Web Token}
-A JSON Web Token (JWT) is a container that can carry authentication assertions, authorization assertions and further information in a cryptographically safe manner.
+A JSON Web Token (JWT) is a container that can carry authentication assertions, authorization assertions, and further information in a cryptographically safe manner.
 An authentication assertion can be anything that identifies the user.
 Usually, usernames or e-mail addresses are used as authentication assertions.
 An authorization assertion can be any information about the access permissions.
@@ -257,7 +257,7 @@ The base64 encoded header is the first part of the JWT.
 
 The \textbf{payload} is a set of registered and custom claims.
 A claim is a piece of information about an entity.
-The JWT specification defines registered claims, that are not mandatory for all cases but should provide a good starting point for a set of valuable claims to ensure interoperability.
+The JWT specification defines registered claims that are not mandatory for all cases but should provide a good starting point for a set of valuable claims to ensure interoperability.
 The software architects can define custom claims on their own, depending on their needs.
 The custom claims registered in the IANA registry are called public claims, and those not registered in the IANA registry are called private claims~\cite{jwtdocauth0, jwtrfc}.
 The base64 encoded payload is the second part of the JWT.
@@ -290,7 +290,7 @@ Confidentiality is assured using symmetric encryption.
 Integrity is provided using Message Authentication Codes (MAC)~\cite{kurbatov2021design, krawczyk2013security}.
 
 \subsubsection{mTLS} \label{sec:mtls}
-TLS itself is also called one-way TLS because it allows the client to identify the server, but not the server to identify the client.
+TLS itself is also called one-way TLS because it allows the client to identify the server but not the server to identify the client.
 Therefore mTLS was introduced to provide authentication in both directions.
 The server and the client must own a private/public key pair.
 Therefore it is more appropriate for the communication between systems instead of the communication between users and servers~\cite{dias2020microservices}. 

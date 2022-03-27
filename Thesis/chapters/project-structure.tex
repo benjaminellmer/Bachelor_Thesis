@@ -1,8 +1,8 @@
 \chapter{Project Structure}
 \label{cha:project_structure}
-This chapter aims to show the concrete structure and communication of a project, that implements the previously discussed authentication mechanisms.
+This chapter aims to show the concrete structure and communication of a project that implements the previously discussed authentication mechanisms.
 The focus of this chapter is showing the effects of the different authentication mechanisms on the project itself.
-For simplicity, this chapter does not handle topics like authorization, key management and user context sharing.
+For simplicity, this chapter does not handle topics like authorization, key management, and user context sharing.
 The visualizations are based on the backend of a flea market app.
 
 \section{Flea Market App}
@@ -32,7 +32,7 @@ In this example, the user fetches all ads in his surroundings.
 Therefore the AdService is used to retrieve the ads from the database, and the UserService is needed to preview information about the seller.
 The following components are necessary for the declared use case:
 \begin{description}
-	\item[Android App:] The Android App is the User Interface for the client, that allows the users to access the functionalities of the services.
+	\item[Android App:] The Android App is the User Interface for the client that allows the users to access the functionalities of the services.
 		The requests sent by the Android App are sent in beyond of the user.
 	\item[Firebase:] The Firebase service is responsible for validating the access tokens transferred by the users.
 		The app also communicates with the Firebase service to get an access token, but this is done earlier.
@@ -79,7 +79,7 @@ The following components are necessary for the declared use case:
 		The communication between the API Gateway and the app is secured using HTTPS.
 		Therefore the server is authenticated to the client using TLS.
 		The client is authenticated to the server by embedding a firebase access token within the Authorization header.
-	\item[2.] The API Gateway sends the received token to the Firebase service for the validation.
+	\item[2.] The API Gateway sends the received token to the Firebase service for validation.
 		This procedure is defined as a policy within the policy file of the API Gateway.
 		\newpage
 	\item[3.] The Firebase service returns the information whether the presented token is valid or not.
@@ -106,7 +106,7 @@ Therefore, only the steps that differ between the mechanisms are described again
 \begin{enumerate}
 	\item[4.] The request from the client is forwarded to the \textbf{UserService}. 
 		Therefore the API Gateway has to create a valid JWT to communicate with the \textbf{UserService}.
-		The JWT, that is signed using the private key of the API Gateway, is transferred within the Authorization header.
+		The JWT, which is signed using the private key of the API Gateway, is transferred within the Authorization header.
 	\item[5.] The \textbf{AdService} has to retrieve additional information from the \textbf{UserService}.
 		Now the \textbf{AdService} has to present his JWT to the \textbf{UserService}.
 % Unclear antecedent
@@ -132,7 +132,7 @@ The functions of the API Controllers have to be marked with the \textbf{[Authori
 The client has to attach his certificate to the request.
 In ASP.Net this is done, by creating a custom \textbf{HTTPHandler}, and setting the \textbf{ClientCertificate} property.
 The \textbf{HTTPHandler} is then used to create a \textbf{HTTPClient}, that can be used to perform requests.
-It is good-practice to create the \textbf{HTTPClient} once and then inject it into the Controllers using dependency injection.
+It is good practice to create the \textbf{HTTPClient} once and then inject it into the Controllers using dependency injection.
 % Unclear antecedent
 This helps improve the performance and especially prevents the service certificate from being parsed multiple times.
 
