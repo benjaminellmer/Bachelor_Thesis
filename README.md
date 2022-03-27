@@ -28,15 +28,15 @@ When none of these requirements apply, mTLS is the preferred approach since it k
 - [Bachelor thesis presentation](Presentation/BA_Presentation_Ellmer.pdf)
 - [Developed ASP.Net library for service-to-service authentication](Implementation/MutualAuthenticationLibrary)
 - [Description how to use the developed library](Implementation/Installationsbeschreibung.pdf)
-- [Self-signed JWT example project](Implementation/PRO-Abgabe/JWT)
-- [mTLS example project](Implementation/PRO-Abgabe/JWT)
-- [PRO submission](Implementation/PRO-Abgabe)
+- [Self-signed JWT example project](Implementation/JWT)
+- [mTLS example project](Implementation/mTLS)
+- [PRO submission](PRO)
 - [Source files of the experiment](Experiment)
 
 LaTeX sources:
-- Source of the thesis
-- Source of the self-made diagrams for the thesis
-- Source of the presentation
-- Source of the PRO abstract
-- Source of the PRO installation description
-- Source of the PRO requirements specifiaction
+- [Source of the thesis](Thesis/thesis-src)
+- [Source of the self-made diagrams for the thesis](Thesis/diagrams-src)
+- [Source of the presentation](Presentation/src)
+- [Source of the PRO abstract](PRO/src-abstract)
+- [Source of the PRO installation description](PRO/src-installationsbeschreibung)
+- [Source of the PRO requirements specifiaction](PRO/src-requirements-specification)
