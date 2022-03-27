@@ -9,10 +9,10 @@
 
 	Die verbreitetsten Service-zu-Service Authentifizierungsmechanismen sind self-signed JSON Web Tokens (JWT) und mutual TLS (mTLS).
 	Diese Arbeit beschreibt die Ideen und Konzepte, sowie die Motivationen und Herausforderungen dieser Mechanismen.
-	Außerdem wird ein Projekt vorgestellt, welches beide Mechanismen implementiert und Einblicke über die Implementierung dieses Projekts werden gegeben.
-	Mit dem Wissen, aus dieser Arbeit sollen Entwickler in der Lage sein selbst den richtige Authentifizierungsmechanismus für ihre Projekte zu bestimmen.
+	Außerdem wird ein Projekt vorgestellt, welches beide Mechanismen implementiert und es werden Einblicke über die Implementierung dieses Projekts gegeben.
+	Mit dem Wissen, aus dieser Arbeit sollen Entwickler in der Lage sein selbst den richtige Authentifizierungsmechanismus für ihre Projekte bestimmen zu können.
 
-	Die Vergleiche haben gezeigt, dass beide Mechanismen sehr effizient sind und das selbe Maß an Sicherheit liefern.
+	Die Vergleiche haben gezeigt, dass beide Mechanismen sehr effizient sind und das selbe Maß an Sicherheit bieten.
 	Deswegen ist kein Mechanismus dem anderem gegenüber in jedem Fall überlegen.
 	Self-signed JWTs sind der bevorzugte Authentifizierungsmechanismus, falls Nonrepudiation eine Anforderung ist, wenn die Applikation dazu neigt, den User-Context zu benötigen, oder falls die Entwickler die Authentifizierung selbst mit zusätzlichen Parametern adaptieren möchten.
 	Falls keine dieser Anforderungen zutrifft, ist mTLS der bevorzugte Authentifizierungsmechanismus, da damit das System so einfach wie möglich gehalten wird.

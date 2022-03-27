@@ -6,7 +6,7 @@ Especially because the migration from a monolithic architecture to the microserv
 Therefore the performance is already restricted, and the authentication mechanisms should not produce too much overhead.
 
 \section{Setup}
-The setup consists of two components, the service that responds to requests and the client, which performs requests and measures the time taken.
+The setup consists of two components, the service that responds to requests and the client, that performs requests and measures the time taken.
 Both components are located in the same network and run on the same machine.
 The service is developed in C\# using ASP.Net Core, same as the services of the flea market app, mentioned in chapter~\ref{cha:project_structure}.
 The client is a console application developed in C\# using .NET.
@@ -25,7 +25,7 @@ The exact durations are not relevant since they are influenced by many factors, 
 The tests were performed five times to minimize distortions between the test runs.
 
 Two different implementations of the approach using self-signed JWTs are compared to the performance using mTLS.
-First, an implementation of the self-signed JWT approach, in which a new JWT is created for each request, is shown.
+First, an implementation of the self-signed JWT approach, that creates a new JWT for each request is shown.
 The second implementation uses the same JWT for all requests.
 % Unclear antecedent
 This should illustrate how the performance using self-signed JWTs can be improved by efficiently reusing the tokens.
@@ -89,6 +89,6 @@ The results showed that the request durations of the mechanism using self-signed
 Depending on the implementation of the JWT approach, it can consume up to 34\% more time or up to 20\% less time.
 Therefore, performance is not the most crucial criterion when the two authentication mechanisms are compared, because they result in almost similar request durations.
 
-Nevertheless, for time-critical projects in which each millisecond matters, self-signed JWTs are the better choice since the performance can be optimized in multiple ways.
+Nevertheless, for time-critical projects where each millisecond matters, self-signed JWTs are the better choice since the performance can be optimized in multiple ways.
 For example, the certificates of the services can be distributed even before the first request is performed.
 Or the validity timespan of the tokens can be increased so the same tokens can be used for a longer timespan.
