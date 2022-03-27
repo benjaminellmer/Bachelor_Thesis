@@ -33,7 +33,7 @@ When none of these requirements apply, mTLS is the preferred approach since it k
 - [PRO submission](PRO)
 - [Source files of the experiment](Experiment)
 
-LaTeX sources:
+## LaTeX sources
 - [Source of the thesis](Thesis/thesis-src)
 - [Source of the self-made diagrams for the thesis](Thesis/diagrams-src)
 - [Source of the presentation](Presentation/src)

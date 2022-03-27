@@ -63,7 +63,7 @@ The most popular technic for identity propagation is extracting the user's conte
 The tokens are passed between the microservices and the API Gateway.
 The propagated identity of the user can be extracted from the token, and the token's signature must be checked.
 The microservices can then perform authorization based on the identity of the client~\cite{barabanov2020authentication, dias2020microservices}.
-The way how identity propagation is implemented depends on the authentication mechanism used.
+The way how identity propagation is implemented depends on the used authentication mechanism.
 %unclear antecedent
 This will be discussed in more detail in chapter~\ref{cha:authentication_mechanisms}.
 
@@ -215,7 +215,7 @@ It results in requiring to communicate with a centralized authority for each req
 A certificate can be revocated for the following reasons~\cite{dias2020microservices}: 
 \begin{itemize}
     \item The Private key of the CA is compromised
-    \item The Private key of the microservice is compromised
+    \item The Private key of the subject is compromised
     \item The holder of the certificate is no longer the identity who requested the certificate 
     \item The CA finds out that the parameters provided in the CSR are invalid
 \end{itemize}
@@ -236,7 +236,7 @@ An authorization assertion can be any information about the access permissions.
 For example, a JWT can include the information, whether the user is an admin or an unprivileged user~\cite{dias2020microservices}. 
 
 \subsubsection{Structure}
-A JWT is decomposed into the header, the payload, and the signature, that are concatenated and separated by a dot~\cite{jwtdocauth0}.
+A JWT is decomposed into the header, the payload, and the signature, which are concatenated and separated by a dot~\cite{jwtdocauth0}.
 %A valid JWT could look like the JWT shown in figure~\ref{fig:myjwt}.
 %\begin{figure}
 %    \textcolor{red}{Header}.

@@ -133,7 +133,7 @@ This approach can be implemented in multiple ways~\cite{dias2020microservices}.
 \end{figure}
 
 \newpage
-Generally, the user has to obtain an access token from any token service.
+First, the user has to obtain an access token from any token service.
 This token could be an OAuth2, OpenID Connect, or any other token.
 Then the user has to embed his token within the Authorization header of each request.
 The token is validated by a Security Token Service (STS).
@@ -302,8 +302,7 @@ This freedom of choice is not guaranteed with mTLS because it is a strictly defi
 Sadly the biggest challenge of mTLS, key management, can not be avoided using self-signed JWTs, because it also requires each service to have its key pair.
 Therefore a PKI is required for both mechanisms.
 But, the key management can be simplified since it is unnecessary to have a CA responsible for signing each certificate.
-Still, it makes sense to have one superior authority regarding the webserver setup, that is, the root of trust and whose chained certificates are trusted.
+Still, regarding the webserver setup, it makes sense to have one superior authority, that is the root of trust and whose chained certificates are trusted.
 
 As a result, self-signed JWTs are the preferred authentication mechanism when the target is to achieve nonrepudiation or when the system is very dependent on sharing the user context.
 Nevertheless, this leads to additional implementation overhead and requires developers specialized in security-related systems.
-evertheless, this leads to additional implementation overhead and requires developers specialized in security-related systems.

@@ -16,7 +16,7 @@ Nevertheless, this makes the experiment setup simpler and reduces falsifications
 
 The experiment simulates that the client service (the console application) performs 1000 requests to another service.
 When the first request is performed, the connection between the services has to be established.
-Therefore the first request will take significantly longer since the full TCP handshake and TLS handshake have to be performed.
+Therefore the first request will take significantly longer since the full TCP-handshake and TLS-handshake have to be performed.
 Following requests can reuse the already created connection and do not have to perform the whole initialization process again.
 
 This experiment does not aim to approximate the expected request durations with the declared technology stack.
@@ -31,7 +31,7 @@ The second implementation uses the same JWT for all requests.
 This should illustrate how the performance using self-signed JWTs can be improved by efficiently reusing the tokens.
 Furthermore, the experiment includes the request duration when only TLS is used.
 % Unclear antecedent
-This should show how much time is accounted by the service-to-service authentication mechanisms and how much time is accounted by other tasks like the transport, the random number generation, and the standard TLS-handshake.
+This should show how much time is accounted by the service-to-service authentication mechanisms and how much time is accounted by other tasks like the transport, the random number generation, and the basic TLS-handshake.
 
 \section{Results}
 

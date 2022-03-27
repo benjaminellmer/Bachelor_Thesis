@@ -87,12 +87,12 @@ The following components are necessary for the declared use case:
 		The communication between the API Gateway and the \textbf{AdService} is secured using mTLS.
 %Unclear antecedent
 		This means both parties have to present a certificate signed by a trusted CA.
-		Therefore the webserver of the \textbf{AdService} has to be configured to allow or even require Client Certificates.
+		Therefore the webserver of the \textbf{AdService} has to be configured to allow or even require client certificates.
 	\item[5.] After processing the request from the API Gateway, the \textbf{AdService} sends a request to the \textbf{UserService} to retrieve additional information about the owner of the ad.
 		The communication between the \textbf{UserService} and the \textbf{AdService} is also protected using mTLS.
 		Therefore the \textbf{AdService} implements the same authentication mechanism as the \textbf{UserService}.
 		The certificate is appended to the request using an HTTPClient, that is injected to the Controller of the WebService using Dependency Injection.
-	\item[6.] When the \textbf{UserService} processed the request, it responds to the request.
+	\item[6.] When the \textbf{UserService} processed the request, it responds.
 		The response does not require performing the authentication again since the TCP connection between the \textbf{AdService} and the \textbf{UserService} is still opened.
 	\item[7.] After the \textbf{AdService} processed the response from the \textbf{UserService}, it uses the opened connection with the API Gateway and transfers its response.
 	\item[8.] The API Gateway forwards the response from the \textbf{AdService} to the Android App.
@@ -100,7 +100,7 @@ The following components are necessary for the declared use case:
 		The app can now process the response and present the requested information to the user.
 \end{enumerate}
 
-\subsection{Workflow using JWT}
+\subsection{Workflow using self-sigend JWTs}
 The workflow using JWT and the workflow using mTLS are pretty similar.
 Therefore, only the steps that differ between the mechanisms are described again.
 \begin{enumerate}
@@ -145,7 +145,7 @@ This helps improve the performance and especially prevents the service certifica
 	\end{CsCode}
 \end{minipage}
 
-\subsection{JWT}
+\subsection{Self-signed JWT}
 The best way to implement mutual authentication using self-signed JWTs in ASP.Net Core is a custom middleware.
 A custom middleware provides the possibility to perform actions on the receiving request before the API Controllers handle them.
 The \textbf{JWTAuthenticationMiddleware} validates the JWTs and certificates of all received requests.
@@ -242,8 +242,8 @@ The header and the body of an authentication JWT, created by the \textbf{JWTCrea
 \end{algorithm}
 
 \section{Conclusion}
-This chapter showed a concrete project that implements the previously discussed authentication concepts.
-Furthermore, some implementation details were shown to give an idea of how the concepts can be implemented.
+This chapter showed a concrete project that implements the previously discussed authentication mechanisms.
+Furthermore, some implementation details were shown to give an idea of how the mechanisms can be implemented.
 The implementation also proved that the authentication mechanism using self-signed JWTs requires more code than the implementation of mTLS.
 
 The concrete implementation of the discussed authentication mechanisms differs depending on the programming language and the used technologies.
