@@ -19,5 +19,5 @@ When none of these requirements apply, mTLS is the preferred approach since it k
 
 ## Videos
 [Presentation Video](https://filebox.fhooecloud.at/index.php/s/dd2rB84fWPjYeJ9)  
-[Official Promovideo] (https://drive.google.com/file/d/1kwnXZHeul1EyKZvslPQLISg2FJRT6bwO/view?usp=sharing)  
-[Project Teaser] (https://filebox.fhooecloud.at/index.php/s/DqLwGTbncibgM3n)  
+[Official Promovideo](https://drive.google.com/file/d/1kwnXZHeul1EyKZvslPQLISg2FJRT6bwO/view?usp=sharing)  
+[Project Teaser](https://filebox.fhooecloud.at/index.php/s/DqLwGTbncibgM3n)  
