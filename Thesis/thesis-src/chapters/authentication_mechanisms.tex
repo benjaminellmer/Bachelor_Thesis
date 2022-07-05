@@ -60,7 +60,7 @@ The following sequence and figure~\ref{fig:tlshandshake} should give an overview
 		This encrypted hash is then sent to the server within the \textbf{CertificateVerify} message.
 		The server can decrypt the hash and can calculate it on his own to check whether the decrypted hash is correct or not.
 	\item The client sends a \textbf{ChangeCipherSpec} message to signal the server that all following messages will be protected with the protection mechanisms defined in the cipher suite.
-	\item The last message of the handshake, the \textbf{Finished} message contains an encrypted has of all previous messages.
+	\item The last message of the handshake, the \textbf{Finished} message contains an encrypted hash of all previous messages.
 	%\item[11-12] Same as steps 9-10 but from the server.
 	\item Same as step 9, but from the server.
 	\item Same as step 10, but from the server.
