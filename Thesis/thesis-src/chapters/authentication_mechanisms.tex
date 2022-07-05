@@ -88,8 +88,8 @@ Only the \textbf{CertificateRequest} message of the sever and the \textbf{Certif
 		\begin{messcall}{A}{ClientHello$^1$}{B}{}
 			\mess{B}{ServerHello$^2$, Certificates$^3$, CertificateRequest$^4$, ServerHelloDone$^5$}{A}
 			\mess{A}{Certificate$^6$, ClientKeyExchange$^7$, CertificateVerify$^8$}{B}
-			\mess{B}{ChangeCipherSpec$^9$, Finished$^{10}$}{A}
-			\mess{A}{ChangeCipherSpec$^{11}$, Finished$^{12}$}{B}
+			\mess{A}{ChangeCipherSpec$^9$, Finished$^{10}$}{B}
+			\mess{B}{ChangeCipherSpec$^{11}$, Finished$^{12}$}{A}
 		\end{messcall}
 	\end{sequencediagram}
 	\caption{TLS handshake using mTLS~\cite{parsovs2013practical}}
